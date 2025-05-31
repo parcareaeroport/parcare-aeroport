@@ -15,6 +15,7 @@ import {
   query,
   orderBy,
   type Timestamp, // Import Timestamp
+  increment,
 } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -150,6 +151,9 @@ function BookingsPageContent() {
           status: "cancelled_by_admin", // Sau un status mai specific
           apiResponseMessage: result.message, // Salvează mesajul de la API
         })
+        // OPTIMIZARE: Decrementez contorul de rezervări active
+        const statsDocRef = doc(db, "config", "reservationStats")
+        await updateDoc(statsDocRef, { activeBookingsCount: increment(-1) })
         toast({
           title: "Rezervare Anulată",
           description: `Rezervarea ${booking.apiBookingNumber} a fost anulată cu succes la API și actualizată local.`,

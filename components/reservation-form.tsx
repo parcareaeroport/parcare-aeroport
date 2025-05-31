@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { TimePickerDemo } from "@/components/time-picker"
 import { Label } from "@/components/ui/label"
-import { collection, getDocs, query, orderBy, doc, getDoc, getCountFromServer, where } from "firebase/firestore" // Importuri Firestore necesare
+import { collection, getDocs, query, orderBy, doc, getDoc, getCountFromServer, where, onSnapshot } from "firebase/firestore" // Importuri Firestore necesare
 import { db } from "@/lib/firebase"
 
 interface PriceTier {
@@ -50,42 +50,55 @@ export default function ReservationForm() {
 
   // useEffect pentru a încărca setările sistemului și numărul de rezervări active
   useEffect(() => {
-    const fetchSystemStatus = async () => {
-      setIsLoadingSystemStatus(true)
-      try {
-        // Fetch reservation settings (limit & enabled status)
-        const settingsDocRef = doc(db, "config", "reservationSettings")
-        const settingsSnap = await getDoc(settingsDocRef)
-        const settingsData = settingsSnap.exists() ? settingsSnap.data() : {} // Obiect gol dacă nu există
-
+    let settingsLoaded = false;
+    let statsLoaded = false;
+    const checkLoaded = () => {
+      if (settingsLoaded && statsLoaded) setIsLoadingSystemStatus(false);
+    };
+    const unsubSettings = onSnapshot(
+      doc(db, "config", "reservationSettings"),
+      (settingsSnap) => {
+        const settingsData = settingsSnap.exists() ? settingsSnap.data() : {};
         setReservationSettings({
-          maxTotalReservations: settingsData.maxTotalReservations ?? 0, // Implicit 0 dacă lipsește
-          reservationsEnabled: settingsData.reservationsEnabled ?? true, // Implicit true dacă lipsește
-        })
-
-        // Fetch active bookings count
-        const bookingsColRef = collection(db, "bookings")
-        // Presupunem că rezervările active nu au status 'cancelled' sau 'completed'
-        // Ajustați condiția 'where' conform logicii dvs. de business pentru rezervări active
-        const q = query(bookingsColRef, where("status", "!=", "cancelled"))
-        const countSnap = await getCountFromServer(q)
-        setActiveBookingsCount(countSnap.data().count)
-      } catch (error) {
-        console.error("Error fetching system status:", error)
+          maxTotalReservations: settingsData.maxTotalReservations ?? 0,
+          reservationsEnabled: settingsData.reservationsEnabled ?? true,
+        });
+        settingsLoaded = true;
+        checkLoaded();
+      },
+      (error) => {
+        console.error("Error fetching reservation settings:", error);
         toast({
           title: "Eroare de sistem",
           description: "Nu s-au putut verifica setările pentru rezervări. Vă rugăm încercați mai târziu.",
           variant: "destructive",
-        })
-        // Fallback: considerăm rezervările oprite și limita 0 în caz de eroare
-        setReservationSettings({ maxTotalReservations: 0, reservationsEnabled: false })
-        setActiveBookingsCount(0)
-      } finally {
-        setIsLoadingSystemStatus(false)
+        });
+        setReservationSettings({ maxTotalReservations: 0, reservationsEnabled: false });
+        settingsLoaded = true;
+        checkLoaded();
       }
-    }
-    fetchSystemStatus()
-  }, [toast])
+    );
+    const unsubStats = onSnapshot(
+      doc(db, "config", "reservationStats"),
+      (statsSnap) => {
+        const statsData = statsSnap.exists() ? statsSnap.data() : {};
+        setActiveBookingsCount(statsData.activeBookingsCount ?? 0);
+        statsLoaded = true;
+        checkLoaded();
+      },
+      (error) => {
+        console.error("Error fetching reservation stats:", error);
+        setActiveBookingsCount(0);
+        statsLoaded = true;
+        checkLoaded();
+      }
+    );
+    // NU mai apela setIsLoadingSystemStatus(false) aici!
+    return () => {
+      unsubSettings();
+      unsubStats();
+    };
+  }, [])
 
   const getCombinedDateTime = (date: Date, time: string): Date => {
     const [hours, minutes] = time.split(":").map(Number)
@@ -348,7 +361,7 @@ export default function ReservationForm() {
       }
     }
     fetchPriceTiers()
-  }, [toast]) // Adăugat toast la dependențe dacă nu era deja
+  }, [])
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border border-gray-100">

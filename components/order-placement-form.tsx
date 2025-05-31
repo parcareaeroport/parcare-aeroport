@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"
+import { collection, addDoc, serverTimestamp, doc, updateDoc, increment } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
 // This is a placeholder component.  Replace with actual implementation.
@@ -47,6 +47,9 @@ const OrderPlacementForm: React.FC<OrderPlacementFormProps> = ({
           status: "confirmed_test", // Un status intern
           createdAt: serverTimestamp(),
         })
+        // OPTIMIZARE: Incrementez contorul de rezervări active
+        const statsDocRef = doc(db, "config", "reservationStats")
+        await updateDoc(statsDocRef, { activeBookingsCount: increment(1) })
         toast({
           title: "Rezervare salvată local",
           description: "Detaliile rezervării au fost salvate și în sistemul nostru.",

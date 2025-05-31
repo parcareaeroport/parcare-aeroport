@@ -6,7 +6,7 @@ import { CheckCircle, XCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { getStripe } from "@/lib/stripe" // Pentru a prelua instanța Stripe.js
-import { collection, addDoc, serverTimestamp, query, where, getDocs } from "firebase/firestore"
+import { collection, addDoc, serverTimestamp, query, where, getDocs, doc, updateDoc, increment } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useToast } from "@/components/ui/use-toast"
 
@@ -122,6 +122,9 @@ function ConfirmationContent() {
                     createdAt: serverTimestamp(),
                     // apiBookingNumber este deja în tempReservationData dacă a fost setat
                   })
+                  // OPTIMIZARE: Incrementez contorul de rezervări active
+                  const statsDocRef = doc(db, "config", "reservationStats")
+                  await updateDoc(statsDocRef, { activeBookingsCount: increment(1) })
                   toast({ title: "Rezervare salvată", description: "Detaliile rezervării au fost salvate în sistem." })
                 } else {
                   toast({ title: "Info", description: "Rezervarea a fost deja procesată." })
