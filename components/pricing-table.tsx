@@ -119,7 +119,7 @@ export default function PricingTable() {
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-waze-pink">
-            TARIFE PARCARE OTOPENI (Prețuri per număr de zile)
+            Parcare Otopeni preț (prețuri per număr de zile)
           </h2>
           <p className="text-center text-sm text-gray-600 mb-6">
             Prețurile sunt actualizate dinamic. Verificați întotdeauna prețul
