@@ -1,16 +1,18 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { CheckCircle2 } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { CheckCircle2, Send, Loader2 } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -21,103 +23,88 @@ export default function ContactForm() {
 
     setIsSubmitting(false)
     setIsSubmitted(true)
+    toast({
+      title: "Mesaj Trimis!",
+      description: "Mulțumim! Am primit mesajul tău și vom reveni în cel mai scurt timp.",
+    })
+  }
+
+  if (isSubmitted) {
+    return (
+      <section className="py-12 md:py-16 bg-slate-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto bg-white rounded-lg p-8 text-center border border-slate-200">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="h-8 w-8 text-green-600" />
+            </div>
+            <h3 className="text-2xl font-semibold mb-3">Mesaj trimis cu succes!</h3>
+            <p className="text-slate-600 mb-8">
+              Mulțumim pentru mesajul tău. Echipa noastră va reveni cu un răspuns în cel mai scurt timp posibil.
+            </p>
+            <Button onClick={() => setIsSubmitted(false)} variant="outline">
+              Trimite un alt mesaj
+            </Button>
+          </div>
+        </div>
+      </section>
+    )
   }
 
   return (
-    <section className="py-12 md:py-20 bg-white">
+    <section className="py-12 md:py-16 bg-slate-50">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">Trimite-ne un mesaj</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Trimite-ne un mesaj</h2>
 
-          {isSubmitted ? (
-            <div className="bg-[#e6f9ff] rounded-2xl p-8 text-center">
-              <div className="w-16 h-16 bg-[#ccf5ff] rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="h-8 w-8 text-[#33CCFF]" />
+          <form onSubmit={handleSubmit} className="bg-white p-6 md:p-8 rounded-lg border border-slate-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+              <div className="space-y-2">
+                <Label htmlFor="name">Nume complet *</Label>
+                <Input id="name" name="name" required placeholder="Numele tău" />
               </div>
-              <h3 className="text-xl font-bold mb-2 text-[#0099cc]">Mesaj trimis cu succes!</h3>
-              <p className="text-[#00b8e6] mb-6">
-                Mulțumim pentru mesajul tău. Echipa noastră va reveni cu un răspuns în cel mai scurt timp posibil.
-              </p>
-              <Button onClick={() => setIsSubmitted(false)} className="gradient-bg hover:opacity-90 rounded-xl">
-                Trimite alt mesaj
+              <div className="space-y-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input id="email" name="email" type="email" required placeholder="exemplu@email.com" />
+              </div>
+            </div>
+
+            <div className="space-y-2 mb-6">
+              <Label htmlFor="phone">Telefon</Label>
+              <Input id="phone" name="phone" type="tel" placeholder="07xx xxx xxx" />
+            </div>
+
+            <div className="space-y-2 mb-6">
+              <Label htmlFor="subject">Subiect *</Label>
+              <Input id="subject" name="subject" required placeholder="Motivul contactului" />
+            </div>
+
+            <div className="space-y-2 mb-6">
+              <Label htmlFor="message">Mesaj *</Label>
+              <Textarea
+                id="message"
+                name="message"
+                required
+                className="min-h-[150px]"
+                placeholder="Scrie mesajul tău aici..."
+              />
+            </div>
+
+            <div className="text-center">
+              <Button type="submit" disabled={isSubmitting} className="px-8">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Se trimite...
+                  </>
+                ) : (
+                  <>
+                    Trimite mesajul
+                    <Send className="ml-2 h-4 w-4" />
+                  </>
+                )}
               </Button>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm p-6 md:p-8 border border-gray-100">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Nume complet *
-                  </label>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    required
-                    className="w-full rounded-lg"
-                    placeholder="Numele tău"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email *
-                  </label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    className="w-full rounded-lg"
-                    placeholder="email@exemplu.com"
-                  />
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                  Telefon
-                </label>
-                <Input id="phone" name="phone" type="tel" className="w-full rounded-lg" placeholder="07xx xxx xxx" />
-              </div>
-
-              <div className="mb-4">
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-                  Subiect *
-                </label>
-                <Input
-                  id="subject"
-                  name="subject"
-                  type="text"
-                  required
-                  className="w-full rounded-lg"
-                  placeholder="Subiectul mesajului"
-                />
-              </div>
-
-              <div className="mb-6">
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                  Mesaj *
-                </label>
-                <Textarea
-                  id="message"
-                  name="message"
-                  required
-                  className="w-full rounded-lg min-h-[150px]"
-                  placeholder="Scrie mesajul tău aici..."
-                />
-              </div>
-
-              <div className="flex justify-center">
-                <Button
-                  type="submit"
-                  className="gradient-bg hover:opacity-90 rounded-xl px-8 py-3 h-auto text-base"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Se trimite..." : "Trimite mesajul"}
-                </Button>
-              </div>
-            </form>
-          )}
+          </form>
         </div>
       </div>
     </section>
