@@ -100,40 +100,32 @@ export default function PricingTableSection() {
         {/* ---------- HEADER ---------- */}
         <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold mb-3">
-            <span className="relative inline-block">
-              Parcare&nbsp;– Otopeni
-              <span className="absolute bottom-2 left-0 w-full h-3 bg-primary/20 -z-10 rounded-full" />
-            </span>
+            Parcare Otopeni preț avantajos
           </h2>
           <p className="text-lg sm:text-xl mb-4 sm:mb-5">
-            Parcare în Otopeni lângă aeroportul&nbsp;Henri&nbsp;Coandă
+            Lângă aeroportul Henri Coandă București
           </p>
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 text-gray-600 text-xs sm:text-sm">
-            {[
-              "ASFALTATĂ",
-              "Rezervare online",
-              "securizată",
-              "supraveghere video",
-            ].map((tag) => (
-              <span
-                key={tag}
-                className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm"
-              >
-                {tag}
-              </span>
-            ))}
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 text-gray-700 text-xs sm:text-sm font-semibold mb-4">
+            <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Parcare ASFALTATĂ</span>
+            <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Rezervare rapidă</span>
+            <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Securitate NON-STOP</span>
+            <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Proximitate aeroport</span>
+            <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Transfer gratuit</span>
+          </div>
+          <div className="text-primary font-bold text-base sm:text-lg mb-2">
+            Profită de promoțiile noastre și rezervă acum!<br />
+            <span className="text-pink-600">30% reducere începând cu a2a zi de parcare</span>
           </div>
         </div>
 
         <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* ---------- BANNER ---------- */}
-          <div className="gradient-bg text-white p-4 sm:p-5 text-center">
+          <div className="gradient-bg text-black p-4 sm:p-5 text-center">
             <p className="text-base sm:text-xl font-bold">
               Tarife&nbsp;REDUSE* Parcare&nbsp;Otopeni
             </p>
             <p className="text-xs sm:text-sm mt-1 opacity-90">
-              * Prețurile promoționale sunt valabile pe perioada afișării pe
-              site
+              * Prețurile promoționale sunt valabile pe perioada afișării pe site
             </p>
           </div>
 
@@ -340,19 +332,16 @@ export default function PricingTableSection() {
                 </div>
               ))}
             </div>
+          </div>
 
-            <p className="mt-8 text-sm text-gray-600 bg-gray-50 p-4 rounded-xl">
-              * TVA&nbsp;19&nbsp;%. Reducerea de 30&nbsp;% se aplică începând cu
-              a&nbsp;2-a zi de staționare. Consultați tarifele exacte în pagina
-              de&nbsp;
-              <Link
-                href="/rezerva"
-                className="text-primary hover:underline font-medium"
-              >
-                rezervare parcare
-              </Link>
-              .
-            </p>
+          {/* CTA la finalul containerului alb */}
+          <div className="w-full flex justify-center py-8">
+            <Link
+              href="/rezerva"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-pink-700 transition text-white px-8 py-3 rounded-full shadow-md text-base font-bold"
+            >
+              Vezi tarife pe 100 de zile
+            </Link>
           </div>
         </div>
       </div>

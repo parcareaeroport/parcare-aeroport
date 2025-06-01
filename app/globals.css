@@ -272,3 +272,9 @@ body {
 .custom-calendar .rdp-day_today::before {
   display: none !important;
 }
+
+/* Mask fade right: solid la stânga, transparent la dreapta */
+.mask-fade-right {
+  mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+  -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+}

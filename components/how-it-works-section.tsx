@@ -9,7 +9,7 @@ export default function HowItWorksSection() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-12 text-center">
             <span className="relative inline-block">
-              Cum parchezi la această unitate?
+            Pași de urmat, la sosirea si plecarea din unitate
               <span className="absolute bottom-2 left-0 w-full h-3 bg-yellow-200 -z-10 rounded-full"></span>
             </span>
           </h2>

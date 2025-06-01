@@ -36,9 +36,9 @@ export default function Home() {
     <main className="min-h-screen">
       <Header />
       <HeroSection />
+      <PricingTableSection />
       <HowItWorksSection />
       <WhyChooseSection />
-      <PricingTableSection />
       <FacilitiesSection />
       <SeoTextSection />
       <VideoSection />

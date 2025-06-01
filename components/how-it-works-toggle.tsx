@@ -35,45 +35,54 @@ export default function HowItWorksToggle() {
       {activeTab === "intrare" && (
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div>
+            {/* Pas 1: Efectuarea rezervării */}
             <div className="flex items-start mb-8 md:mb-10 group">
               <div className="bg-primary/10 p-3 sm:p-4 rounded-2xl mr-4 sm:mr-5 group-hover:bg-primary/20 transition-colors flex-shrink-0">
                 <Search className="h-5 w-5 sm:h-6 sm:w-6 text-waze-blue" />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-pink">Găsește locația perfectă</h3>
+                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-pink">Efectuarea rezervării</h3>
                 <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
-                  Aplicația noastră inteligentă va găsi rapid cel mai bun loc pentru tine. Cu peste 1000 de locuri de
-                  parcare disponibile, nimeni nu te aduce mai aproape de destinație.
+                  Alege metoda preferată: rapid și ușor pe site-ul nostru securizat sau direct la locația parcării, în funcție de disponibilitate.
                 </p>
               </div>
             </div>
 
+            {/* Pas 2: Găsește-ne fără efort */}
+            <div className="flex items-start mb-8 md:mb-10 group">
+              <div className="bg-primary/10 p-3 sm:p-4 rounded-2xl mr-4 sm:mr-5 group-hover:bg-primary/20 transition-colors flex-shrink-0">
+                <Search className="h-5 w-5 sm:h-6 sm:w-6 text-waze-blue" />
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-pink">Găsește-ne fără efort</h3>
+                <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+                  Dacă dorești să ne găsești rapid, apasă click pe pictograma locației de pe site-ul nostru sau folosește aplicația preferată de navigație. Alege o parcare lângă aeroportul Otopeni, astfel încât să beneficiezi de transfer rapid.
+                </p>
+              </div>
+            </div>
+
+            {/* Pas 3: Sosirea la parcare */}
             <div className="flex items-start mb-8 md:mb-10 group">
               <div className="bg-primary/10 p-3 sm:p-4 rounded-2xl mr-4 sm:mr-5 group-hover:bg-primary/20 transition-colors flex-shrink-0">
                 <Car className="h-5 w-5 sm:h-6 sm:w-6 text-waze-blue" />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-pink">
-                  Rezervă parcarea garantată în câteva secunde
-                </h3>
+                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-pink">Sosirea la parcare</h3>
                 <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
-                  Navighează prin locurile disponibile și verifică recenziile și fotografiile. Apoi doar rezervă și
-                  relaxează-te – parcarea nu a fost niciodată mai simplă.
+                  Când ai sosit, intră în parcare, vei fi întâmpinat cu un călduros "Bine ați venit!" de către personalul nostru amabil. Apoi, poți parca mașina în locul indicat. În doar câteva minute, șoferul nostru te va prelua pentru transfer.
                 </p>
               </div>
             </div>
 
+            {/* Pas 4: Transfer Gratuit la Aeroport */}
             <div className="flex items-start group">
               <div className="bg-primary/10 p-3 sm:p-4 rounded-2xl mr-4 sm:mr-5 group-hover:bg-primary/20 transition-colors flex-shrink-0">
                 <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 text-waze-blue" />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-pink">
-                  Intră în parcare cu ușurință
-                </h3>
+                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-pink">Transfer Gratuit la Aeroport</h3>
                 <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
-                  La sosire, arată confirmarea rezervării la intrare. Sistemul nostru automat va scana numărul de
-                  înmatriculare și bariera se va ridica. Simplu și rapid!
+                  Beneficiezi de transfer gratuit la aeroport în mașina noastră de modernă și confortabilă. Te conducem pe tine și pe însoțitorii tăi gratuit și în siguranță la terminalul de plecări al aeroportului.
                 </p>
               </div>
             </div>

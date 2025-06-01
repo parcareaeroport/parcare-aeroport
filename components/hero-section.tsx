@@ -1,94 +1,110 @@
 "use client"
 
 import Image from "next/image"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import ReservationForm from "@/components/reservation-form"
+import { AlertTriangle } from "lucide-react"
 
-const SLIDES = Array(5).fill({
-  headline: "Parcare aeroport Otopeni",
-  subheadline:
-    "Parcarea ta inteligentă și sigură, la doar 3 minute de aeroportul Otopeni. Confort garantat, transfer rapid și zero stres, la un preț avantajos. Pentru călătoria ta perfectă!",
-})
+const SLIDES = [
+  {
+    headline: "Parcare aeroport Otopeni",
+    subheadline:
+      "Parcarea ta inteligentă și sigură, la doar 3 minute de aeroportul Otopeni. Confort garantat, transfer rapid și zero stres, la un preț avantajos. Pentru călătoria ta perfectă!",
+    image: "/parking-lot-cars.png",
+    alt: "Parcare Otopeni lângă Aeroportul Henri Coandă - vedere panoramică a parcării asfaltate"
+  },
+  // Poți adăuga mai multe slide-uri aici cu alte imagini și texte
+  {
+    headline: "Parcare cu transfer rapid",
+    subheadline:
+      "Transfer gratuit la aeroport, pază 24/7 și locuri asfaltate. Rezervă online și călătorește fără griji!",
+    image: "/parking-lot-cars.png",
+    alt: "Parcare cu transfer rapid la aeroport Otopeni"
+  }
+]
 
 export default function HeroSection() {
   const [current, setCurrent] = useState(0)
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  // Efect de slide simplu cu CSS
+  const handleGoTo = (idx: number) => setCurrent(idx)
 
-  // Autoplay logic
+  // Autoplay: slide automat la fiecare 5 secunde
   useEffect(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    timeoutRef.current = setTimeout(() => {
-      setCurrent((c) => (c === SLIDES.length - 1 ? 0 : c + 1))
+    const timeout = setTimeout(() => {
+      setCurrent((prev) => (prev + 1) % SLIDES.length)
     }, 5000)
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    }
+    return () => clearTimeout(timeout)
   }, [current])
 
-  // Slide direction for animation
-  const [direction, setDirection] = useState<"left" | "right">("right")
-  const goTo = (idx: number) => {
-    setDirection(idx > current ? "right" : "left")
-    setCurrent(idx)
-  }
-
   return (
-    <section className="w-full bg-gradient-to-br from-[#e6007a] to-[#4f2683] py-10 md:py-16 relative overflow-hidden">
-      <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-8 md:gap-16">
-        {/* Slider text */}
-        <div className="flex-1 flex flex-col items-start justify-center text-white z-10 relative min-h-[220px] md:min-h-[260px]">
-          <nav aria-label="Slider navigation" className="mb-4 flex gap-2">
-            {SLIDES.map((_, i) => (
-              <button
-                key={i}
-                aria-label={`Slide ${i + 1}`}
-                className={`w-3 h-3 rounded-full ${i === current ? "bg-white" : "bg-white/40"}`}
-                onClick={() => goTo(i)}
-                type="button"
-              />
-            ))}
-          </nav>
-          <div className="relative w-full h-[120px] md:h-[160px]">
-            {SLIDES.map((slide, i) => (
-              <div
-                key={i}
-                className={`absolute top-0 left-0 w-full transition-all duration-700 ease-in-out
-                  ${i === current ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}
-                  ${i === current
-                    ? "translate-x-0"
-                    : i < current
-                    ? "-translate-x-10 scale-95"
-                    : "translate-x-10 scale-95"}
-                `}
-                aria-hidden={i !== current}
-              >
-                <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight" style={{textShadow:'0 2px 8px #0002'}}>
-                  {slide.headline}
-                </h1>
-                <p className="text-lg md:text-2xl mb-6 max-w-xl" style={{textShadow:'0 2px 8px #0002'}}>
-                  {slide.subheadline}
-                </p>
+    <section className="relative w-full bg-gradient-to-br from-[#e6007a] to-[#0a1172] py-10 md:py-16 overflow-hidden min-h-[600px] md:min-h-[700px] flex flex-col justify-end">
+      {/* Imagine de fundal cu fade pentru fiecare slide, toate în DOM pentru SEO */}
+      <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
+        {SLIDES.map((slide, idx) => (
+          <Image
+            key={idx}
+            src={slide.image}
+            alt={slide.alt}
+            fill
+            className={`object-cover w-full h-full mask-fade-right transition-all duration-700 ease-in-out absolute top-0 left-0 ${current === idx ? 'opacity-100' : 'opacity-0'} ${current === idx ? 'z-10' : 'z-0'}`}
+            priority={idx === 0}
+            aria-hidden={current !== idx}
+          />
+        ))}
+        {/* Gradient roz-mov peste imagine, acum vertical roz->albastru și cu mask-fade-right */}
+        <div
+          className="absolute inset-0 mask-fade-right"
+          style={{ background: 'linear-gradient(to bottom, #e6007a 0%, #0a1172 80%)' }}
+        />
+      </div>
+      {/* Conținutul sliderului */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-2 md:px-6 flex flex-col gap-8 md:gap-12">
+        {/* Formularul sus, centrat */}
+        <div className="w-full flex justify-center mb-4 md:mb-8">
+          <div className="w-full max-w-3xl">
+            <div className="bg-white rounded-2xl shadow-2xl p-4 md:p-6 flex flex-col gap-4 border border-gray-100">
+              {/* Mesaj de atenționare subtil sub formular */}
+              <div className="flex items-center gap-2 font-semibold text-gray-700 text-xs md:text-sm justify-center mt-2" aria-live="polite">
+                <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                ACCESUL în parcarea Otopeni la INTRARE se face cu maxim 2 ORE înaintea orei de start!
               </div>
-            ))}
+              <ReservationForm />
+            </div>
           </div>
         </div>
-        {/* Imagine decorativă */}
-        <div className="flex-1 flex justify-center items-center relative min-h-[320px]">
-          <Image
-            src="/placeholder.svg?key=modern-parking-lot"
-            alt="Parcare Otopeni lângă Aeroportul Henri Coandă - vedere panoramică a parcării asfaltate"
-            width={500}
-            height={500}
-            className="rounded-2xl shadow-2xl object-cover w-full max-w-[400px] h-[320px] md:h-[400px]"
-            priority
-          />
+        {/* Slide-uri headline/subheadline, toate în DOM pentru SEO, doar unul vizibil */}
+        <div className="w-full flex flex-col items-center md:items-start text-white z-10 relative min-h-[220px] md:min-h-[260px]">
+          {SLIDES.map((slide, idx) => (
+            <div
+              key={idx}
+              aria-hidden={current !== idx}
+              className={`transition-all duration-700 ease-in-out w-full md:max-w-2xl ${current === idx ? 'opacity-100 translate-x-0 pointer-events-auto' : 'opacity-0 -translate-x-8 pointer-events-none'} absolute md:relative top-0 left-0`}
+              style={{ position: current === idx ? 'relative' : 'absolute' }}
+            >
+              <h1 className="text-4xl md:text-6xl font-extrabold text-center md:text-left mb-4 leading-tight drop-shadow-lg uppercase tracking-tight w-full">
+                {slide.headline}
+              </h1>
+              <p className="text-lg md:text-2xl text-center md:text-left mb-6 drop-shadow-md font-medium w-full">
+                {slide.subheadline}
+              </p>
+            </div>
+          ))}
         </div>
-      </div>
-      {/* Formular pe orizontală, suprapus */}
-      <div className="absolute left-1/2 bottom-0 translate-x-[-50%] translate-y-1/2 w-full max-w-4xl px-2 z-20">
-        <div className="bg-white rounded-2xl shadow-2xl p-4 md:p-6 flex flex-col md:flex-row items-center gap-4 md:gap-2 border border-gray-100">
-          <ReservationForm />
-        </div>
+        {/* Bara de navigare cu linii drepte */}
+        <nav className="w-full flex justify-center mt-8">
+          <div className="flex gap-4 px-4 py-2 rounded-xl bg-black/30 backdrop-blur-sm" style={{minWidth:'220px'}}>
+            {SLIDES.map((_, idx) => (
+              <button
+                key={idx}
+                aria-label={`Slide ${idx + 1}`}
+                onClick={() => handleGoTo(idx)}
+                className={`h-2 rounded transition-all duration-300 focus:outline-none border-none ${current === idx ? 'bg-white w-20 md:w-32' : 'bg-white/40 w-10 md:w-16'}`}
+                style={{ border: 'none' }}
+                tabIndex={0}
+              />
+            ))}
+          </div>
+        </nav>
       </div>
     </section>
   )
