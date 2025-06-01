@@ -20,7 +20,7 @@ export default function WhyChooseUsSection() {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Image
                     src="/placeholder.svg?key=secure-parking-icon&height=80&width=80"
-                    alt="Parcare sigură"
+                    alt="Control total și eficiență maximă"
                     width={80}
                     height={80}
                     className="object-contain"
@@ -31,10 +31,9 @@ export default function WhyChooseUsSection() {
                   <div className="absolute w-4 h-4 bg-yellow-400 rounded-full"></div>
                 </div>
               </div>
-              <h3 className="text-xl font-bold mb-3">Parcare sigură</h3>
+              <h3 className="text-xl font-bold mb-3">Control total și eficiență maximă</h3>
               <p className="text-gray-600 leading-relaxed">
-                Parcarea noastră este supravegheată video 24/7 și păzită permanent. Mașina ta este în siguranță maximă
-                pe toată durata staționării.
+                Alege parcarea noastră și economisești nu doar bani, ci și timp prețios și energie. Începi și termini călătoria relaxat, fără surprize neplăcute, cu un serviciu premium la un preț corect și transparent.
               </p>
             </div>
 
@@ -44,7 +43,7 @@ export default function WhyChooseUsSection() {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Image
                     src="/placeholder.svg?key=payment-control-icon&height=80&width=80"
-                    alt="Tu deții controlul"
+                    alt="Acces rapid în parcare"
                     width={80}
                     height={80}
                     className="object-contain"
@@ -55,10 +54,9 @@ export default function WhyChooseUsSection() {
                   <div className="absolute w-4 h-4 bg-yellow-400 rounded-full"></div>
                 </div>
               </div>
-              <h3 className="text-xl font-bold mb-3">Tu deții controlul</h3>
+              <h3 className="text-xl font-bold mb-3">Acces rapid în parcare</h3>
               <p className="text-gray-600 leading-relaxed">
-                Alege zilele și orele care ți se potrivesc și stabilește-ți propriul program. Rezervă online și primește
-                confirmarea instant, fără complicații.
+                Accesul în parcare se poate face prin citirea automată a numărului de înmatriculare sau codul QR generat pentru tine. În plus, ai parte de un tarif avantajos pentru parcare lângă aeroportul Otopeni.
               </p>
             </div>
 
@@ -68,7 +66,7 @@ export default function WhyChooseUsSection() {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Image
                     src="/placeholder.svg?key=car-community-icon&height=80&width=80"
-                    alt="Comunitate de șoferi"
+                    alt="Zonă de relaxare"
                     width={80}
                     height={80}
                     className="object-contain"
@@ -79,10 +77,9 @@ export default function WhyChooseUsSection() {
                   <div className="absolute w-4 h-4 bg-yellow-400 rounded-full"></div>
                 </div>
               </div>
-              <h3 className="text-xl font-bold mb-3">Mii de clienți mulțumiți</h3>
+              <h3 className="text-xl font-bold mb-3">Zonă de relaxare</h3>
               <p className="text-gray-600 leading-relaxed">
-                Comunitatea noastră în creștere de șoferi verificați este dovada calității serviciilor. Mai multe
-                rezervări pentru tine înseamnă mai multă liniște pentru noi.
+                Așteaptă transferul sau relaxează-te după un zbor lung în zona noastră special amenajată. Savurează o cafea aromată, un ceai sau răcorește-te cu o apă plată și mici snack-uri pentru un plus de energie.
               </p>
             </div>
           </div>

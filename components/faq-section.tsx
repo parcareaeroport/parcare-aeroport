@@ -46,6 +46,10 @@ export default function FAQSection() {
       answer:
         "Parcarea noastră este complet împrejmuită, iluminată corespunzător și monitorizată video 24/7. Avem personal de securitate prezent permanent și sisteme de alarmă conectate la dispeceratul de securitate. Accesul în parcare se face doar pe baza codului de rezervare sau prin recunoașterea numărului de înmatriculare.",
     },
+    {
+      question: "Caut parcare Otopeni preț, care sunt prețurile voastre?",
+      answer: "Prețul este în funcție de durata aleasa și le poți vedea în tabelul atașat.",
+    },
   ]
 
   return (

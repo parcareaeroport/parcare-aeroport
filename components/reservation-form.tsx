@@ -364,225 +364,82 @@ export default function ReservationForm() {
   }, [])
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border border-gray-100">
-      <form onSubmit={handleSubmit}>
-        <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
-          <Button className="gradient-bg rounded-full text-xs sm:text-sm px-3 sm:px-5 py-2 h-auto shadow-md">
-            Rezervare
-          </Button>
-          <Button
-            variant="outline"
-            className="rounded-full text-xs sm:text-sm px-3 sm:px-5 py-2 h-auto border-primary/30 text-primary"
-            type="button"
-          >
-            Parcare Otopeni
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 md:mb-6">
-          <Button className="gradient-bg font-bold text-xs sm:text-sm py-2 h-auto rounded-xl shadow-md">
-            INTRARE*
-          </Button>
-          <Button className="gradient-bg font-bold text-xs sm:text-sm py-2 h-auto rounded-xl shadow-md">IEȘIRE*</Button>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-3 sm:mb-4">
-          <div className="relative">
-            <Popover
-              open={openCalendar === "start"}
-              onOpenChange={(open) => (open ? setOpenCalendar("start") : setOpenCalendar(null))}
-            >
-              <PopoverTrigger asChild>
-                <div
-                  className={`bg-white rounded-xl border ${dateError ? "border-red-300" : "border-gray-200"} overflow-hidden flex items-center transition-all hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 cursor-pointer`}
-                >
-                  <Input
-                    type="text"
-                    readOnly
-                    value={startDate ? format(startDate, "d MMMM", { locale: ro }) : ""}
-                    placeholder="Data intrare"
-                    className="border-0 rounded-xl pl-2 sm:pl-4 pr-8 sm:pr-10 py-2 h-auto text-xs sm:text-sm focus-visible:ring-0 cursor-pointer"
-                  />
-                  <CalendarIcon className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={startDate}
-                  onSelect={handleStartDateChange}
-                  initialFocus
-                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                  fromDate={new Date()}
-                  className="custom-calendar"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div className="relative">
-            <Popover
-              open={openCalendar === "end"}
-              onOpenChange={(open) => (open ? setOpenCalendar("end") : setOpenCalendar(null))}
-            >
-              <PopoverTrigger asChild>
-                <div
-                  className={`bg-white rounded-xl border ${dateError ? "border-red-300" : "border-gray-200"} overflow-hidden flex items-center transition-all hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 cursor-pointer`}
-                >
-                  <Input
-                    type="text"
-                    readOnly
-                    value={endDate ? format(endDate, "d MMMM", { locale: ro }) : ""}
-                    placeholder="Data ieșire"
-                    className="border-0 rounded-xl pl-2 sm:pl-4 pr-8 sm:pr-10 py-2 h-auto text-xs sm:text-sm focus-visible:ring-0 cursor-pointer"
-                  />
-                  <CalendarIcon className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={endDate}
-                  onSelect={handleEndDateChange}
-                  initialFocus
-                  disabled={(date) => (startDate ? date < startDate : date < new Date(new Date().setHours(0, 0, 0, 0)))}
-                  fromDate={startDate || new Date()}
-                  className="custom-calendar"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 md:mb-6">
-          <div className="relative">
-            <Popover>
-              <PopoverTrigger asChild>
-                <div
-                  className={`bg-white rounded-xl border ${dateError ? "border-red-300" : "border-gray-200"} overflow-hidden flex items-center transition-all hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 cursor-pointer`}
-                >
-                  <Input
-                    type="text"
-                    readOnly
-                    value={startTime}
-                    placeholder="Ora intrare"
-                    className="border-0 rounded-xl pl-2 sm:pl-4 pr-8 sm:pr-10 py-2 h-auto text-xs sm:text-sm focus-visible:ring-0 cursor-pointer"
-                  />
-                  <Clock className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-4" align="start">
-                <div className="space-y-2">
-                  <Label>Ora intrare</Label>
-                  <TimePickerDemo value={startTime} onChange={setStartTime} />
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div className="relative">
-            <Popover>
-              <PopoverTrigger asChild>
-                <div
-                  className={`bg-white rounded-xl border ${dateError ? "border-red-300" : "border-gray-200"} overflow-hidden flex items-center transition-all hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 cursor-pointer`}
-                >
-                  <Input
-                    type="text"
-                    readOnly
-                    value={endTime}
-                    placeholder="Ora ieșire"
-                    className="border-0 rounded-xl pl-2 sm:pl-4 pr-8 sm:pr-10 py-2 h-auto text-xs sm:text-sm focus-visible:ring-0 cursor-pointer"
-                  />
-                  <Clock className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-4" align="start">
-                <div className="space-y-2">
-                  <Label>Ora ieșire</Label>
-                  <TimePickerDemo value={endTime} onChange={setEndTime} />
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
-
-        {dateError && (
-          <div className="text-red-500 text-xs sm:text-sm mb-4 p-2 bg-red-50 rounded-lg border border-red-100">
-            <span className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 mr-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-              {dateError}
-            </span>
-          </div>
-        )}
-
-        <div className="flex gap-2 sm:gap-4 mb-4 md:mb-6">
-          <div className="flex-grow">
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30">
-              <Input
-                type="text"
-                placeholder="Număr înmatriculare"
-                className="border-0 rounded-xl py-2 h-auto text-xs sm:text-sm focus-visible:ring-0"
-                value={licensePlate}
-                onChange={(e) => setLicensePlate(e.target.value.toUpperCase())}
-                required
-              />
-            </div>
-          </div>
-          <div className="w-auto">
-            <Button
-              className="gradient-bg hover:opacity-90 rounded-xl h-full px-4 sm:px-8 shadow-md text-xs sm:text-sm"
-              type="submit"
-              disabled={
-                isSubmitting ||
-                !!dateError ||
-                !startDate ||
-                !endDate ||
-                !startTime ||
-                !endTime ||
-                !licensePlate ||
-                isLoadingPrices ||
-                isLoadingSystemStatus // Adăugăm isLoadingSystemStatus la condițiile de dezactivare
-              }
-            >
-              {isSubmitting || isLoadingSystemStatus ? ( // Afișăm loader și dacă se încarcă statusul sistemului
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {isLoadingSystemStatus ? "Verifică..." : "Procesează..."}
-                </>
-              ) : (
-                "Continuă"
-              )}
-            </Button>
-          </div>
-        </div>
-
-        <div className="bg-gray-50 rounded-xl p-4 sm:p-6 text-center">
-          <p className="font-medium text-gray-600 text-xs sm:text-sm">ZILE REZERVATE: {calculatedDays}</p>
-          <p className="text-xl sm:text-2xl font-bold mt-1">
-            TOTAL:{" "}
-            {isLoadingPrices ? (
-              <Loader2 className="inline h-6 w-6 animate-spin" />
-            ) : (
-              `${calculatePrice().toFixed(2)} LEI`
-            )}
-          </p>
-        </div>
-
-        <p className="text-[10px] sm:text-xs text-gray-500 mt-3 sm:mt-4 text-center">
-          ACCESUL în parcarea Otopeni la INTRARE se face cu maxim 2 ORE înaintea orei de start!
-        </p>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="w-full bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col md:flex-row items-stretch gap-2 md:gap-0 px-2 py-3 md:py-0 md:px-0">
+      {/* Start Date */}
+      <div className="flex flex-col flex-1 min-w-[120px] px-2 py-1 justify-center">
+        <label htmlFor="startDate" className="text-xs font-medium text-gray-700 mb-1">Data intrare</label>
+        <Input
+          id="startDate"
+          type="date"
+          value={startDate ? format(startDate, "yyyy-MM-dd") : ""}
+          onChange={e => handleStartDateChange(new Date(e.target.value))}
+          className="rounded-lg border-gray-200 text-sm"
+          required
+        />
+      </div>
+      {/* End Date */}
+      <div className="flex flex-col flex-1 min-w-[120px] px-2 py-1 justify-center">
+        <label htmlFor="endDate" className="text-xs font-medium text-gray-700 mb-1">Data ieșire</label>
+        <Input
+          id="endDate"
+          type="date"
+          value={endDate ? format(endDate, "yyyy-MM-dd") : ""}
+          onChange={e => handleEndDateChange(new Date(e.target.value))}
+          className="rounded-lg border-gray-200 text-sm"
+          required
+        />
+      </div>
+      {/* Start Time */}
+      <div className="flex flex-col flex-1 min-w-[100px] px-2 py-1 justify-center">
+        <label htmlFor="startTime" className="text-xs font-medium text-gray-700 mb-1">Ora intrare</label>
+        <Input
+          id="startTime"
+          type="time"
+          value={startTime}
+          onChange={e => setStartTime(e.target.value)}
+          className="rounded-lg border-gray-200 text-sm"
+          required
+        />
+      </div>
+      {/* End Time */}
+      <div className="flex flex-col flex-1 min-w-[100px] px-2 py-1 justify-center">
+        <label htmlFor="endTime" className="text-xs font-medium text-gray-700 mb-1">Ora ieșire</label>
+        <Input
+          id="endTime"
+          type="time"
+          value={endTime}
+          onChange={e => setEndTime(e.target.value)}
+          className="rounded-lg border-gray-200 text-sm"
+          required
+        />
+      </div>
+      {/* License Plate */}
+      <div className="flex flex-col flex-1 min-w-[120px] px-2 py-1 justify-center">
+        <label htmlFor="licensePlate" className="text-xs font-medium text-gray-700 mb-1">Număr înmatriculare</label>
+        <Input
+          id="licensePlate"
+          type="text"
+          value={licensePlate}
+          onChange={e => setLicensePlate(e.target.value.toUpperCase())}
+          className="rounded-lg border-gray-200 text-sm"
+          placeholder="B 00 ABC"
+          required
+        />
+      </div>
+      {/* Submit Button */}
+      <div className="flex flex-col justify-end px-2 py-1">
+        <Button
+          type="submit"
+          className="h-12 w-full md:w-auto px-6 rounded-xl bg-primary text-white font-bold text-base shadow-md"
+          disabled={isSubmitting || !!dateError || isLoadingPrices || isLoadingSystemStatus}
+        >
+          {isSubmitting || isLoadingSystemStatus ? (
+            <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{isLoadingSystemStatus ? "Verifică..." : "Procesează..."}</>
+          ) : (
+            "Caută loc de parcare"
+          )}
+        </Button>
+      </div>
+    </form>
   )
 }
