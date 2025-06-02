@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Instagram, Facebook, Twitter, Linkedin, ArrowUp } from "lucide-react"
+import { Instagram, Facebook, Twitter, Linkedin, ArrowUp, Phone, Mail, MapPin, Navigation } from "lucide-react"
 
 export default function Footer() {
   const scrollToTop = () => {
@@ -14,282 +14,123 @@ export default function Footer() {
   return (
     <footer className="bg-[#0A1172] text-white pt-10 sm:pt-16 pb-8">
       <div className="container mx-auto px-4">
-        {/* Logo and Trustpilot - Same for all devices */}
-        <div className="mb-8 md:mb-12">
-          <h2 className="text-xl sm:text-2xl font-bold text-[#FF0066] mb-4 md:mb-6">Parcare-Aeroport</h2>
+        {/* Logo Section */}
+        <div className="mb-8 md:mb-12 text-center md:text-left">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#FF0066] mb-4">Parcare-Aeroport</h2>
+        </div>
 
-          <div className="mb-2">
-            <p className="text-base sm:text-lg font-medium text-green-500 mb-2">Trustpilot</p>
+        {/* Main Footer Content - Three Equal Sections */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8 md:mb-12">
+          
+          {/* Left Section - Description */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium mb-4 text-white">Despre noi</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Parcare Aeroport Otopeni oferă servicii de parcare securizată la doar 2 km de aeroportul Henri Coandă. 
+              Cu transfer gratuit, supraveghere 24/7 și facilități moderne, suntem alegerea ideală pentru călătoriile tale.
+            </p>
+            <p className="text-gray-300 text-sm">
+              Experiență fără stres, siguranță maximă și servicii profesionale pentru mașina ta.
+            </p>
           </div>
 
-          <div className="flex mb-2">
-            {[...Array(5)].map((_, i) => (
-              <svg
-                key={i}
-                width="20"
-                height="20"
-                viewBox="0 0 28 28"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 sm:w-6 sm:h-6"
-              >
-                <rect width="28" height="28" fill="#00B67A" />
-                <path
-                  d="M14 4L16.944 9.83688L23.4616 10.7451L18.7308 15.3331L19.8885 21.8149L14 18.77L8.11148 21.8149L9.26916 15.3331L4.53839 10.7451L11.056 9.83688L14 4Z"
-                  fill="white"
-                />
-                {i === 4 && (
-                  <>
-                    <rect x="21" width="7" height="28" fill="#DCDCE6" />
-                    <path d="M24.5 4L27.444 9.83688L34 10.7451V28H21V10.7451L27.5 9.83688L24.5 4Z" fill="#DCDCE6" />
-                  </>
-                )}
-              </svg>
-            ))}
+          {/* Middle Section - Utile (Site Pages) */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium mb-4 text-white">Utile</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  Acasă
+                </Link>
+              </li>
+              <li>
+                <Link href="/plasare-comanda" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  Rezervare online
+                </Link>
+              </li>
+              <li>
+                <Link href="/tarife" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  Tarife
+                </Link>
+              </li>
+              <li>
+                <Link href="/admin/dashboard" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  Dashboard Admin
+                </Link>
+              </li>
+              <li>
+                <Link href="/confirmare" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  Confirmare rezervare
+                </Link>
+              </li>
+              <li>
+                <Link href="/termeni" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  Termeni și condiții
+                </Link>
+              </li>
+              <li>
+                <Link href="/confidentialitate" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  Politica de confidențialitate
+                </Link>
+              </li>
+            </ul>
           </div>
 
-          <div className="text-xs sm:text-sm text-gray-300">
-            <div>TrustScore 4.5</div>
-            <div>151,132 recenzii</div>
+          {/* Right Section - Contact rapid */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium mb-4 text-white">Contact rapid</h3>
+            <div className="space-y-4">
+              {/* Phone */}
+              <div className="flex items-center space-x-3">
+                <Phone size={16} className="text-[#FF0066] flex-shrink-0" />
+                <a href="tel:+40123456789" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  +40 123 456 789
+                </a>
+              </div>
+              
+              {/* Email */}
+              <div className="flex items-center space-x-3">
+                <Mail size={16} className="text-[#FF0066] flex-shrink-0" />
+                <a href="mailto:contact@parcare-aeroport.ro" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  contact@parcare-aeroport.ro
+                </a>
+              </div>
+
+              {/* Maps */}
+              <div className="space-y-3 pt-2">
+                <p className="text-gray-400 text-sm mb-2">Navigare rapidă:</p>
+                
+                {/* Google Maps */}
+                <div className="flex items-center space-x-3">
+                  <MapPin size={16} className="text-[#FF0066] flex-shrink-0" />
+                  <a 
+                    href="https://maps.google.com/?q=Parcare+Aeroport+Otopeni,+DN1,+Otopeni,+Romania" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-gray-300 hover:text-white transition-colors text-sm"
+                  >
+                    Google Maps
+                  </a>
+                </div>
+                
+                {/* Waze */}
+                <div className="flex items-center space-x-3">
+                  <Navigation size={16} className="text-[#FF0066] flex-shrink-0" />
+                  <a 
+                    href="https://waze.com/ul?q=Parcare%20Aeroport%20Otopeni&navigate=yes" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-gray-300 hover:text-white transition-colors text-sm"
+                  >
+                    Waze
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Mobile Footer Sections - No Accordion */}
-        <div className="md:hidden space-y-8">
-          {/* Information Section */}
-          <div>
-            <h3 className="text-base font-medium mb-3 text-white">Informații</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Despre noi
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Parteneriate
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Centru de resurse
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Cariere
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Acoperire media
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Hartă site
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Services Section */}
-          <div>
-            <h3 className="text-base font-medium mb-3 text-white">Servicii</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Conturi business
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Management parcări
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Încărcare vehicule electrice
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Închiriază spațiul tău
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Închiriază încărcătorul EV
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Points of interest Section */}
-          <div>
-            <h3 className="text-base font-medium mb-3 text-white">Puncte de interes</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Parcare aeroport
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Parcare oraș
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Parcare stadion
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Parcare gară
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Section */}
-          <div>
-            <h3 className="text-base font-medium mb-3 text-white">Contactează-ne</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Cum funcționează Parcare-Aeroport
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Centru de ajutor
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Desktop Footer Sections - Hidden on Mobile */}
-        <div className="hidden md:grid md:grid-cols-5 gap-4 md:gap-8 mb-8 md:mb-12">
-          {/* Logo and Trustpilot - Desktop */}
-          <div className="md:col-span-1"></div>
-
-          {/* Information */}
-          <div className="hidden md:block md:col-span-1">
-            <h3 className="text-lg font-medium mb-4">Informații</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Despre noi
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Parteneriate
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Centru de resurse
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Cariere
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Acoperire media
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Hartă site
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div className="hidden md:block md:col-span-1">
-            <h3 className="text-lg font-medium mb-4">Servicii</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Conturi business
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Management parcări
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Încărcare vehicule electrice
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Închiriază spațiul tău
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Închiriază încărcătorul EV
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Points of interest */}
-          <div className="hidden md:block md:col-span-1">
-            <h3 className="text-lg font-medium mb-4">Puncte de interes</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Parcare aeroport
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Parcare oraș
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Parcare stadion
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Parcare gară
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Get in touch */}
-          <div className="hidden md:block md:col-span-1">
-            <h3 className="text-lg font-medium mb-4">Contactează-ne</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Cum funcționează Parcare-Aeroport
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Centru de ajutor
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Social and App Links */}
+        {/* Social Media Links */}
         <div className="flex flex-col md:flex-row justify-between items-center border-t border-[#1a2285] pt-6 md:pt-8">
           <div className="flex space-x-4 mb-6 md:mb-0">
             <Link href="#" className="text-gray-300 hover:text-white transition-colors">
@@ -305,8 +146,6 @@ export default function Footer() {
               <Linkedin size={20} className="sm:w-5 sm:h-5" />
             </Link>
           </div>
-
-          <div></div>
         </div>
 
         {/* Copyright and Legal */}

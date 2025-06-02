@@ -45,7 +45,6 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password)
       console.log("[LoginPage] Firebase signInWithEmailAndPassword successful.")
-      localStorage.setItem("isAdminLoggedIn", "true")
       router.push("/admin/dashboard")
     } catch (err: any) {
       console.error("[LoginPage] Firebase login error:", err)
@@ -77,9 +76,6 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold text-gray-900">Parcare Otopeni</h1>
           <p className="mt-2 text-gray-600">Panou de administrare</p>
         </div>
-
-        {/* Log pentru a vedea dacă se ajunge la randarea UI-ului */}
-        {console.log("[LoginPage] Rendering UI elements inside return.")}
 
         {error && (
           <Alert variant="destructive">

@@ -49,7 +49,6 @@ export default function ReservationForm() {
   const [isLoadingSystemStatus, setIsLoadingSystemStatus] = useState(true)
 
   // === ADĂUGĂM STARE PENTRU TIPUL DE CĂLĂTORIE ===
-  const [tripType, setTripType] = useState<'dus-intors' | 'dus'>('dus-intors')
 
   // useEffect pentru a încărca setările sistemului și numărul de rezervări active
   useEffect(() => {
@@ -91,6 +90,11 @@ export default function ReservationForm() {
       },
       (error) => {
         console.error("Error fetching reservation stats:", error);
+        toast({
+          title: "Eroare de sistem",
+          description: "Nu s-au putut încărca statisticile rezervărilor. Funcționalitatea poate fi limitată.",
+          variant: "destructive",
+        });
         setActiveBookingsCount(0);
         statsLoaded = true;
         checkLoaded();
@@ -295,6 +299,11 @@ export default function ReservationForm() {
       }
 
       sessionStorage.setItem("reservationData", JSON.stringify(reservationDetails))
+      toast({
+        title: "Rezervare pregătită",
+        description: "Datele au fost salvate cu succes. Veți fi redirectat pentru finalizarea comenzii.",
+        variant: "default",
+      })
       router.push("/plasare-comanda")
     } catch (error) {
       console.error("Error preparing reservation data:", error)
@@ -367,81 +376,104 @@ export default function ReservationForm() {
   }, [])
 
   return (
-    <form onSubmit={handleSubmit} className="w-full bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col gap-4 px-4 py-6 max-w-5xl mx-auto">
-      {/* Selectare tip călătorie */}
-      <div className="flex items-center gap-6 mb-2">
-        <label className="flex items-center cursor-pointer text-pink-600 font-semibold text-base">
-          <input
-            type="radio"
-            name="tripType"
-            value="dus-intors"
-            checked={tripType === 'dus-intors'}
-            onChange={() => setTripType('dus-intors')}
-            className="accent-pink-600 w-5 h-5 mr-2"
-          />
-          Dus-întors
-        </label>
-        <label className="flex items-center cursor-pointer text-gray-700 font-semibold text-base">
-          <input
-            type="radio"
-            name="tripType"
-            value="dus"
-            checked={tripType === 'dus'}
-            onChange={() => setTripType('dus')}
-            className="accent-pink-600 w-5 h-5 mr-2"
-          />
-          Dus
-        </label>
-      </div>
+    <form onSubmit={handleSubmit} className="w-full bg-white rounded-2xl flex flex-col gap-3 px-4 py-4 max-w-full mx-auto" style={{maxWidth: '1200px'}}>
       {/* Câmpuri formular */}
-      <div className="flex flex-col md:flex-row gap-4 w-full">
+      <div className="flex flex-col md:flex-row gap-3 w-full">
         {/* Start Date */}
         <div className="flex flex-col flex-1 min-w-[120px]">
-          <label htmlFor="startDate" className="text-xs font-semibold text-gray-700 mb-1">Data intrare</label>
-          <Input
-            id="startDate"
-            type="date"
-            value={startDate ? format(startDate, "yyyy-MM-dd") : ""}
-            onChange={e => handleStartDateChange(new Date(e.target.value))}
-            className="rounded-lg border-gray-200 text-base px-3 py-2 focus:ring-2 focus:ring-pink-500"
-            required
-          />
+          <label className="text-xs font-semibold text-gray-700 mb-1">Data intrare</label>
+          <Popover open={openCalendar === "start"} onOpenChange={open => setOpenCalendar(open ? "start" : null)}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-left font-normal h-10"
+                type="button"
+                onClick={() => setOpenCalendar("start")}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {startDate ? format(startDate, "PPP", { locale: ro }) : "Selectează data"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent
+                mode="single"
+                selected={startDate || new Date()}
+                onSelect={date => handleStartDateChange(date || new Date())}
+                initialFocus
+                disabled={date => date < new Date(new Date().setHours(0, 0, 0, 0))}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
         {/* End Date */}
         <div className="flex flex-col flex-1 min-w-[120px]">
-          <label htmlFor="endDate" className="text-xs font-semibold text-gray-700 mb-1">Data ieșire</label>
-          <Input
-            id="endDate"
-            type="date"
-            value={endDate ? format(endDate, "yyyy-MM-dd") : ""}
-            onChange={e => handleEndDateChange(new Date(e.target.value))}
-            className="rounded-lg border-gray-200 text-base px-3 py-2 focus:ring-2 focus:ring-pink-500"
-            required
-          />
+          <label className="text-xs font-semibold text-gray-700 mb-1">Data ieșire</label>
+          <Popover open={openCalendar === "end"} onOpenChange={open => setOpenCalendar(open ? "end" : null)}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-left font-normal h-10"
+                type="button"
+                onClick={() => setOpenCalendar("end")}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {endDate ? format(endDate, "PPP", { locale: ro }) : "Selectează data"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent
+                mode="single"
+                selected={endDate || new Date()}
+                onSelect={date => handleEndDateChange(date || new Date())}
+                initialFocus
+                disabled={date => date < (startDate ? new Date(startDate.setHours(0, 0, 0, 0)) : new Date(new Date().setHours(0, 0, 0, 0)))}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
         {/* Start Time */}
         <div className="flex flex-col flex-1 min-w-[100px]">
-          <label htmlFor="startTime" className="text-xs font-semibold text-gray-700 mb-1">Ora intrare</label>
-          <Input
-            id="startTime"
-            type="time"
-            value={startTime}
-            onChange={e => setStartTime(e.target.value)}
-            className="rounded-lg border-gray-200 text-base px-3 py-2 focus:ring-2 focus:ring-pink-500"
-            required
-          />
+          <label className="text-xs font-semibold text-gray-700 mb-1">Ora intrare</label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-left font-normal h-10"
+                type="button"
+              >
+                <Clock className="mr-2 h-4 w-4" />
+                {startTime}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-4" align="start">
+              <div className="space-y-2">
+                <Label>Ora Intrare</Label>
+                <TimePickerDemo value={startTime} onChange={setStartTime} />
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
         {/* End Time */}
         <div className="flex flex-col flex-1 min-w-[100px]">
-          <label htmlFor="endTime" className="text-xs font-semibold text-gray-700 mb-1">Ora ieșire</label>
-          <Input
-            id="endTime"
-            type="time"
-            value={endTime}
-            onChange={e => setEndTime(e.target.value)}
-            className="rounded-lg border-gray-200 text-base px-3 py-2 focus:ring-2 focus:ring-pink-500"
-            required
-          />
+          <label className="text-xs font-semibold text-gray-700 mb-1">Ora ieșire</label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-left font-normal h-10"
+                type="button"
+              >
+                <Clock className="mr-2 h-4 w-4" />
+                {endTime}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-4" align="start">
+              <div className="space-y-2">
+                <Label>Ora Ieșire</Label>
+                <TimePickerDemo value={endTime} onChange={setEndTime} />
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
         {/* License Plate */}
         <div className="flex flex-col flex-1 min-w-[120px]">
@@ -451,29 +483,60 @@ export default function ReservationForm() {
             type="text"
             value={licensePlate}
             onChange={e => setLicensePlate(e.target.value.toUpperCase())}
-            className="rounded-lg border-gray-200 text-base px-3 py-2 focus:ring-2 focus:ring-pink-500"
+            className="rounded-lg border-gray-200 text-base px-3 py-2 focus:ring-2 focus:ring-pink-500 h-10"
             placeholder="B 00 ABC"
             required
           />
         </div>
-      </div>
-      {/* Submit Button */}
-      <div className="flex flex-col justify-end mt-2">
-        <Button
-          type="submit"
-          className="h-14 w-full md:w-auto px-10 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-lg shadow-lg flex items-center justify-center gap-2 transition-all duration-200"
-          disabled={isSubmitting || !!dateError || isLoadingPrices || isLoadingSystemStatus}
-        >
-          <span className="inline-flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        {/* Submit Button */}
+        <div className="flex flex-col justify-end min-w-[120px]">
+          <label className="text-xs font-semibold text-gray-700 mb-1 opacity-0">Acțiune</label>
+          <Button
+            type="submit"
+            className="h-10 w-full px-6 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition-all duration-200"
+            disabled={isSubmitting || !!dateError || isLoadingPrices || isLoadingSystemStatus}
+          >
             {isSubmitting || isLoadingSystemStatus ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{isLoadingSystemStatus ? "Verifică..." : "Procesează..."}</>
+              <><Loader2 className="mr-1 h-4 w-4 animate-spin" />{isLoadingSystemStatus ? "Verifică..." : "Procesează..."}</>
             ) : (
-              "Continuă"
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                Continuă
+              </>
             )}
-          </span>
-        </Button>
+          </Button>
+        </div>
       </div>
+      
+      {/* Afișare preț calculat */}
+      {calculatedDays > 0 && !isLoadingPrices && (
+        <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-gray-600">
+                Perioada: {calculatedDays} {calculatedDays === 1 ? 'zi' : 'zile'}
+              </span>
+              <span className="text-xs text-gray-500">
+                {startDate && endDate ? 
+                  `${format(startDate, "d MMM", { locale: ro })} - ${format(endDate, "d MMM", { locale: ro })}` 
+                  : ''
+                }
+              </span>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-orange-600 font-medium">
+              <AlertTriangle className="w-3 h-3" />
+              Acces cu max 2h înainte
+            </div>
+            <div className="text-right">
+              <div className="text-xl font-bold text-pink-600">
+                {calculatePrice().toFixed(2)} LEI
+              </div>
+              <div className="text-xs text-gray-500">Preț total</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {dateError && <div className="text-red-500 text-sm font-semibold mt-1 flex items-center"><XCircle className="mr-1 h-5 w-5" />{dateError}</div>}
     </form>
   )

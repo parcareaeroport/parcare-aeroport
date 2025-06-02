@@ -4,101 +4,71 @@ export default function SeoTextSection() {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-10 text-center">
-            PARCARE ÎN OTOPENI LÂNGĂ AEROPORTUL HENRI COANDĂ. FACILITĂȚI
+            Dedicați excelenței în servicii de parcare securizată
           </h2>
 
           <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none bg-white rounded-2xl shadow-sm p-5 sm:p-8 border border-gray-100">
             <p className="text-gray-700 mb-6 sm:mb-8">
-              Dacă încă te întrebi de ce să alegi <strong>Parcarea Otopeni de lungă durată din Otopeni</strong>, aici ai
-              câteva motive care te vor convinge de calitatea serviciilor noastre:
-            </p>
-
-            <ol className="space-y-4 sm:space-y-6 list-decimal pl-5">
-              <li className="text-gray-700">
-                <span className="font-medium">Parcare în Otopeni</span>, aflată la{" "}
-                <span className="font-medium">500m distanță</span> de aeroportul Otopeni Henri Coandă
-              </li>
-
-              <li className="text-gray-700">
-                <span className="font-medium">Acces direct din DN1</span> pentru o intrare și ieșire rapidă
-              </li>
-
-              <li className="text-gray-700">
-                Puteți beneficia de <span className="font-medium">rezervare locuri parcare și plată online</span> pentru
-                o experiență fără stres
-              </li>
-
-              <li className="text-gray-700">
-                Parcarea este dotată cu tehnologie avansată. Pentru intrarea în incintă, primiți un{" "}
-                <span className="font-medium">cod unic de acces la barieră</span>. Astfel, nimeni nu poate intra în
-                locație fără un scop precis, asigurând securitatea maximă a vehiculului dumneavoastră.
-              </li>
-
-              <li className="text-gray-700">
-                Dacă rezervarea se face online, accesul în incinta parcării se face prin citirea automată a numărului de
-                înmatriculare la barieră sau prin scanarea codului de acces <span className="font-medium">QRCode</span>{" "}
-                generat la achiziția online și trimisă clientului pe email.
-              </li>
-
-              <li className="text-gray-700">
-                Parcare în <span className="font-medium">Otopeni pe termen lung cu următoarele facilități</span>:
-                <ul className="list-disc pl-4 sm:pl-6 mt-2 space-y-1">
-                  <li>parcare ASFALTATĂ pentru confort maxim</li>
-                  <li>locurile de parcare marcate clar pentru orientare ușoară</li>
-                  <li>parcarea împrejmuită cu gard pentru siguranță sporită</li>
-                  <li>semnalizată corespunzător pentru acces facil</li>
-                  <li>iluminată pe timp de noapte pentru vizibilitate optimă</li>
-                </ul>
-              </li>
-
-              <li className="text-gray-700">
-                <span className="font-medium">Reflectoarele</span> pe timp de noapte și{" "}
-                <span className="font-medium">camerele video</span> CCTV prezente în toată locația oferă un plus de{" "}
-                <span className="font-medium">siguranță</span>. Mai mult decât atât, dispunem inclusiv de{" "}
-                <span className="font-medium">pază permanentă</span>, având personal activ{" "}
-                <span className="font-medium">24/24 și 7/7</span>.
-              </li>
-
-              <li className="text-gray-700">
-                <span className="font-medium">Transportul la aeroport la plecare și de la aeroport la sosire</span> este
-                oferit de Parcarea Otopeni în mod <span className="font-medium">gratuit</span> cu autoturism de 7 locuri
-                de ultimă generație.
-              </li>
-
-              <li className="text-gray-700">
-                Traseul la și de la aeroportul International Henri Coandă se parcurge în{" "}
-                <span className="font-medium">maxim 4 minute</span>. Distanța dintre parcarea Otopeni și aeroportul
-                Otopeni este de <span className="font-medium">500m</span>.
-              </li>
-            </ol>
-
-            <h3 className="text-xl font-bold mt-8 mb-4">Parcare Otopeni - Soluția ideală pentru călătorii</h3>
-
-            <p className="text-gray-700 mb-4">
-              Când călătorești cu avionul de pe <strong>Aeroportul Internațional Henri Coandă (Otopeni)</strong>, una
-              dintre cele mai mari griji este unde să îți lași mașina în siguranță.{" "}
-              <strong>Parcarea noastră din Otopeni</strong> oferă soluția perfectă, fiind situată la doar 500 metri de
-              terminal.
+              <strong>Parcare Aeroport Otopeni</strong> s-a născut din dorința de a-ți oferi o soluție de parcare completă, care să combine siguranța maximă cu un confort desăvârșit și servicii impecabile. Echipa noastră este formată din profesioniști dedicați, gata să îți asigure o experiență cât mai plăcută, de la rezervare și până la preluarea mașinii la întoarcere. Ne mândrim cu atenția la detalii și cu angajamentul nostru față de satisfacția ta și a familiei tale!
             </p>
 
             <p className="text-gray-700 mb-4">
-              Fie că ai nevoie de <strong>parcare pe termen scurt</strong> pentru câteva ore sau zile, sau{" "}
-              <strong>parcare pe termen lung</strong> pentru vacanțe extinse sau călătorii de afaceri, noi îți oferim
-              tarife competitive și servicii de calitate. Parcarea noastră este ideală atât pentru{" "}
-              <strong>călători individuali</strong>, cât și pentru <strong>familii</strong> sau{" "}
-              <strong>grupuri de prieteni</strong> care pleacă în vacanță.
+              <strong>Parcare privată în Otopeni</strong>, la doar <strong>2 Km distanță</strong> față de aeroport, apropierea optimă care garantează un transfer ultra-rapid.
             </p>
 
             <p className="text-gray-700 mb-4">
-              <strong>Rezervarea online</strong> îți garantează un loc de parcare și îți oferă liniștea că mașina ta va
-              fi în siguranță pe toată durata călătoriei. Nu mai pierde timp căutând loc de parcare în ziua zborului -
-              rezervă din timp și bucură-te de o experiență fără stres.
+              <strong>3 minute</strong> durată de transfer către/dinspre aeroportul Henri Coandă. Eficiență maximă pentru a nu pierde niciun moment prețios.
+            </p>
+
+            <p className="text-gray-700 mb-8">
+              <strong>Suport și informații utile</strong> pe care le poți primi oricând de la personalul nostru pregătit să îți furnizeze orice informație utilă solicitată, pentru a-ți face experiența cât mai plăcută.
+            </p>
+
+            <h3 className="text-xl font-bold mt-8 mb-4">Întrebări frecvente</h3>
+
+            <p className="text-gray-700 mb-4">
+              <strong>Cum pot face o rezervare?</strong><br />
+              Poți rezerva un loc de parcare online, direct pe site-ul nostru, urmând pașii indicați, sau poți veni direct la parcare, însă disponibilitatea locurilor nu este garantată fără rezervare prealabilă. Recomandăm rezervarea online pentru a-ți locul.
+            </p>
+
+            <p className="text-gray-700 mb-4">
+              <strong>Caut cel mai bun preț parcare aeroport Otopeni. Care este tariful vostru?</strong><br />
+              Suntem siguri că dorești un cost parcare Otopeni foarte avantajos pentru tine, iar noi te putem ajuta! Poți vizualiza lista noastră de prețuri în secțiunea tarife. Veți vedea beneficii extra de preț, începând cu cea de-a doua zi.
+            </p>
+
+            <p className="text-gray-700 mb-4">
+              <strong>Ce se întâmplă dacă ajung mai devreme sau mai târziu decât ora specificată în rezervare la aeroport Otopeni parcare?</strong><br />
+              Flexibilitatea este importantă pentru noi. Mici variații ale orei de sosire sunt de obicei acceptabile. Pentru întârzieri sau sosiri anticipate semnificative, te rugăm să ne anunți telefonic pentru a ne coordona cât mai bine.
+            </p>
+
+            <p className="text-gray-700 mb-4">
+              <strong>Transferul la aeroport este inclus în prețul parcării?</strong><br />
+              Da, transferul la și de la aeroport este gratuit pentru toți clienții noștri.
+            </p>
+
+            <p className="text-gray-700 mb-4">
+              <strong>Cât de des circulă mașinile de transfer? Trebuie să aștept mult?</strong><br />
+              Transferurile se efectuează la cerere, imediat după ce ai parcat sau imediat ce ne anunți că ai aterizat și ai ridicat bagajele. Ne străduim să minimizăm timpul de așteptare.
+            </p>
+
+            <p className="text-gray-700 mb-4">
+              <strong>Ce se întâmplă dacă zborul meu are întârziere la întoarcere?</strong><br />
+              Monitorizăm zborurile clienților noștri. Chiar dacă zborul tău are întârziere, te vom aștepta. Te rugăm să ne comunicați numărul zborului la momentul rezervării. La aterizare, după preluarea bagajelor, Te rugăm să ne contactezi telefonic pentru a trimite mașina de transfer.
+            </p>
+
+            <p className="text-gray-700 mb-4">
+              <strong>Cât de sigură este mașina mea în parcarea voastră?</strong><br />
+              Siguranța mașinii tale este prioritatea noastră. Parcarea este dotată cu sisteme de supraveghere video CCTV 24/7, este împrejmuită, are barieră cu cod de acces, iluminat nocturn și pază umană.
+            </p>
+
+            <p className="text-gray-700 mb-4">
+              <strong>Care este programul de funcționare al parcării?</strong><br />
+              Parcarea noastră este deschisă non-stop, 24 de ore din 24, 7 zile din 7.
             </p>
 
             <p className="text-gray-700">
-              Alege <strong>Parcare-Aeroport Otopeni</strong> pentru o experiență de parcare superioară, la prețuri
-              accesibile, cu personal amabil și servicii de calitate. Suntem aici să facem începutul și sfârșitul
-              călătoriei tale cât mai plăcute.
+              <strong>Mă puteți ajuta cu bagajele?</strong><br />
+              Da, șoferii noștri vă vor ajuta cu plăcere la încărcarea și descărcarea bagajelor în/din mașina de transfer.
             </p>
           </div>
         </div>

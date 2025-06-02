@@ -61,13 +61,8 @@ export default function HeroSection() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-2 md:px-6 flex flex-col gap-8 md:gap-12">
         {/* Formularul sus, centrat */}
         <div className="w-full flex justify-center mb-4 md:mb-8">
-          <div className="w-full max-w-3xl">
+          <div className="w-full max-w-6xl">
             <div className="bg-white rounded-2xl shadow-2xl p-4 md:p-6 flex flex-col gap-4 border border-gray-100">
-              {/* Mesaj de atenționare subtil sub formular */}
-              <div className="flex items-center gap-2 font-semibold text-gray-700 text-xs md:text-sm justify-center mt-2" aria-live="polite">
-                <AlertTriangle className="w-4 h-4 text-yellow-500" />
-                ACCESUL în parcarea Otopeni la INTRARE se face cu maxim 2 ORE înaintea orei de start!
-              </div>
               <ReservationForm />
             </div>
           </div>

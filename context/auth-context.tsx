@@ -59,7 +59,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       await firebaseSignOut(auth)
       console.log("[AuthProvider] Firebase signOut successful.")
-      localStorage.removeItem("isAdminLoggedIn")
       setUser(null) // Asigură-te că starea locală este actualizată imediat
       router.push("/admin/login")
     } catch (error) {

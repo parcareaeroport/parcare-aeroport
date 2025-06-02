@@ -337,7 +337,7 @@ export default function PricingTableSection() {
           {/* CTA la finalul containerului alb */}
           <div className="w-full flex justify-center py-8">
             <Link
-              href="/rezerva"
+              href="/tarife"
               className="inline-flex items-center gap-2 bg-primary hover:bg-pink-700 transition text-white px-8 py-3 rounded-full shadow-md text-base font-bold"
             >
               Vezi tarife pe 100 de zile
