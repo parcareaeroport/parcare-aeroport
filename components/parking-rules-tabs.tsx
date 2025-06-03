@@ -42,7 +42,7 @@ export default function ParkingRulesTabs() {
             {/* Left side - Image */}
             <div className="order-2 md:order-1">
               <div className="relative">
-                <div className="rounded-full overflow-hidden border-8 border-gray-100 shadow-xl w-full max-w-md mx-auto aspect-square">
+                <div className="rounded-xl overflow-hidden border-8 border-gray-100 shadow-xl w-full max-w-md mx-auto">
                   <Image
                     src={
                       activeTab === "sosire"
@@ -60,7 +60,7 @@ export default function ParkingRulesTabs() {
 
             {/* Right side - Content */}
             <div className="order-1 md:order-2">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-primary">
                 {activeTab === "sosire" ? "Cum funcționează la sosire" : "Cum funcționează la plecare"}
               </h2>
               <p className="text-gray-600 mb-8">
@@ -74,8 +74,8 @@ export default function ParkingRulesTabs() {
                   <>
                     {/* Arrival Steps */}
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#e6f9ff] flex items-center justify-center mr-4">
-                        <CreditCard className="h-5 w-5 text-[#33CCFF]" />
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+                        <CreditCard className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
                         <h3 className="font-medium mb-1">1. Prezentați confirmarea rezervării</h3>
@@ -86,8 +86,8 @@ export default function ParkingRulesTabs() {
                     </div>
 
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#e6f9ff] flex items-center justify-center mr-4">
-                        <Car className="h-5 w-5 text-[#33CCFF]" />
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+                        <Car className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
                         <h3 className="font-medium mb-1">2. Parcați în zona desemnată</h3>
@@ -99,8 +99,8 @@ export default function ParkingRulesTabs() {
                     </div>
 
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#e6f9ff] flex items-center justify-center mr-4">
-                        <Clock className="h-5 w-5 text-[#33CCFF]" />
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+                        <Clock className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
                         <h3 className="font-medium mb-1">3. Notați ora de sosire</h3>
@@ -112,8 +112,8 @@ export default function ParkingRulesTabs() {
                     </div>
 
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#e6f9ff] flex items-center justify-center mr-4">
-                        <CheckCircle className="h-5 w-5 text-[#33CCFF]" />
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+                        <CheckCircle className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
                         <h3 className="font-medium mb-1">4. Utilizați serviciul de transfer (opțional)</h3>
@@ -128,8 +128,8 @@ export default function ParkingRulesTabs() {
                   <>
                     {/* Departure Steps */}
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#e6f9ff] flex items-center justify-center mr-4">
-                        <Car className="h-5 w-5 text-[#33CCFF]" />
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+                        <Car className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
                         <h3 className="font-medium mb-1">1. Pregătiți-vă pentru plecare</h3>
@@ -140,8 +140,8 @@ export default function ParkingRulesTabs() {
                     </div>
 
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#e6f9ff] flex items-center justify-center mr-4">
-                        <CreditCard className="h-5 w-5 text-[#33CCFF]" />
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+                        <CreditCard className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
                         <h3 className="font-medium mb-1">2. Verificați plata</h3>
@@ -153,8 +153,8 @@ export default function ParkingRulesTabs() {
                     </div>
 
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#e6f9ff] flex items-center justify-center mr-4">
-                        <Clock className="h-5 w-5 text-[#33CCFF]" />
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+                        <Clock className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
                         <h3 className="font-medium mb-1">3. Respectați timpul de ieșire</h3>
@@ -165,8 +165,8 @@ export default function ParkingRulesTabs() {
                     </div>
 
                     <div className="flex items-start">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#e6f9ff] flex items-center justify-center mr-4">
-                        <CheckCircle className="h-5 w-5 text-[#33CCFF]" />
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+                        <CheckCircle className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
                         <h3 className="font-medium mb-1">4. Ieșiți prin bariera automată</h3>

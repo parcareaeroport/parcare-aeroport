@@ -4,7 +4,7 @@ import HowItWorksToggle from "@/components/how-it-works-toggle"
 
 export default function HowItWorksSection() {
   return (
-    <section className="py-12 md:py-20 bg-gray-50">
+    <section className="py-12 md:py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-12 text-center">
@@ -17,7 +17,7 @@ export default function HowItWorksSection() {
           <HowItWorksToggle />
 
           <div className="mt-10 md:mt-12 text-center">
-            <Button className="gradient-bg hover:opacity-90 text-base sm:text-lg px-6 sm:px-10 py-4 sm:py-6 h-auto rounded-md shadow-lg">
+            <Button className="bg-[#ff0066] hover:bg-[#e6005c] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105">
               Rezervă locul tău acum
             </Button>
           </div>

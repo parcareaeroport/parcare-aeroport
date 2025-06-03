@@ -25,7 +25,7 @@ export default function WhyChooseSection() {
     <section className="py-12 md:py-16 bg-white">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center mb-8 md:mb-10">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">
             De ce să alegi parcarea noastră?
           </h2>
           <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto">
@@ -37,7 +37,7 @@ export default function WhyChooseSection() {
           {features.map((feature, index) => (
             <div 
               key={index}
-              className="group p-6 md:p-8 bg-gray-50 rounded-2xl hover:bg-primary/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02]"
+              className="group p-6 md:p-8 bg-gray-50 rounded-2xl hover:bg-primary/5 transition-all duration-300 hover:shadow-lg"
             >
               <div className="text-primary mb-4">
                 {feature.icon}

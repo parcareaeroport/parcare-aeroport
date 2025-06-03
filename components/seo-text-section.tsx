@@ -3,7 +3,7 @@ export default function SeoTextSection() {
     <section className="py-12 md:py-16 bg-white">
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-10 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-10 text-center text-primary">
             Dedicați excelenței în servicii de parcare securizată
           </h2>
 

@@ -25,8 +25,8 @@ export default function VideoSection() {
         </p>
 
         <Link
-          href="/plasare-comanda"
-          className="inline-flex items-center gap-3 bg-[#FF0066] hover:bg-[#E6005C] text-white px-8 sm:px-12 py-4 sm:py-5 rounded-md transition-all duration-300 shadow-xl hover:shadow-2xl text-base sm:text-lg font-semibold hover:scale-105 transform"
+          href="/rezerva"
+          className="inline-flex items-center gap-3 bg-[#ff0066] hover:bg-[#e6005c] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105"
         >
           <span>Rezervă locul tău de parcare și zboară liniștit</span>
         </Link>

@@ -2,7 +2,7 @@ export default function ContactHero() {
   return (
     <section className="py-12 md:py-16 bg-white">
       <div className="container mx-auto px-4 md:px-6 text-center">
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 text-slate-800">Contact</h1>
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 text-primary">Contact</h1>
         <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-primary">Parcare Aeroport Otopeni</h2>
         
         <p className="text-base md:text-lg text-slate-600 mb-4">

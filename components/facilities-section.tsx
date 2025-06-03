@@ -6,7 +6,7 @@ export default function FacilitiesSection() {
     <section className="py-12 md:py-16 bg-primary/5">
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-10 text-center text-gray-800">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-10 text-center text-primary">
             Mergi liniștit în vacanță alături de cei drag sau în călătoria ta de afaceri, noi avem grijă de mașina ta!
           </h2>
           <p className="text-lg sm:text-xl text-center text-gray-700 mb-10 md:mb-12 max-w-4xl mx-auto">

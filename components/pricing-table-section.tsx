@@ -95,7 +95,7 @@ export default function PricingTableSection() {
 
   /* ======================== JSX ======================== */
   return (
-    <section className="py-12 md:py-20 bg-gray-50">
+    <section className="py-12 md:py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         {/* ---------- HEADER ---------- */}
         <div className="text-center mb-8 md:mb-12">
@@ -114,7 +114,7 @@ export default function PricingTableSection() {
           </div>
           <div className="text-primary font-bold text-base sm:text-lg mb-2">
             Profită de promoțiile noastre și rezervă acum!<br />
-            <span className="text-pink-600">30% reducere începând cu a2a zi de parcare</span>
+            <span className="text-primary">30% reducere începând cu a2a zi de parcare</span>
           </div>
         </div>
 
@@ -242,9 +242,10 @@ export default function PricingTableSection() {
             </p>
 
             <div className="mt-6 text-center">
+              {/* Buton Principal - Fundal roz + Text alb */}
               <Link
                 href="/rezerva"
-                className="inline-flex items-center gap-2 gradient-bg hover:opacity-90 text-white px-6 py-3 rounded-md shadow-md text-sm"
+                className="inline-flex items-center gap-2 bg-[#ff0066] hover:bg-[#e6005c] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105"
               >
                 <span>Rezervă acum</span>
                 <ChevronRight className="h-4 w-4" />
@@ -336,9 +337,10 @@ export default function PricingTableSection() {
 
           {/* CTA la finalul containerului alb */}
           <div className="w-full flex justify-center py-8">
+            {/* Buton Secundar - Fundal alb + Border & Text roz */}
             <Link
               href="/tarife"
-              className="inline-flex items-center gap-2 bg-primary hover:bg-pink-700 transition text-white px-8 py-3 rounded-md shadow-md text-base font-bold"
+              className="inline-flex items-center gap-2 bg-white hover:bg-[#ff0066]/5 text-[#ff0066] hover:text-[#ff0066] border-2 border-[#ff0066] hover:border-[#e6005c] px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-sm hover:shadow-md"
             >
               Vezi tarife pe 100 de zile
             </Link>

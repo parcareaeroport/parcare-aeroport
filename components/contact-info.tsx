@@ -110,7 +110,7 @@ export default function ContactInfo() {
                       handleLocationClick()
                     }
                   }}
-                  className="bg-primary text-white p-2 rounded-md hover:bg-primary/90 transition-colors"
+                  className="bg-[#ff0066] hover:bg-[#e6005c] text-white px-4 py-3 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg"
                 >
                   {card.title === "Telefon" && "Sună acum"}
                   {card.title === "Email" && "Trimite email"}

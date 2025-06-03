@@ -483,19 +483,19 @@ export default function ReservationForm() {
             type="text"
             value={licensePlate}
             onChange={e => setLicensePlate(e.target.value.toUpperCase())}
-            className="rounded-lg border-gray-200 text-base px-3 py-2 focus:ring-2 focus:ring-pink-500 h-10"
+            className="rounded-lg border-gray-200 text-base px-3 py-2 focus:ring-2 focus:ring-[#ff0066] h-10"
             placeholder="B 00 ABC"
             required
           />
-        </div>
-        {/* Submit Button */}
+      </div>
+      {/* Submit Button */}
         <div className="flex flex-col justify-end min-w-[120px]">
           <label className="text-xs font-semibold text-gray-700 mb-1 opacity-0">Acțiune</label>
-          <Button
-            type="submit"
-            className="h-10 w-full px-6 rounded-md bg-pink-600 hover:bg-pink-700 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition-all duration-200"
-            disabled={isSubmitting || !!dateError || isLoadingPrices || isLoadingSystemStatus}
-          >
+        <Button
+          type="submit"
+            className="h-10 w-full px-6 rounded-md bg-[#ff0066] hover:bg-[#e6005c] text-white font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all duration-200"
+          disabled={isSubmitting || !!dateError || isLoadingPrices || isLoadingSystemStatus}
+        >
             {isSubmitting || isLoadingSystemStatus ? (
               <><Loader2 className="mr-1 h-4 w-4 animate-spin" />{isLoadingSystemStatus ? "Verifică..." : "Procesează..."}</>
             ) : (
@@ -504,7 +504,7 @@ export default function ReservationForm() {
                 Continuă
               </>
             )}
-          </Button>
+        </Button>
         </div>
       </div>
       
@@ -528,7 +528,7 @@ export default function ReservationForm() {
               Acces cu max 2h înainte
             </div>
             <div className="text-right">
-              <div className="text-xl font-bold text-pink-600">
+              <div className="text-xl font-bold text-primary">
                 {calculatePrice().toFixed(2)} LEI
               </div>
               <div className="text-xs text-gray-500">Preț total</div>

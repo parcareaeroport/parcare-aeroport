@@ -69,21 +69,21 @@ body {
     --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-    /* Înlocuim culoarea primară cu albastrul navy */
+    /* Păstrăm culoarea primară albastră pentru linkuri și texte */
     --primary: 240 80% 25%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222 47% 11%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    /* Înlocuim culoarea de accent cu rozul Waze */
-    --accent: 336 100% 50%;
+    /* Înlocuim culoarea de accent cu albastrul */
+    --accent: 240 80% 25%;
     --accent-foreground: 222 47% 11%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    /* Înlocuim culoarea de ring cu albastrul navy */
+    /* Înlocuim culoarea de ring cu albastrul */
     --ring: 240 80% 25%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -107,7 +107,7 @@ body {
     --card-foreground: 210 40% 98%;
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-    /* Înlocuim culoarea primară cu albastrul navy */
+    /* Păstrăm culoarea primară albastră pentru linkuri și texte */
     --primary: 240 80% 25%;
     --primary-foreground: 222 47% 11%;
     --secondary: 217.2 32.6% 17.5%;
@@ -120,7 +120,7 @@ body {
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    /* Înlocuim culoarea de ring cu albastrul navy */
+    /* Înlocuim culoarea de ring cu albastrul */
     --ring: 240 80% 25%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -166,6 +166,73 @@ body {
 /* Actualizăm text-color pentru a folosi culoarea roz Waze */
 .waze-title {
   color: #ff0066;
+}
+
+/* Clase pentru butoanele standardizate */
+
+/* 
+GHID CULORI APLICAȚIE:
+
+LINKURI ȘI TEXTE:
+- Culoare: albastru #0A1172 (waze-blue)
+- Hover: albastru mai închis
+- Utilizare: navigare, linkuri, titluri, text-primary
+
+BUTOANE - 2 VARIANTE:
+
+VARIANTA 1 - BUTON PRINCIPAL (CTA):
+- Fundal: roz #ff0066
+- Text: alb
+- Border: roz #ff0066
+- Hover: fundal mai închis #e6005c + shadow mai mare + scale 1.05
+- Utilizare: acțiuni principale, CTA-uri, "Rezervă", "Contact rapid"
+
+VARIANTA 2 - BUTON SECUNDAR:
+- Fundal: alb
+- Text: roz #ff0066  
+- Border: roz #ff0066
+- Hover: fundal roz transparent + shadow + border mai închis
+- Utilizare: acțiuni secundare, "Tarife", "Vezi mai multe"
+
+EXEMPLE DE UTILIZARE:
+<Button className="bg-[#ff0066] hover:bg-[#e6005c] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105">
+  Buton Principal
+</Button>
+
+<Button className="bg-white hover:bg-[#ff0066]/5 text-[#ff0066] border-2 border-[#ff0066] hover:border-[#e6005c] px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-sm hover:shadow-md">
+  Buton Secundar
+</Button>
+*/
+
+/* Buton Principal - Fundal roz + Text alb */
+.btn-primary {
+  background-color: #ff0066;
+  color: white;
+  border: 2px solid #ff0066;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #e6005c;
+  border-color: #e6005c;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: scale(1.05);
+}
+
+/* Buton Secundar - Fundal alb + Border & Text roz */
+.btn-secondary {
+  background-color: white;
+  color: #ff0066;
+  border: 2px solid #ff0066;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 0, 102, 0.05);
+  border-color: #e6005c;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 /* Actualizăm bg-color pentru a folosi culoarea albastru navy */

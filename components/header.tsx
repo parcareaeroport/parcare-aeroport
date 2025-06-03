@@ -81,17 +81,19 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
+          {/* Buton Secundar - Fundal alb + Border & Text roz */}
           <Link href="/tarife">
             <Button
-              className="bg-white hover:bg-waze-blue/5 text-gray-800 hover:text-waze-blue border-2 border-waze-blue hover:border-waze-blue/80 rounded-md text-sm font-medium px-3 md:px-4 py-2 h-auto transition-all duration-200"
+              className="bg-white hover:bg-[#ff0066]/5 text-[#ff0066] hover:text-[#ff0066] border-2 border-[#ff0066] hover:border-[#e6005c] rounded-md text-sm font-medium px-3 md:px-4 py-2 h-auto transition-all duration-200 shadow-sm hover:shadow-md"
               aria-label="Vezi tarifele"
             >
               <span>Tarife</span>
             </Button>
           </Link>
+          {/* Buton Principal - Fundal roz + Text alb */}
           <Link
             href="tel:0740123456"
-            className="bg-waze-blue hover:bg-waze-blue/90 rounded-md text-sm font-medium shadow-md px-3 md:px-4 py-2 h-auto flex items-center text-white"
+            className="bg-[#ff0066] hover:bg-[#e6005c] rounded-md text-sm font-medium shadow-md hover:shadow-lg px-3 md:px-4 py-2 h-auto flex items-center text-white transition-all duration-200"
             aria-label="Contact rapid telefonic"
           >
             <Phone className="h-4 w-4 md:mr-2" />

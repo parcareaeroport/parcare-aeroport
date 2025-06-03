@@ -115,7 +115,7 @@ export default function PricingTable() {
 
   /* ======================= JSX ======================= */
   return (
-    <section className="py-12 md:py-20 bg-gray-50">
+    <section className="py-12 md:py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-waze-pink">
@@ -241,9 +241,9 @@ export default function PricingTable() {
             </div>
 
             <Link href="/rezerva">
-              <Button className="bg-waze-blue hover:bg-waze-blue/90 rounded-full px-6 py-3 h-auto shadow-lg flex items-center gap-2 text-white">
+              <Button className="bg-[#ff0066] hover:bg-[#e6005c] rounded-full px-8 py-4 h-auto shadow-md hover:shadow-lg flex items-center gap-2 text-white font-medium transition-all duration-200 hover:scale-105">
                 <Calendar className="h-5 w-5" />
-                <span className="font-medium">REZERVĂ ACUM</span>
+                <span>REZERVĂ ACUM</span>
               </Button>
             </Link>
           </div>
