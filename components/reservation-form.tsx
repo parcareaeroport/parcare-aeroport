@@ -493,7 +493,7 @@ export default function ReservationForm() {
           <label className="text-xs font-semibold text-gray-700 mb-1 opacity-0">Acțiune</label>
           <Button
             type="submit"
-            className="h-10 w-full px-6 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition-all duration-200"
+            className="h-10 w-full px-6 rounded-md bg-pink-600 hover:bg-pink-700 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition-all duration-200"
             disabled={isSubmitting || !!dateError || isLoadingPrices || isLoadingSystemStatus}
           >
             {isSubmitting || isLoadingSystemStatus ? (

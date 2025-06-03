@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X, Phone } from "lucide-react"
@@ -46,7 +47,14 @@ export default function Header() {
       <div className="container mx-auto flex items-center justify-between py-4">
         <div className="flex items-center gap-4 md:gap-8">
           <Link href="/" className="flex items-center" title="Parcare-Aeroport Otopeni" aria-label="Acasă">
-            <h1 className="text-xl md:text-2xl font-bold text-waze-pink">Parcare-Aeroport</h1>
+            <Image
+              src="/sigla-transparenta.png"
+              alt="Parcare-Aeroport Logo"
+              width={140}
+              height={45}
+              className="h-10 md:h-12 w-auto"
+              priority
+            />
           </Link>
 
           <nav className="hidden md:flex items-center space-x-1" aria-label="Navigare principală">
@@ -75,7 +83,7 @@ export default function Header() {
         <div className="flex items-center gap-2 md:gap-4">
           <Link href="/tarife">
             <Button
-              className="bg-white hover:bg-waze-blue/5 text-gray-800 hover:text-waze-blue border-2 border-waze-blue hover:border-waze-blue/80 rounded-full text-sm font-medium px-3 md:px-4 py-2 h-auto transition-all duration-200"
+              className="bg-white hover:bg-waze-blue/5 text-gray-800 hover:text-waze-blue border-2 border-waze-blue hover:border-waze-blue/80 rounded-md text-sm font-medium px-3 md:px-4 py-2 h-auto transition-all duration-200"
               aria-label="Vezi tarifele"
             >
               <span>Tarife</span>
@@ -83,7 +91,7 @@ export default function Header() {
           </Link>
           <Link
             href="tel:0740123456"
-            className="bg-waze-blue hover:bg-waze-blue/90 rounded-full text-sm font-medium shadow-md px-3 md:px-4 py-2 h-auto flex items-center text-white"
+            className="bg-waze-blue hover:bg-waze-blue/90 rounded-md text-sm font-medium shadow-md px-3 md:px-4 py-2 h-auto flex items-center text-white"
             aria-label="Contact rapid telefonic"
           >
             <Phone className="h-4 w-4 md:mr-2" />
@@ -129,7 +137,13 @@ export default function Header() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 title="Parcare-Aeroport Otopeni"
               >
-                <h1 className="text-xl font-bold text-waze-pink">Parcare-Aeroport</h1>
+                <Image
+                  src="/sigla-transparenta.png"
+                  alt="Parcare-Aeroport Logo"
+                  width={100}
+                  height={35}
+                  className="h-7 w-auto"
+                />
               </Link>
               <Button
                 variant="ghost"

@@ -3,13 +3,13 @@ import Image from "next/image"
 
 export default function FacilitiesSection() {
   return (
-    <section className="py-12 md:py-20 bg-primary/5">
-      <div className="container mx-auto px-4">
+    <section className="py-12 md:py-16 bg-primary/5">
+      <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6 md:mb-8 text-center text-gray-800">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-10 text-center text-gray-800">
             Mergi liniștit în vacanță alături de cei drag sau în călătoria ta de afaceri, noi avem grijă de mașina ta!
           </h2>
-          <p className="text-lg sm:text-xl text-center text-gray-700 mb-10 md:mb-16 max-w-4xl mx-auto">
+          <p className="text-lg sm:text-xl text-center text-gray-700 mb-10 md:mb-12 max-w-4xl mx-auto">
             Cauți cea mai bună parcare privată aeroport Otopeni? Sau parcare long term Otopeni? Sau chiar o parcare Otopeni ieftină? Suntem aici pentru tine!
           </p>
 
@@ -17,10 +17,10 @@ export default function FacilitiesSection() {
             {/* Horizontal connecting line - hidden on mobile, visible on desktop */}
             <div className="absolute top-1/2 left-0 right-0 h-1 bg-yellow-400 hidden md:block"></div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 relative">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 relative">
               {/* Facility 1 - City break */}
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden relative z-10 card-hover">
-                <div className="p-4 sm:p-6 md:p-8 flex flex-col items-center">
+                <div className="p-6 md:p-8 flex flex-col items-center">
                   <div className="mb-4 md:mb-6 relative">
                     <div className="absolute -z-10 w-16 sm:w-20 h-16 sm:h-20 bg-primary/10 rounded-full blur-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
                     <Image
@@ -39,7 +39,7 @@ export default function FacilitiesSection() {
 
               {/* Facility 2 - Sejur prelungit */}
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden relative z-10 card-hover">
-                <div className="p-4 sm:p-6 md:p-8 flex flex-col items-center">
+                <div className="p-6 md:p-8 flex flex-col items-center">
                   <div className="mb-4 md:mb-6 relative">
                     <div className="absolute -z-10 w-16 sm:w-20 h-16 sm:h-20 bg-primary/10 rounded-full blur-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
                     <Image
@@ -58,7 +58,7 @@ export default function FacilitiesSection() {
 
               {/* Facility 3 - Business trip */}
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden relative z-10 card-hover">
-                <div className="p-4 sm:p-6 md:p-8 flex flex-col items-center">
+                <div className="p-6 md:p-8 flex flex-col items-center">
                   <div className="mb-4 md:mb-6 relative">
                     <div className="absolute -z-10 w-16 sm:w-20 h-16 sm:h-20 bg-primary/10 rounded-full blur-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
                     <Image
@@ -77,7 +77,7 @@ export default function FacilitiesSection() {
 
               {/* Facility 4 - Călătorii pentru evenimente */}
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden relative z-10 card-hover">
-                <div className="p-4 sm:p-6 md:p-8 flex flex-col items-center">
+                <div className="p-6 md:p-8 flex flex-col items-center">
                   <div className="mb-4 md:mb-6 relative">
                     <div className="absolute -z-10 w-16 sm:w-20 h-16 sm:h-20 bg-primary/10 rounded-full blur-xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
                     <Image

@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { Phone, Mail, MapPin, Instagram, Facebook, Youtube, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -5,147 +7,116 @@ import { Button } from "@/components/ui/button"
 export default function ContactInfo() {
   const contactCards = [
     {
-      title: "Sună acum",
-      icon: Phone,
+      title: "Telefon",
       items: [
-        // Text items removed as per request
-      ],
-      actions: [
-        { label: "Sună acum", href: "tel:+40734292818", icon: Phone, ariaLabel: "Sună acum" },
-        {
-          label: "WhatsApp",
-          href: "https://wa.me/40734292818",
-          icon: MessageSquare,
-          ariaLabel: "Trimite mesaj pe WhatsApp",
-          target: "_blank",
-        },
+        { label: "Rezervări și informații", value: "+40 123 456 789" },
+        { label: "Urgențe și asistență", value: "+40 123 456 790" },
       ],
     },
     {
-      title: "Trimite mesaj",
-      icon: Mail,
+      title: "Email",
       items: [
-        // Text item removed as per request
+        { label: "Rezervări", value: "rezervari@parcare-aeroport.ro" },
+        { label: "Support", value: "contact@parcare-aeroport.ro" },
       ],
-      action: {
-        label: "Trimite email",
-        href: "mailto:contact.parcareaeroport@gmail.com",
-        icon: Mail,
-        ariaLabel: "Trimite un email",
-      },
     },
     {
-      title: "Ne găsești",
-      icon: MapPin,
+      title: "Program",
       items: [
-        { value: "Strada Aeroportului nr. 10, Otopeni" },
-        { value: "Jud. Ilfov, România" },
-        { label: "Program de lucru:", value: "NON STOP" },
+        { label: "Luni - Vineri", value: "06:00 - 22:00" },
+        { label: "Sâmbătă - Duminică", value: "08:00 - 20:00" },
       ],
-      action: {
-        label: "Vezi pe hartă",
-        href: "https://www.google.com/maps?q=Aeroportul+Otopeni",
-        icon: MapPin,
-        ariaLabel: "Vezi pe Google Maps",
-      },
     },
     {
-      title: "Online",
-      icon: Instagram,
-      items: [], // No text items for this card initially
-      socialLinks: [
-        { icon: Facebook, href: "https://www.facebook.com/share/1EYNt8Zp19/?mibextid=wwXIfr", label: "Facebook" },
-        {
-          icon: Instagram,
-          href: "https://www.instagram.com/parcare_aeroport?igsh=MXV5d2d2M3NibHh0Yg%3D%3D&utm_source=qr",
-          label: "Instagram",
-        },
-        { icon: Youtube, href: "#", label: "YouTube" }, // Assuming # is a placeholder
+      title: "Locație",
+      items: [
+        { label: "Adresa", value: "Șoseaua București-Ploiești 42A" },
+        { label: "Localitate", value: "Otopeni, Ilfov" },
       ],
     },
   ]
 
+  const handleCallClick = (phoneNumber: string) => {
+    window.location.href = `tel:${phoneNumber}`
+  }
+
+  const handleEmailClick = (email: string) => {
+    window.location.href = `mailto:${email}`
+  }
+
+  const handleLocationClick = () => {
+    const address = "Șoseaua București-Ploiești 42A, Otopeni, Ilfov"
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+    window.open(googleMapsUrl, '_blank')
+  }
+
+  const isClickable = (title: string) => {
+    return title === "Telefon" || title === "Email" || title === "Locație"
+  }
+
+  const handleItemClick = (title: string, value: string) => {
+    if (title === "Telefon") {
+      handleCallClick(value)
+    } else if (title === "Email") {
+      handleEmailClick(value)
+    } else if (title === "Locație") {
+      handleLocationClick()
+    }
+  }
+
   return (
     <section className="py-12 md:py-16 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {contactCards.map((card, index) => (
             <div
               key={index}
-              className="border border-slate-200 rounded-lg p-6 hover:shadow-md transition-shadow flex flex-col"
+              className="border border-slate-200 rounded-lg p-6 md:p-8 hover:shadow-md transition-shadow flex flex-col"
             >
               <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-4 mx-auto">
-                <card.icon className="h-6 w-6 text-primary" />
+                {card.title === "Telefon" && <PhoneIcon />}
+                {card.title === "Email" && <EmailIcon />}
+                {card.title === "Program" && <ClockIcon />}
+                {card.title === "Locație" && <LocationIcon />}
               </div>
               <h3 className="text-xl font-semibold mb-4 text-center">{card.title}</h3>
-
-              {card.items && card.items.length > 0 && (
-                <div className="space-y-2 mb-4 flex-grow">
-                  {card.items.map((item, i) => (
-                    <p key={i} className="text-center">
-                      {item.label && <span className="font-medium">{item.label} </span>}
-                      {item.href ? (
-                        <a href={item.href} className="text-primary hover:underline">
-                          {item.value}
-                        </a>
-                      ) : (
-                        <span>{item.value}</span>
-                      )}
+              
+              <div className="space-y-2 mb-4 flex-grow">
+                {card.items.map((item, itemIndex) => (
+                  <div key={itemIndex} className="text-center">
+                    <p className="text-sm text-slate-600 mb-1">{item.label}</p>
+                    <p 
+                      className={`text-sm font-medium ${
+                        isClickable(card.title) 
+                          ? 'text-primary cursor-pointer hover:text-primary/80' 
+                          : 'text-slate-800'
+                      }`}
+                      onClick={() => isClickable(card.title) ? handleItemClick(card.title, item.value) : undefined}
+                    >
+                      {item.value}
                     </p>
-                  ))}
-                </div>
-              )}
-
-              {/* Spacer to push buttons down if items are few or none */}
-              {(!card.items || card.items.length === 0) && !card.socialLinks && <div className="flex-grow"></div>}
-
-              {card.socialLinks && (
-                <div className="flex justify-center space-x-4 mt-auto pt-4">
-                  {card.socialLinks.map((link, i) => (
-                    <a
-                      key={i}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={link.label}
-                      className="bg-primary text-white p-2 rounded-md hover:bg-primary/90 transition-colors"
-                    >
-                      <link.icon className="h-5 w-5" />
-                    </a>
-                  ))}
-                </div>
-              )}
-
-              {card.actions && card.actions.length > 0 && (
-                <div className="mt-auto pt-4 space-y-2">
-                  {card.actions.map((action, i) => (
-                    <Button
-                      key={i}
-                      variant="outline"
-                      size="sm"
-                      className="w-full"
-                      asChild
-                      aria-label={action.ariaLabel}
-                    >
-                      <Link href={action.href || "#"} target={action.target}>
-                        {action.icon && <action.icon className="h-4 w-4 mr-2" />}
-                        {action.label}
-                      </Link>
-                    </Button>
-                  ))}
-                </div>
-              )}
-              {card.action &&
-                !card.actions && ( // Ensure this doesn't render if card.actions exists
-                  <div className="mt-auto pt-4 text-center">
-                    <Button asChild variant="outline" size="sm" className="w-full">
-                      <Link href={card.action.href} aria-label={card.action.ariaLabel}>
-                        <card.action.icon className="h-4 w-4 mr-2" />
-                        {card.action.label}
-                      </Link>
-                    </Button>
                   </div>
-                )}
+                ))}
+              </div>
+              
+              {isClickable(card.title) && (
+                <button
+                  onClick={() => {
+                    if (card.title === "Telefon") {
+                      handleCallClick(card.items[0].value)
+                    } else if (card.title === "Email") {
+                      handleEmailClick(card.items[0].value)
+                    } else if (card.title === "Locație") {
+                      handleLocationClick()
+                    }
+                  }}
+                  className="bg-primary text-white p-2 rounded-md hover:bg-primary/90 transition-colors"
+                >
+                  {card.title === "Telefon" && "Sună acum"}
+                  {card.title === "Email" && "Trimite email"}
+                  {card.title === "Locație" && "Vezi pe hartă"}
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -153,3 +124,29 @@ export default function ContactInfo() {
     </section>
   )
 }
+
+// Icon components
+const PhoneIcon = () => (
+  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+  </svg>
+)
+
+const EmailIcon = () => (
+  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+  </svg>
+)
+
+const ClockIcon = () => (
+  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+)
+
+const LocationIcon = () => (
+  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>
+)

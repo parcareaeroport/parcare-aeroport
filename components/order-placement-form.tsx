@@ -79,7 +79,7 @@ function CheckoutForm({
 
       <Button
         type="submit"
-        className="w-full gradient-bg hover:opacity-90 py-6 text-base font-medium rounded-xl"
+        className="w-full gradient-bg hover:opacity-90 py-6 text-base font-medium rounded-md"
         disabled={isLoading || !stripe || !elements}
       >
         {isLoading ? "Se procesează..." : "Plătește acum"}
@@ -609,7 +609,7 @@ export default function OrderPlacementForm() {
                           />
                         </div>
 
-                        <div>
+    <div>
                           <h2 className="text-lg font-bold mb-4">Metodă de plată</h2>
 
                           <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
@@ -654,7 +654,7 @@ export default function OrderPlacementForm() {
 
                     <Button
                       type="submit"
-                      className="w-full gradient-bg hover:opacity-90 py-6 text-base font-medium rounded-xl"
+                      className="w-full gradient-bg hover:opacity-90 py-6 text-base font-medium rounded-md"
                       disabled={isSubmitting || !acceptTerms}
                     >
                       {isSubmitting ? "Se procesează..." : isTestMode ? "Rezervare directă (TEST)" : "Continuă spre plată"}

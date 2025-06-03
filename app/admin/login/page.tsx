@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState, useEffect } from "react" // Adaugă useEffect pentru log
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
@@ -73,7 +74,15 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Parcare Otopeni</h1>
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/sigla-transparenta.png"
+              alt="Parcare-Aeroport Logo"
+              width={150}
+              height={60}
+              className="h-12 w-auto"
+            />
+          </div>
           <p className="mt-2 text-gray-600">Panou de administrare</p>
         </div>
 

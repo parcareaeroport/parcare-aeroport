@@ -17,7 +17,7 @@ export default function ReviewsSection() {
       text: "Totul a decurs conform planului în ceea ce privește comunicarea, indicațiile și programul... ca să fiu sincer, cu întârzierile zborurilor și o ofertă consistentă pentru un transfer cu autobuzul... parcarea a fost cea mai bună opțiune.",
       author: "Maria D.",
       date: "3 Aprilie 2023",
-      rating: 3,
+      rating: 5,
     },
     {
       text: "Liniște sufletească prin rezervarea cu ușurință în avans. Multe opțiuni și valoare rezonabilă pentru parcare. Cu siguranță voi folosi din nou.",
@@ -39,54 +39,12 @@ export default function ReviewsSection() {
     <section className="py-12 md:py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 text-gray-800">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-gray-800">
             Ce spun șoferii despre noi
           </h2>
-          <p className="text-base sm:text-lg mb-2 text-gray-600">
-            Parcare-Aeroport evaluat ca "excelent" pe site-ul independent de recenzii, Trustpilot.
-          </p>
           <p className="text-base sm:text-lg mb-10 sm:mb-16 text-gray-600">
-            Citiți recenzii reale de la clienți reali pe{" "}
-            <a href="https://www.trustpilot.com" className="text-primary hover:underline transition-colors">
-              www.trustpilot.com
-            </a>
-            .
+            Recenzii reale de la clienții noștri care au folosit serviciile de parcare.
           </p>
-
-          {/* Trustpilot Rating */}
-          <div className="mb-10 sm:mb-16 flex flex-col items-center">
-            <p className="text-base sm:text-lg font-medium text-gray-700 mb-3">Trustpilot</p>
-
-            <div className="flex mb-3">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  width="28"
-                  height="28"
-                  viewBox="0 0 28 28"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="transition-transform hover:scale-110 w-6 h-6 sm:w-8 sm:h-8"
-                >
-                  <rect width="28" height="28" fill="#00B67A" />
-                  <path
-                    d="M14 4L16.944 9.83688L23.4616 10.7451L18.7308 15.3331L19.8885 21.8149L14 18.77L8.11148 21.8149L9.26916 15.3331L4.53839 10.7451L11.056 9.83688L14 4Z"
-                    fill="white"
-                  />
-                  {i === 4 && (
-                    <>
-                      <rect x="21" width="7" height="28" fill="#DCDCE6" />
-                      <path d="M24.5 4L27.444 9.83688L34 10.7451V28H21V10.7451L27.5 9.83688L24.5 4Z" fill="#DCDCE6" />
-                    </>
-                  )}
-                </svg>
-              ))}
-            </div>
-            <div className="text-sm sm:text-base text-gray-700 font-medium">
-              <div className="mb-1">TrustScore 4.5</div>
-              <div>151,132 recenzii</div>
-            </div>
-          </div>
 
           {/* Mobile Reviews Slider */}
           <div className="md:hidden relative">
@@ -98,21 +56,21 @@ export default function ReviewsSection() {
                 {reviews.map((review, index) => (
                   <div key={index} className="w-full flex-shrink-0 px-4">
                     <div className="bg-white p-6 rounded-2xl shadow-lg text-left h-full">
-                      <p className="text-sm font-medium text-primary mb-2">Trustpilot</p>
                       <div className="flex mb-4">
                         {[...Array(review.rating)].map((_, i) => (
                           <svg
                             key={i}
                             width="20"
                             height="20"
-                            viewBox="0 0 18 18"
+                            viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
                           >
-                            <rect width="18" height="18" fill="#00B67A" />
                             <path
-                              d="M9 2L11.0206 6.21885L15.7553 6.90983L12.3776 10.1812L13.0412 14.8902L9 12.6L4.95883 14.8902L5.62236 10.1812L2.24472 6.90983L6.97937 6.21885L9 2Z"
-                              fill="white"
+                              d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                              fill="#FFD700"
+                              stroke="#FFD700"
+                              strokeWidth="1"
                             />
                           </svg>
                         ))}
@@ -167,21 +125,21 @@ export default function ReviewsSection() {
                 key={index}
                 className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-left transform hover:-translate-y-2 card-hover"
               >
-                <p className="text-sm font-medium text-primary mb-2">Trustpilot</p>
                 <div className="flex mb-4">
                   {[...Array(review.rating)].map((_, i) => (
                     <svg
                       key={i}
                       width="20"
                       height="20"
-                      viewBox="0 0 18 18"
+                      viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <rect width="18" height="18" fill="#00B67A" />
                       <path
-                        d="M9 2L11.0206 6.21885L15.7553 6.90983L12.3776 10.1812L13.0412 14.8902L9 12.6L4.95883 14.8902L5.62236 10.1812L2.24472 6.90983L6.97937 6.21885L9 2Z"
-                        fill="white"
+                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                        fill="#FFD700"
+                        stroke="#FFD700"
+                        strokeWidth="1"
                       />
                     </svg>
                   ))}

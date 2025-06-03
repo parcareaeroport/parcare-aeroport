@@ -2,94 +2,67 @@ import Image from "next/image"
 
 export default function PricingHero() {
   return (
-    <section className="py-16 md:py-24 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto text-center mb-16">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3">Tarif avantajos parcare aeroport Otopeni</h1>
-          <p className="text-xl md:text-2xl lg:text-3xl text-gray-700 max-w-3xl mx-auto">
-          Profită acum
+    <section className="py-12 md:py-16 bg-white">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="text-center">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-slate-800">
+            Tarife Parcare Otopeni
+          </h1>
+          <p className="text-base md:text-lg text-slate-600 mb-8 md:mb-10 max-w-3xl mx-auto">
+            Descoperă tarifele noastre competitive pentru parcare securizată lângă Aeroportul Henri Coandă.
           </p>
         </div>
 
-        <div className="relative max-w-4xl mx-auto">
-          {/* Main layout with image in center and stats around it */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 items-center">
-            {/* Left Column Stats */}
-            <div className="flex flex-col space-y-12 md:space-y-24">
-              {/* Top Left Stat */}
-              <div className="text-center md:text-right relative">
-                <div className="hidden md:block absolute top-1/2 right-0 w-8 h-0.5 bg-green-500 transform translate-x-full">
-                  <div className="absolute right-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">49,98 LEI</h3>
-                <p className="text-gray-600">preț pentru prima zi de parcare</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-center">
+          {/* Left - Parcare Securizată */}
+          <div className="text-center relative">
+            <div className="bg-green-50 p-6 md:p-8 rounded-2xl">
+              <div className="hidden md:block absolute top-1/2 right-0 w-8 h-0.5 bg-green-500 transform translate-x-full">
+                <div className="absolute right-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
               </div>
-
-              {/* Bottom Left Stat */}
-              <div className="text-center md:text-right relative">
-                <div className="hidden md:block absolute top-1/2 right-0 w-8 h-0.5 bg-green-500 transform translate-x-full">
-                  <div className="absolute right-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">30%</h3>
-                <p className="text-gray-600">reducere pentru următoarele zile</p>
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
               </div>
-            </div>
-
-            {/* Center Column - Image */}
-            <div className="flex justify-center">
-              <div className="relative z-10 w-64 h-64 md:w-72 md:h-72 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                <Image
-                  src="/placeholder.svg?key=modern-airport-parking-lot"
-                  alt="Parcare Otopeni"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-
-            {/* Right Column Stats */}
-            <div className="flex flex-col space-y-12 md:space-y-24">
-              {/* Top Right Stat */}
-              <div className="text-center md:text-left relative">
-                <div className="hidden md:block absolute top-1/2 left-0 w-8 h-0.5 bg-green-500 transform -translate-x-full">
-                  <div className="absolute left-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">3 minute</h3>
-                <p className="text-gray-600">timp de transfer la aeroport</p>
-              </div>
-
-              {/* Bottom Right Stat */}
-              <div className="text-center md:text-left relative">
-                <div className="hidden md:block absolute top-1/2 left-0 w-8 h-0.5 bg-green-500 transform -translate-x-full">
-                  <div className="absolute left-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">24/7</h3>
-                <p className="text-gray-600">supraveghere video și pază</p>
+              <h3 className="text-lg font-bold mb-2">Parcare Securizată</h3>
+              <p className="text-sm text-gray-600">Supraveghere video 24/7</p>
+              <div className="hidden md:block absolute top-1/2 right-0 w-8 h-0.5 bg-green-500 transform translate-x-full">
+                <div className="absolute right-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
               </div>
             </div>
           </div>
 
-          {/* Mobile dots for visual connection (visible only on mobile) */}
-          <div className="flex justify-center space-x-2 mt-8 md:hidden">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+          {/* Center - Logo or Main Feature */}
+          <div className="text-center">
+            <div className="bg-primary/10 p-6 md:p-8 rounded-2xl">
+              <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-primary">Rezervare Online</h3>
+              <p className="text-sm text-gray-600">Simplu și rapid</p>
+            </div>
           </div>
 
-          {/* Additional features below the image */}
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
-              <h3 className="font-bold text-lg mb-2">Parcare asfaltată</h3>
-              <p className="text-gray-600 text-sm">Suprafață asfaltată și marcată pentru confort maxim</p>
-            </div>
-            <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
-              <h3 className="font-bold text-lg mb-2">Transfer gratuit</h3>
-              <p className="text-gray-600 text-sm">Transport gratuit dus-întors la terminal</p>
-            </div>
-            <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
-              <h3 className="font-bold text-lg mb-2">Rezervare online</h3>
-              <p className="text-gray-600 text-sm">Sistem simplu de rezervare cu confirmare instantă</p>
+          {/* Right - Transfer Gratuit */}
+          <div className="text-center relative">
+            <div className="bg-blue-50 p-6 md:p-8 rounded-2xl">
+              <div className="hidden md:block absolute top-1/2 left-0 w-8 h-0.5 bg-green-500 transform -translate-x-full">
+                <div className="absolute left-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
+              </div>
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 17l4 4 4-4m-4-5v9" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 7l-5-5-5 5" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold mb-2">Transfer Gratuit</h3>
+              <p className="text-sm text-gray-600">La și de la aeroport</p>
+              <div className="hidden md:block absolute top-1/2 left-0 w-8 h-0.5 bg-green-500 transform -translate-x-full">
+                <div className="absolute left-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
+              </div>
             </div>
           </div>
         </div>

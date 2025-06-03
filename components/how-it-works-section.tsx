@@ -17,7 +17,7 @@ export default function HowItWorksSection() {
           <HowItWorksToggle />
 
           <div className="mt-10 md:mt-12 text-center">
-            <Button className="gradient-bg hover:opacity-90 text-base sm:text-lg px-6 sm:px-10 py-4 sm:py-6 h-auto rounded-full shadow-lg">
+            <Button className="gradient-bg hover:opacity-90 text-base sm:text-lg px-6 sm:px-10 py-4 sm:py-6 h-auto rounded-md shadow-lg">
               Rezervă locul tău acum
             </Button>
           </div>

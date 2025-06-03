@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, type ReactNode } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { AuthProvider, useAuth } from "@/context/auth-context"
 import { Button } from "@/components/ui/button"
@@ -62,8 +63,14 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
       <div className="flex min-h-screen bg-gray-100">
         <aside className="w-64 bg-white p-6 border-r border-gray-200 flex flex-col">
           <div className="mb-8">
-            <Link href="/admin/dashboard" className="text-2xl font-bold text-primary">
-              Admin Parcare
+            <Link href="/admin/dashboard" className="flex items-center">
+              <Image
+                src="/sigla-transparenta.png"
+                alt="Parcare-Aeroport Logo"
+                width={140}
+                height={50}
+                className="h-10 w-auto"
+              />
             </Link>
           </div>
           <nav className="flex-grow">

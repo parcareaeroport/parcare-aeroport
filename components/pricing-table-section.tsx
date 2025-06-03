@@ -244,7 +244,7 @@ export default function PricingTableSection() {
             <div className="mt-6 text-center">
               <Link
                 href="/rezerva"
-                className="inline-flex items-center gap-2 gradient-bg hover:opacity-90 text-white px-6 py-3 rounded-full shadow-md text-sm"
+                className="inline-flex items-center gap-2 gradient-bg hover:opacity-90 text-white px-6 py-3 rounded-md shadow-md text-sm"
               >
                 <span>Rezervă acum</span>
                 <ChevronRight className="h-4 w-4" />
@@ -338,7 +338,7 @@ export default function PricingTableSection() {
           <div className="w-full flex justify-center py-8">
             <Link
               href="/tarife"
-              className="inline-flex items-center gap-2 bg-primary hover:bg-pink-700 transition text-white px-8 py-3 rounded-full shadow-md text-base font-bold"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-pink-700 transition text-white px-8 py-3 rounded-md shadow-md text-base font-bold"
             >
               Vezi tarife pe 100 de zile
             </Link>

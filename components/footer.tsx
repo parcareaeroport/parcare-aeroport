@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Instagram, Facebook, Twitter, Linkedin, ArrowUp, Phone, Mail, MapPin, Navigation } from "lucide-react"
 
 export default function Footer() {
@@ -16,7 +17,16 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         {/* Logo Section */}
         <div className="mb-8 md:mb-12 text-center md:text-left">
-          <h2 className="text-xl sm:text-2xl font-bold text-[#FF0066] mb-4">Parcare-Aeroport</h2>
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
+            {/* <Image
+              src="/sigla-transparenta.png"
+              alt="Parcare-Aeroport Logo"
+              width={200}
+              height={80}
+              className="h-16 md:h-20 w-auto"
+            /> */}
+            <h2 className="text-xl sm:text-2xl font-bold text-[#FF0066]">Parcare-Aeroport</h2>
+          </div>
         </div>
 
         {/* Main Footer Content - Three Equal Sections */}

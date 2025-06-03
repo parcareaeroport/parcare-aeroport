@@ -1,14 +1,14 @@
 export default function SeoTextSection() {
   return (
-    <section className="py-12 md:py-20 bg-white">
-      <div className="container mx-auto px-4">
+    <section className="py-12 md:py-16 bg-white">
+      <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-10 text-center">
             Dedicați excelenței în servicii de parcare securizată
           </h2>
 
-          <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none bg-white rounded-2xl shadow-sm p-5 sm:p-8 border border-gray-100">
-            <p className="text-gray-700 mb-6 sm:mb-8">
+          <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none bg-white rounded-2xl shadow-sm p-6 md:p-8 border border-gray-100">
+            <p className="text-gray-700 mb-6 md:mb-8">
               <strong>Parcare Aeroport Otopeni</strong> s-a născut din dorința de a-ți oferi o soluție de parcare completă, care să combine siguranța maximă cu un confort desăvârșit și servicii impecabile. Echipa noastră este formată din profesioniști dedicați, gata să îți asigure o experiență cât mai plăcută, de la rezervare și până la preluarea mașinii la întoarcere. Ne mândrim cu atenția la detalii și cu angajamentul nostru față de satisfacția ta și a familiei tale!
             </p>
 
