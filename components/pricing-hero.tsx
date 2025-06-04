@@ -11,15 +11,15 @@ export default function PricingHero() {
           </p>
         </div>
 
-        <div className="relative max-w-4xl mx-auto">
+        <div className="relative max-w-6xl mx-auto">
           {/* Main layout with image in center and stats around it */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-20 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-32 lg:gap-40 items-center">
             {/* Left Column Stats */}
             <div className="flex flex-col space-y-12 md:space-y-24">
               {/* Top Left Stat */}
               <div className="text-center md:text-right relative">
-                <div className="hidden md:block absolute top-1/2 right-0 w-20 h-0.5 bg-green-500 transform translate-x-full">
-                  <div className="absolute right-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
+                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] right-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform translate-x-full">
+                  <div className="absolute right-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-800">49,98 LEI</h3>
                 <p className="text-gray-600">preț pentru o zi de parcare</p>
@@ -27,8 +27,8 @@ export default function PricingHero() {
 
               {/* Bottom Left Stat */}
               <div className="text-center md:text-right relative">
-                <div className="hidden md:block absolute top-1/2 right-0 w-20 h-0.5 bg-green-500 transform translate-x-full">
-                  <div className="absolute right-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
+                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] right-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform translate-x-full">
+                  <div className="absolute right-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-800">500m</h3>
                 <p className="text-gray-600">distanță față de aeroport</p>
@@ -39,7 +39,7 @@ export default function PricingHero() {
             <div className="flex justify-center">
               <div className="relative z-10 w-64 h-64 md:w-72 md:h-72 aspect-square rounded-full overflow-hidden border-4 border-white shadow-xl shrink-0">
                 <Image
-                  src="/placeholder.svg?key=modern-airport-parking-lot"
+                  src="/parcare_otopeni pret_tarife_parcare_otopeni.jpg"
                   alt="Parcare Otopeni"
                   fill
                   className="object-cover"
@@ -51,8 +51,8 @@ export default function PricingHero() {
             <div className="flex flex-col space-y-12 md:space-y-24">
               {/* Top Right Stat */}
               <div className="text-center md:text-left relative">
-                <div className="hidden md:block absolute top-1/2 left-0 w-20 h-0.5 bg-green-500 transform -translate-x-full">
-                  <div className="absolute left-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
+                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] left-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform -translate-x-full">
+                  <div className="absolute left-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-800">24/7</h3>
                 <p className="text-gray-600">supraveghere video și pază</p>
@@ -60,8 +60,8 @@ export default function PricingHero() {
 
               {/* Bottom Right Stat */}
               <div className="text-center md:text-left relative">
-                <div className="hidden md:block absolute top-1/2 left-0 w-20 h-0.5 bg-green-500 transform -translate-x-full">
-                  <div className="absolute left-0 top-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-y-1/2"></div>
+                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] left-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform -translate-x-full">
+                  <div className="absolute left-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-800">30%</h3>
                 <p className="text-gray-600">reducere pentru rezervări online</p>
@@ -71,10 +71,10 @@ export default function PricingHero() {
 
           {/* Mobile dots for visual connection (visible only on mobile) */}
           <div className="flex justify-center space-x-2 mt-8 md:hidden">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
           </div>
 
           {/* Additional features below the image */}

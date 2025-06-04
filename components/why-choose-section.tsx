@@ -30,8 +30,8 @@ export default function WhyChooseSection() {
           </h2>
           <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto">
             Oferim cele mai bune servicii de parcare pentru călătoriile tale, cu siguranță garantată și confort maxim.
-          </p>
-        </div>
+              </p>
+            </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {features.map((feature, index) => (

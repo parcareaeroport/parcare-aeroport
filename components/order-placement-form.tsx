@@ -13,7 +13,7 @@ import { AlertCircle, Info, TestTube } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { loadStripe } from "@stripe/stripe-js"
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
-import { createBooking } from "@/app/actions/booking-actions"
+import { createBooking, createBookingWithFirestore } from "@/app/actions/booking-actions"
 
 // Inițializăm Stripe cu cheia publică
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "")
@@ -181,37 +181,71 @@ export default function OrderPlacementForm() {
       formData.append("clientName", `${firstName} ${lastName}`.trim())
       if (firstName) formData.append("clientTitle", firstName)
 
-      console.log("Test Mode - Apelăm direct createBooking cu datele:", {
+      console.log("Test Mode - Apelăm createBookingWithFirestore cu datele:", {
         licensePlate: reservationData.licensePlate,
         startDate: reservationData.startDate,
         startTime: reservationData.startTime,
         endDate: reservationData.endDate,
         endTime: reservationData.endTime,
         clientName: `${firstName} ${lastName}`.trim(),
+        clientEmail: email,
+        clientPhone: phone
       })
 
-      // Apelează direct API-ul de rezervare
-      const result = await createBooking(formData)
+      // Apelează noua funcție cu salvare completă în Firestore
+      const result = await createBookingWithFirestore(formData, {
+        clientEmail: email,
+        clientPhone: phone,
+        paymentStatus: "n/a", // Mod test - fără plată
+        amount: calculateTotal(),
+        days: reservationData.days,
+        source: "test_mode"
+      })
 
-      if (result.success && result.bookingNumber) {
+      // Log pentru debugging doar în caz de eroare
+      const hasFirestoreSuccess = 'firestoreSuccess' in result ? result.firestoreSuccess : false
+      if (!result.success || !hasFirestoreSuccess) {
+        console.error("🚨 Booking issues detected:")
+        if ('debugLogs' in result && result.debugLogs) {
+          result.debugLogs.forEach((log, index) => {
+            console.log(`${index + 1}. ${log}`)
+          })
+        }
+      }
+
+      console.log("📋 Full result from server:", result)
+
+      if (result.success) {
+        // Type guards pentru proprietățile opționale
+        const bookingNumber = 'bookingNumber' in result ? result.bookingNumber : null
+        const firestoreId = 'firestoreId' in result ? result.firestoreId : null
+        
+        const successMessage = hasFirestoreSuccess 
+          ? `Rezervarea de test ${bookingNumber} a fost creată cu succes și salvată în sistem!`
+          : `Rezervarea de test ${bookingNumber} a fost creată la API, dar nu s-a putut salva local.`
+        
         toast({
           title: "Succes!",
-          description: `Rezervarea de test ${result.bookingNumber} a fost creată cu succes!`,
+          description: successMessage,
           variant: "default",
         })
 
-        // Salvează pentru pagina de confirmare
-        sessionStorage.setItem("bookingNumber", result.bookingNumber)
-        sessionStorage.setItem("reservationDataForConfirmation", JSON.stringify({
+        // Salvează datele complete pentru pagina de confirmare
+        const completeReservationData = {
           ...reservationData,
           clientName: `${firstName} ${lastName}`.trim(),
           clientEmail: email,
           clientPhone: phone,
-          apiBookingNumber: result.bookingNumber,
-        }))
+          apiBookingNumber: bookingNumber,
+          firestoreId: firestoreId,
+          amount: calculateTotal(),
+          status: "confirmed_test"
+        }
+
+        sessionStorage.setItem("reservationDataForConfirmation", JSON.stringify(completeReservationData))
 
         // Redirectează la pagina de confirmare cu parametrii de test
-        router.push(`/confirmare?bookingNumber=${result.bookingNumber}&status=success_test`)
+        router.push(`/confirmare?bookingNumber=${bookingNumber}&status=success_test&firestoreId=${firestoreId || ''}`)
       } else {
         toast({
           title: "Eroare la rezervare",

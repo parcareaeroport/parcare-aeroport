@@ -1,16 +1,17 @@
 import Stripe from "stripe"
 import { NextResponse } from "next/server"
 import { headers } from "next/headers"
-import { createBooking } from "@/app/actions/booking-actions" // Asigură-te că importul este corect
+import { createBookingWithFirestore } from "@/app/actions/booking-actions" // Folosim versiunea extinsă
 
 // Inițializăm clientul Stripe cu cheia secretă
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2023-10-16", // Asigură-te că versiunea API este consistentă
+  apiVersion: "2025-05-28.basil", // Versiune actualizată
 })
 
 export async function POST(req: Request) {
   const body = await req.text()
-  const signature = headers().get("Stripe-Signature") as string
+  const headersList = await headers()
+  const signature = headersList.get("Stripe-Signature") as string
 
   let event: Stripe.Event
 
@@ -26,80 +27,111 @@ export async function POST(req: Request) {
     console.log("Webhook received: payment_intent.succeeded", paymentIntent.id)
 
     // Extrage datele necesare pentru `createBooking` din metadata PaymentIntent-ului
-    // Aceste date ar fi trebuit adăugate în metadata la crearea PaymentIntent-ului
     const bookingMetadata = paymentIntent.metadata
 
     if (
       !bookingMetadata ||
       !bookingMetadata.licensePlate ||
       !bookingMetadata.startDate ||
-      !bookingMetadata.startTime ||
-      !bookingMetadata.endDate ||
-      !bookingMetadata.endTime
+      !bookingMetadata.endDate
     ) {
       console.error("Webhook Error: Lipsesc datele necesare în metadata PaymentIntent-ului pentru a crea rezervarea.")
-      // Poți returna un status 200 pentru a confirma primirea webhook-ului către Stripe,
-      // dar loghează eroarea pentru investigații.
       return NextResponse.json({ success: false, error: "Lipsă metadata pentru rezervare" }, { status: 200 })
     }
 
     try {
+      // Pregătim FormData pentru API-ul de parcare
       const formData = new FormData()
       formData.append("licensePlate", bookingMetadata.licensePlate)
-      formData.append("startDate", bookingMetadata.startDate) // Format YYYY-MM-DD
-      formData.append("startTime", bookingMetadata.startTime) // Format HH:mm
-      formData.append("endDate", bookingMetadata.endDate)
-      formData.append("endTime", bookingMetadata.endTime)
+      
+      // Extragem data și ora din startDate și endDate (format: YYYY-MM-DDTHH:mm:00)
+      const startDateParts = bookingMetadata.startDate.split('T')
+      const endDateParts = bookingMetadata.endDate.split('T')
+      
+      formData.append("startDate", startDateParts[0]) // YYYY-MM-DD
+      formData.append("startTime", startDateParts[1]?.slice(0, 5) || "08:00") // HH:mm
+      formData.append("endDate", endDateParts[0]) // YYYY-MM-DD  
+      formData.append("endTime", endDateParts[1]?.slice(0, 5) || "08:00") // HH:mm
 
-      if (bookingMetadata.clientName) {
-        formData.append("clientName", bookingMetadata.clientName)
+      if (bookingMetadata.customerName) {
+        formData.append("clientName", bookingMetadata.customerName)
       }
-      // Adaugă clientTitle dacă este în metadata și necesar
 
-      console.log(
-        "Webhook: Se încearcă crearea rezervării pentru PaymentIntent:",
-        paymentIntent.id,
-        "cu datele:",
-        Object.fromEntries(formData),
-      )
+      // Calculăm zilele și suma din metadata sau din diferența de date
+      const startDate = new Date(bookingMetadata.startDate)
+      const endDate = new Date(bookingMetadata.endDate)
+      const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) || 1
+      const amount = paymentIntent.amount / 100 // Stripe folosește cenți
 
-      const bookingApiResult = await createBooking(formData)
+      console.log("Webhook: Se încearcă crearea rezervării complete pentru PaymentIntent:", paymentIntent.id, {
+        licensePlate: bookingMetadata.licensePlate,
+        startDate: startDateParts[0],
+        startTime: startDateParts[1]?.slice(0, 5),
+        endDate: endDateParts[0], 
+        endTime: endDateParts[1]?.slice(0, 5),
+        days,
+        amount,
+        customerEmail: bookingMetadata.customerEmail
+      })
 
-      if (bookingApiResult.success) {
-        console.log(
-          "Webhook: Rezervare creată cu succes prin API parcare:",
-          bookingApiResult.bookingNumber,
-          "pentru PaymentIntent:",
-          paymentIntent.id,
-        )
-        // Aici ai putea actualiza o bază de date locală cu numărul de rezervare de la API-ul de parcare
-        // și cu ID-ul tranzacției Stripe.
-        // De exemplu: await updateOrderWithBookingNumber(bookingMetadata.orderId, bookingApiResult.bookingNumber, paymentIntent.id);
+      // Folosim noua funcție care salvează totul în Firestore
+      const bookingResult = await createBookingWithFirestore(formData, {
+        clientEmail: bookingMetadata.customerEmail,
+        clientPhone: undefined, // Nu e în metadata momentan
+        paymentIntentId: paymentIntent.id,
+        paymentStatus: "paid",
+        amount: amount,
+        days: days,
+        source: "webhook"
+      })
+
+      // Verificăm dacă au reușit ambele operațiuni
+      const hasFirestoreSuccess = 'firestoreSuccess' in bookingResult ? bookingResult.firestoreSuccess : false
+      const bookingNumber = 'bookingNumber' in bookingResult ? bookingResult.bookingNumber : null
+      const firestoreId = 'firestoreId' in bookingResult ? bookingResult.firestoreId : null
+      const firestoreError = 'firestoreError' in bookingResult ? bookingResult.firestoreError : null
+
+      if (bookingResult.success && hasFirestoreSuccess) {
+        console.log("Webhook: Rezervare completă creată cu succes!", {
+          apiBookingNumber: bookingNumber,
+          firestoreId: firestoreId,
+          paymentIntentId: paymentIntent.id
+        })
+        
+        return NextResponse.json({ 
+          success: true, 
+          bookingNumber: bookingNumber,
+          firestoreId: firestoreId
+        }, { status: 200 })
+        
       } else {
-        console.error(
-          "Webhook Error: API-ul de parcare a returnat eroare:",
-          bookingApiResult.message,
-          "pentru PaymentIntent:",
-          paymentIntent.id,
-        )
-        // Gestionează eroarea - poate reîncercare, notificare admin etc.
+        console.error("Webhook Error: Rezervarea nu a reușit complet:", {
+          apiSuccess: bookingResult.success,
+          apiMessage: bookingResult.message,
+          firestoreSuccess: hasFirestoreSuccess,
+          firestoreError: firestoreError
+        })
+        
+        return NextResponse.json({ 
+          success: false, 
+          error: `API: ${bookingResult.message}, Firestore: ${firestoreError || 'OK'}` 
+        }, { status: 200 })
       }
+      
     } catch (error: any) {
-      console.error(
-        "Webhook Error: Eroare la apelarea createBooking:",
-        error.message,
-        "pentru PaymentIntent:",
-        paymentIntent.id,
-      )
-      // Gestionează eroarea
+      console.error("Webhook Error: Eroare la apelarea createBookingWithFirestore:", error.message, "pentru PaymentIntent:", paymentIntent.id)
+      
+      return NextResponse.json({ 
+        success: false, 
+        error: error.message 
+      }, { status: 200 })
     }
-  } else if (event.type === "payment_intent.payment_failed") {
+  }
+  
+  // Alte tipuri de evenimente Stripe
+  else if (event.type === "payment_intent.payment_failed") {
     const paymentIntent = event.data.object as Stripe.PaymentIntent
-    console.log(
-      "Webhook received: payment_intent.payment_failed",
-      paymentIntent.id,
-      paymentIntent.last_payment_error?.message,
-    )
+    console.log("Webhook received: payment_intent.payment_failed", paymentIntent.id, paymentIntent.last_payment_error?.message)
     // Gestionează eșecul plății (ex: notifică utilizatorul, anulează comanda etc.)
   } else {
     console.log(`Webhook unhandled event type: ${event.type}`)

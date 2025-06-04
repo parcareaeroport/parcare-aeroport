@@ -17,76 +17,179 @@ import {
   Cell,
   Legend,
 } from "recharts"
-import { Calendar, Car, CreditCard, Users } from "lucide-react"
+import { Calendar, Car, CreditCard, Users, RefreshCw } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ReservationLimitManager } from "@/components/admin/reservation-limit-manager" // Importă noua componentă
-
-// Date mock pentru statistici (rămân aici sau pot fi mutate dacă sunt specifice altor carduri)
-const revenueData = [
-  { name: "Ian", value: 12500 },
-  { name: "Feb", value: 14200 },
-  { name: "Mar", value: 16800 },
-  { name: "Apr", value: 18900 },
-  { name: "Mai", value: 21500 },
-  { name: "Iun", value: 25800 },
-  { name: "Iul", value: 31200 },
-  { name: "Aug", value: 29800 },
-  { name: "Sep", value: 24500 },
-  { name: "Oct", value: 19800 },
-  { name: "Nov", value: 16500 },
-  { name: "Dec", value: 15200 },
-]
-
-const bookingsData = [
-  { name: "Ian", value: 125 },
-  { name: "Feb", value: 142 },
-  { name: "Mar", value: 168 },
-  { name: "Apr", value: 189 },
-  { name: "Mai", value: 215 },
-  { name: "Iun", value: 258 },
-  { name: "Iul", value: 312 },
-  { name: "Aug", value: 298 },
-  { name: "Sep", value: 245 },
-  { name: "Oct", value: 198 },
-  { name: "Nov", value: 165 },
-  { name: "Dec", value: 152 },
-]
-
-const occupancyData = [
-  { name: "Ocupat", value: 72 },
-  { name: "Liber", value: 28 },
-]
+import { ReservationLimitManager } from "@/components/admin/reservation-limit-manager"
+import {
+  getDashboardStats,
+  getMonthlyRevenueData,
+  getMonthlyBookingsData,
+  getBookingStatusData,
+  getOccupancyData,
+  getRecentBookings,
+  type DashboardStats,
+  type MonthlyStats,
+  type BookingStatusStats,
+  type OccupancyStats,
+  type RecentBooking
+} from "@/lib/admin-stats"
+import { Button } from "@/components/ui/button"
 
 const COLORS = ["#22c55e", "#e5e7eb"]
-
-const bookingStatusData = [
-  { name: "Confirmate", value: 65 },
-  { name: "În așteptare", value: 15 },
-  { name: "Anulate", value: 20 },
-]
-
 const STATUS_COLORS = ["#22c55e", "#f59e0b", "#ef4444"]
 
 export default function DashboardPage() {
   const [isClient, setIsClient] = useState(false)
+  const [loading, setLoading] = useState(true)
+  
+  // State pentru toate datele
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
+    totalRevenue: 0,
+    totalBookings: 0,
+    totalClients: 0,
+    currentOccupancy: 0,
+    revenueGrowth: '0%',
+    bookingsGrowth: '0%',
+    clientsGrowth: '0%'
+  })
+  
+  const [revenueData, setRevenueData] = useState<MonthlyStats[]>([])
+  const [bookingsData, setBookingsData] = useState<MonthlyStats[]>([])
+  const [bookingStatusData, setBookingStatusData] = useState<BookingStatusStats[]>([])
+  const [occupancyData, setOccupancyData] = useState<OccupancyStats[]>([])
+  const [recentBookings, setRecentBookings] = useState<RecentBooking[]>([])
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
-  // State-ul și useEffect-urile pentru ReservationLimitManager au fost mutate în componenta dedicată.
+  useEffect(() => {
+    if (isClient) {
+      loadAllData()
+    }
+  }, [isClient])
+
+  const loadAllData = async () => {
+    try {
+      setLoading(true)
+      
+      // Încarcă toate datele în paralel
+      const [
+        stats,
+        monthlyRevenue,
+        monthlyBookings,
+        statusData,
+        occupancy,
+        recent
+      ] = await Promise.all([
+        getDashboardStats(),
+        getMonthlyRevenueData(),
+        getMonthlyBookingsData(),
+        getBookingStatusData(),
+        getOccupancyData(),
+        getRecentBookings()
+      ])
+
+      setDashboardStats(stats)
+      setRevenueData(monthlyRevenue)
+      setBookingsData(monthlyBookings)
+      setBookingStatusData(statusData)
+      setOccupancyData(occupancy)
+      setRecentBookings(recent)
+      
+    } catch (error) {
+      console.error('Error loading dashboard data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('ro-RO', {
+      style: 'currency',
+      currency: 'RON',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount)
+  }
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return 'N/A'
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('ro-RO', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    })
+  }
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+      case 'paid':
+        return 'Confirmată'
+      case 'cancelled':
+        return 'Anulată'
+      default:
+        return 'În așteptare'
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+      case 'paid':
+        return 'text-green-600'
+      case 'cancelled':
+        return 'text-red-600'
+      default:
+        return 'text-yellow-600'
+    }
+  }
 
   if (!isClient) {
-    return null // Sau un loader global pentru pagină
+    return null
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-8 w-24 bg-gray-200 rounded animate-pulse mb-2"></div>
+                <div className="h-3 w-32 bg-gray-200 rounded animate-pulse"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+        <Button 
+          onClick={loadAllData} 
+          disabled={loading}
+          variant="outline"
+          size="sm"
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          {loading ? 'Se încarcă...' : 'Actualizează'}
+        </Button>
       </div>
 
-      {/* Aici randăm noua componentă */}
       <ReservationLimitManager />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -96,8 +199,11 @@ export default function DashboardPage() {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">247,500 RON</div>
-            <p className="text-xs text-muted-foreground">+20.1% față de anul trecut</p>
+            <div className="text-2xl font-bold">{formatCurrency(dashboardStats.totalRevenue)}</div>
+            <p className="text-xs text-muted-foreground">
+              {dashboardStats.revenueGrowth.startsWith('-') ? '' : '+'}
+              {dashboardStats.revenueGrowth} față de anul trecut
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -106,8 +212,11 @@ export default function DashboardPage() {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2,350</div>
-            <p className="text-xs text-muted-foreground">+15.2% față de anul trecut</p>
+            <div className="text-2xl font-bold">{dashboardStats.totalBookings.toLocaleString('ro-RO')}</div>
+            <p className="text-xs text-muted-foreground">
+              {dashboardStats.bookingsGrowth.startsWith('-') ? '' : '+'}
+              {dashboardStats.bookingsGrowth} față de anul trecut
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -116,8 +225,11 @@ export default function DashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,274</div>
-            <p className="text-xs text-muted-foreground">+4.5% față de anul trecut</p>
+            <div className="text-2xl font-bold">{dashboardStats.totalClients.toLocaleString('ro-RO')}</div>
+            <p className="text-xs text-muted-foreground">
+              {dashboardStats.clientsGrowth.startsWith('-') ? '' : '+'}
+              {dashboardStats.clientsGrowth} față de anul trecut
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -126,8 +238,8 @@ export default function DashboardPage() {
             <Car className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">72%</div>
-            <p className="text-xs text-muted-foreground">72 din 100 locuri ocupate</p>
+            <div className="text-2xl font-bold">{dashboardStats.currentOccupancy}%</div>
+            <p className="text-xs text-muted-foreground">{dashboardStats.currentOccupancy} din 100 locuri ocupate</p>
           </CardContent>
         </Card>
       </div>
@@ -151,7 +263,7 @@ export default function DashboardPage() {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis />
-                    <Tooltip formatter={(value) => [`${value} RON`, "Venit"]} />
+                    <Tooltip formatter={(value) => [`${formatCurrency(Number(value))}`, "Venit"]} />
                     <Bar dataKey="value" fill="#22c55e" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -220,28 +332,66 @@ export default function DashboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Rezervări Recente</CardTitle>
-                <CardDescription>Ultimele 5 rezervări efectuate</CardDescription>
+                <CardDescription>Ultimele {recentBookings.length} rezervări efectuate</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-sm font-medium">B-123-ABC</p>
-                      <p className="text-xs text-muted-foreground">Popescu Ion</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm">23-25 Mai 2023</p>
-                      <p className="text-xs text-green-600">Confirmată</p>
-                    </div>
-                  </div>
-                  {/* Restul rezervărilor recente mock... */}
+                  {recentBookings.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Nu există rezervări recente.</p>
+                  ) : (
+                    recentBookings.map((booking) => (
+                      <div key={booking.id} className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium">{booking.licensePlate}</p>
+                          <p className="text-xs text-muted-foreground">{booking.clientName}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm">
+                            {formatDate(booking.startDate)} - {formatDate(booking.endDate)}
+                          </p>
+                          <p className={`text-xs ${getStatusColor(booking.status)}`}>
+                            {getStatusLabel(booking.status)}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>
           </div>
         </TabsContent>
         <TabsContent value="occupancy" className="space-y-4">
-          {/* Restul tab-ului de ocupare... */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Ocupare Curentă</CardTitle>
+              <CardDescription>Distribuția locurilor de parcare la momentul actual</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={occupancyData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {occupancyData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => [`${value}%`, ""]} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

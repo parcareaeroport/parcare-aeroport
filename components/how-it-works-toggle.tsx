@@ -92,7 +92,7 @@ export default function HowItWorksToggle() {
             <div className="relative">
               <div className="absolute -z-10 w-48 sm:w-72 h-48 sm:h-72 bg-waze-blue/10 rounded-full blur-3xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
               <Image
-                src="/placeholder.svg?key=parking-entry-modern"
+                src="/parcare_langa_aeroportul_otopeni_intrare.jpg"
                 alt="Intrare în parcare"
                 width={450}
                 height={550}
@@ -153,7 +153,7 @@ export default function HowItWorksToggle() {
             <div className="relative">
               <div className="absolute -z-10 w-48 sm:w-72 h-48 sm:h-72 bg-waze-blue/10 rounded-full blur-3xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
               <Image
-                src="/placeholder.svg?key=parking-exit-modern"
+                src="/parcare_langa_aeroportul_otopeni_iesire.jpg"
                 alt="Ieșire din parcare"
                 width={450}
                 height={550}

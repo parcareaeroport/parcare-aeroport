@@ -385,12 +385,12 @@ export default function ReservationForm() {
           <Popover open={openCalendar === "start"} onOpenChange={open => setOpenCalendar(open ? "start" : null)}>
             <PopoverTrigger asChild>
               <Button
-                variant="outline"
-                className="w-full justify-start text-left font-normal h-10"
+                variant="ghost"
+                className="w-full justify-start text-left font-normal h-10 border border-gray-200 bg-white hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 hover:bg-white focus:bg-white text-gray-900 hover:text-gray-900"
                 type="button"
                 onClick={() => setOpenCalendar("start")}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
+                <CalendarIcon className="mr-2 h-4 w-4 text-gray-500" />
                 {startDate ? format(startDate, "PPP", { locale: ro }) : "Selectează data"}
               </Button>
             </PopoverTrigger>
@@ -411,12 +411,12 @@ export default function ReservationForm() {
           <Popover open={openCalendar === "end"} onOpenChange={open => setOpenCalendar(open ? "end" : null)}>
             <PopoverTrigger asChild>
               <Button
-                variant="outline"
-                className="w-full justify-start text-left font-normal h-10"
+                variant="ghost"
+                className="w-full justify-start text-left font-normal h-10 border border-gray-200 bg-white hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 hover:bg-white focus:bg-white text-gray-900 hover:text-gray-900"
                 type="button"
                 onClick={() => setOpenCalendar("end")}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
+                <CalendarIcon className="mr-2 h-4 w-4 text-gray-500" />
                 {endDate ? format(endDate, "PPP", { locale: ro }) : "Selectează data"}
               </Button>
             </PopoverTrigger>
@@ -437,11 +437,11 @@ export default function ReservationForm() {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant="outline"
-                className="w-full justify-start text-left font-normal h-10"
+                variant="ghost"
+                className="w-full justify-start text-left font-normal h-10 border border-gray-200 bg-white hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 hover:bg-white focus:bg-white text-gray-900 hover:text-gray-900"
                 type="button"
               >
-                <Clock className="mr-2 h-4 w-4" />
+                <Clock className="mr-2 h-4 w-4 text-gray-500" />
                 {startTime}
               </Button>
             </PopoverTrigger>
@@ -459,11 +459,11 @@ export default function ReservationForm() {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant="outline"
-                className="w-full justify-start text-left font-normal h-10"
+                variant="ghost"
+                className="w-full justify-start text-left font-normal h-10 border border-gray-200 bg-white hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 hover:bg-white focus:bg-white text-gray-900 hover:text-gray-900"
                 type="button"
               >
-                <Clock className="mr-2 h-4 w-4" />
+                <Clock className="mr-2 h-4 w-4 text-gray-500" />
                 {endTime}
               </Button>
             </PopoverTrigger>
@@ -483,7 +483,7 @@ export default function ReservationForm() {
             type="text"
             value={licensePlate}
             onChange={e => setLicensePlate(e.target.value.toUpperCase())}
-            className="rounded-lg border-gray-200 text-base px-3 py-2 focus:ring-2 focus:ring-[#ff0066] h-10"
+            className="rounded-lg border-gray-200 text-base px-3 py-2 hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 focus:outline-none h-10"
             placeholder="B 00 ABC"
             required
           />

@@ -9,7 +9,7 @@ export default function VideoSection() {
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('/placeholder.svg?key=airport-night-view-modern')",
+          backgroundImage: "url('/parcare_otopeni_reguli_parcare_sosire.jpg')",
           filter: "brightness(0.6)",
         }}
       ></div>

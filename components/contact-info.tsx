@@ -80,8 +80,8 @@ export default function ContactInfo() {
                 {card.title === "Locație" && <LocationIcon />}
               </div>
               <h3 className="text-xl font-semibold mb-4 text-center">{card.title}</h3>
-              
-              <div className="space-y-2 mb-4 flex-grow">
+
+                <div className="space-y-2 mb-4 flex-grow">
                 {card.items.map((item, itemIndex) => (
                   <div key={itemIndex} className="text-center">
                     <p className="text-sm text-slate-600 mb-1">{item.label}</p>
@@ -93,11 +93,11 @@ export default function ContactInfo() {
                       }`}
                       onClick={() => isClickable(card.title) ? handleItemClick(card.title, item.value) : undefined}
                     >
-                      {item.value}
+                          {item.value}
                     </p>
-                  </div>
-                ))}
-              </div>
+                </div>
+                  ))}
+                </div>
               
               {isClickable(card.title) && (
                 <button
@@ -116,7 +116,7 @@ export default function ContactInfo() {
                   {card.title === "Email" && "Trimite email"}
                   {card.title === "Locație" && "Vezi pe hartă"}
                 </button>
-              )}
+                )}
             </div>
           ))}
         </div>

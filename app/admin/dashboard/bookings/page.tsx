@@ -47,17 +47,35 @@ interface Booking {
   clientName?: string
   clientEmail?: string
   clientPhone?: string
+  clientTitle?: string
   startDate: string // YYYY-MM-DD
   startTime: string // HH:mm
   endDate: string // YYYY-MM-DD
   endTime: string // HH:mm
-  status: "confirmed_test" | "confirmed_paid" | "cancelled_by_admin" | "cancelled_by_api" | "api_error" | string // status intern
-  paymentStatus?: "paid" | "pending" | "refunded" | "n/a"
+  
+  // Date calculate
+  durationMinutes: number
+  days?: number
   amount?: number
-  createdAt: Timestamp // Firestore Timestamp
+  
+  // Status și plată
+  status: "confirmed_test" | "confirmed_paid" | "cancelled_by_admin" | "cancelled_by_api" | "api_error" | string
+  paymentStatus?: "paid" | "pending" | "refunded" | "n/a"
   paymentIntentId?: string
+  
+  // Date API externe
   apiBookingNumber?: string // Numărul de la API-ul de parcare
-  apiResponseMessage?: string
+  apiSuccess?: boolean
+  apiErrorCode?: string
+  apiMessage?: string
+  apiRequestPayload?: string
+  apiResponseRaw?: string
+  apiRequestTimestamp?: Timestamp
+  
+  // Metadata sistem
+  source?: "webhook" | "test_mode" | "manual"
+  createdAt: Timestamp // Firestore Timestamp
+  lastUpdated?: Timestamp
 }
 
 function BookingsPageContent() {
@@ -149,7 +167,7 @@ function BookingsPageContent() {
         const bookingDocRef = doc(db, "bookings", booking.id)
         await updateDoc(bookingDocRef, {
           status: "cancelled_by_admin", // Sau un status mai specific
-          apiResponseMessage: result.message, // Salvează mesajul de la API
+          apiMessage: result.message, // Salvează mesajul de la API
         })
         // OPTIMIZARE: Decrementez contorul de rezervări active
         const statsDocRef = doc(db, "config", "reservationStats")
@@ -168,7 +186,7 @@ function BookingsPageContent() {
         })
         // Opțional: actualizează statusul local pentru a reflecta eroarea API
         const bookingDocRef = doc(db, "bookings", booking.id)
-        await updateDoc(bookingDocRef, { status: "api_error_cancel", apiResponseMessage: result.message })
+        await updateDoc(bookingDocRef, { status: "api_error_cancel", apiMessage: result.message })
         fetchBookings()
       }
     } catch (error) {
@@ -413,9 +431,9 @@ function BookingsPageContent() {
                       ? formatDateFn(selectedBooking.createdAt.toDate(), "dd MMM yyyy, HH:mm:ss", { locale: ro })
                       : "N/A"}
                   </p>
-                  {selectedBooking.apiResponseMessage && (
+                  {selectedBooking.apiMessage && (
                     <p>
-                      <strong>Mesaj API:</strong> {selectedBooking.apiResponseMessage}
+                      <strong>Mesaj API:</strong> {selectedBooking.apiMessage}
                     </p>
                   )}
                 </div>

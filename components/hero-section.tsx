@@ -10,7 +10,7 @@ const SLIDES = [
     headline: "Parcare aeroport Otopeni",
     subheadline:
       "Parcarea ta inteligentă și sigură, la doar 3 minute de aeroportul Otopeni. Confort garantat, transfer rapid și zero stres, la un preț avantajos. Pentru călătoria ta perfectă!",
-    image: "/parking-lot-cars.png",
+    image: "/parcare_aeroport_otopeni_slider.jpg",
     alt: "Parcare Otopeni lângă Aeroportul Henri Coandă - vedere panoramică a parcării asfaltate"
   },
   // Poți adăuga mai multe slide-uri aici cu alte imagini și texte
@@ -18,7 +18,7 @@ const SLIDES = [
     headline: "Parcare cu transfer rapid",
     subheadline:
       "Transfer gratuit la aeroport, pază 24/7 și locuri asfaltate. Rezervă online și călătorește fără griji!",
-    image: "/parking-lot-cars.png",
+    image: "/parcare_aeroport_otopeni_slider.jpg",
     alt: "Parcare cu transfer rapid la aeroport Otopeni"
   }
 ]
