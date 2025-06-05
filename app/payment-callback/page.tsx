@@ -44,8 +44,13 @@ export default function PaymentCallbackPage() {
           // Salvăm rezultatul în sessionStorage
           sessionStorage.setItem("bookingResult", JSON.stringify(bookingResult))
 
-          // Redirecționăm către pagina de confirmare
-          router.push("/confirmare")
+          // Redirecționăm către pagina de confirmare CU parametrii de plată
+          const confirmationUrl = new URL("/confirmare", window.location.origin)
+          confirmationUrl.searchParams.set("payment_intent", paymentIntentId)
+          confirmationUrl.searchParams.set("payment_intent_client_secret", paymentIntentClientSecret)
+          confirmationUrl.searchParams.set("redirect_status", "succeeded")
+          
+          router.push(confirmationUrl.toString())
         } else {
           // Plata a eșuat sau a fost anulată
           toast({

@@ -377,7 +377,13 @@ export default function OrderPlacementForm() {
       }
 
       sessionStorage.setItem("bookingResult", JSON.stringify(bookingResult))
-      router.push("/confirmare")
+      
+      // Redirectăm cu parametrii PaymentIntent pentru compatibilitate
+      const confirmationUrl = new URL("/confirmare", window.location.origin)
+      confirmationUrl.searchParams.set("payment_intent", paymentIntentId)
+      confirmationUrl.searchParams.set("redirect_status", "succeeded")
+      
+      router.push(confirmationUrl.toString())
     }
   }
 
