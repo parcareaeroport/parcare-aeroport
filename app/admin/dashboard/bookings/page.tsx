@@ -40,6 +40,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/context/auth-context"
 import { cancelBooking as cancelParkingApiBooking } from "@/app/actions/booking-actions" // Acțiunea server pentru API parcare
+import { recoverSpecificBooking } from "@/app/actions/booking-recovery" // Recovery pentru rezervări eșuate
 
 interface Booking {
   id: string // Firestore document ID
@@ -90,6 +91,7 @@ function BookingsPageContent() {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isCancelling, setIsCancelling] = useState(false)
+  const [isRecovering, setIsRecovering] = useState(false)
 
   const fetchBookings = async () => {
     setIsLoading(true)
@@ -198,6 +200,48 @@ function BookingsPageContent() {
       })
     } finally {
       setIsCancelling(false)
+    }
+  }
+
+  const handleRecoverBooking = async (booking: Booking) => {
+    if (booking.status !== "api_error" || booking.paymentStatus !== "paid") {
+      toast({
+        title: "Rezervarea nu poate fi recuperată",
+        description: "Doar rezervările cu plata procesată și API eșuat pot fi recuperate.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsRecovering(true)
+    try {
+      const result = await recoverSpecificBooking(booking.id)
+      
+      if (result.success) {
+        toast({
+          title: "Recovery Reușit",
+          description: `Rezervarea a fost recuperată cu numărul ${result.bookingNumber}`,
+        })
+        
+        fetchBookings() // Reîncarcă lista
+        if (isViewDialogOpen) setIsViewDialogOpen(false)
+        
+      } else {
+        toast({
+          title: "Recovery Eșuat",
+          description: result.message,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error recovering booking:", error)
+      toast({
+        title: "Eroare Recovery",
+        description: "A apărut o eroare la procesul de recovery.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsRecovering(false)
     }
   }
 
@@ -365,6 +409,22 @@ function BookingsPageContent() {
                             <DropdownMenuItem onClick={() => handleViewBooking(booking)}>
                               <Eye className="mr-2 h-4 w-4" /> Vizualizează
                             </DropdownMenuItem>
+                            {booking.status === "api_error" && booking.paymentStatus === "paid" && (
+                              <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  onClick={() => handleRecoverBooking(booking)}
+                                  className="text-blue-600 focus:text-blue-600"
+                                  disabled={isRecovering}
+                                >
+                                  {isRecovering && selectedBooking?.id === booking.id ? (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  ) : null}
+                                  Recuperează Rezervarea
+                                </DropdownMenuItem>
+                              </>
+                            )}
+                            
                             {booking.status !== "cancelled_by_admin" &&
                               booking.status !== "cancelled_by_api" &&
                               booking.apiBookingNumber && (

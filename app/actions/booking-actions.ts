@@ -380,15 +380,27 @@ export async function createBooking(formData: FormData) {
     // Create Basic Auth header
     const authHeader = `Basic ${Buffer.from(`${API_CONFIG.username}:${API_CONFIG.password}`).toString("base64")}`
 
-    // Make API request
-    const response = await fetch(API_CONFIG.url, {
-      method: "POST",
-      headers: {
-        Authorization: authHeader,
-        "Content-Type": "text/xml",
-      },
-      body: xmlPayload,
-    })
+    // Make API request with extended timeout (45 seconds for webhook compatibility)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 45000) // 45 secunde timeout
+
+    let response: Response
+    try {
+      response = await fetch(API_CONFIG.url, {
+        method: "POST",
+        headers: {
+          Authorization: authHeader,
+          "Content-Type": "text/xml",
+        },
+        body: xmlPayload,
+        signal: controller.signal,
+      })
+      clearTimeout(timeoutId)
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      console.error("API Fetch Error:", fetchError)
+      throw fetchError
+    }
 
     // Parse XML response
     const responseText = await response.text()
@@ -587,21 +599,33 @@ export async function cancelBooking(bookingNumber: string) {
     // Create Basic Auth header
     const authHeader = `Basic ${Buffer.from(`${API_CONFIG.username}:${API_CONFIG.password}`).toString("base64")}`
 
-    // Make API request
-    const response = await fetch(API_CONFIG.url, {
-      method: "POST",
-      headers: {
-        Authorization: authHeader,
-        "Content-Type": "text/xml",
-      },
-      body: xmlPayload,
-    })
+    // Make API request with extended timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 45000) // 45 secunde timeout
 
-    if (!response.ok) {
-      return {
-        success: false,
-        message: `Eroare de server: ${response.status} ${response.statusText}`,
+    let response: Response
+    try {
+      response = await fetch(API_CONFIG.url, {
+        method: "POST",
+        headers: {
+          Authorization: authHeader,
+          "Content-Type": "text/xml",
+        },
+        body: xmlPayload,
+        signal: controller.signal,
+      })
+      clearTimeout(timeoutId)
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: `Eroare de server: ${response.status} ${response.statusText}`,
+        }
       }
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      console.error("API Cancel Fetch Error:", fetchError)
+      throw fetchError
     }
 
     // Parse XML response
