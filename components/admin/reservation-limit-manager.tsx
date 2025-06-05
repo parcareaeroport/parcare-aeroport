@@ -6,10 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { Settings, Save, Loader2, Power, PowerOff } from "lucide-react"
+import { Settings, Save, Loader2, Power, PowerOff, AlertTriangle, RefreshCw } from "lucide-react"
 import { db } from "@/lib/firebase"
-import { doc, setDoc, onSnapshot, collection, query, getCountFromServer, where } from "firebase/firestore"
+import { doc, setDoc, onSnapshot, collection, query, getCountFromServer, where, getDocs, updateDoc, serverTimestamp, increment } from "firebase/firestore"
 import { useToast } from "@/components/ui/use-toast"
+import { Badge } from "@/components/ui/badge"
+import { Label } from "@/components/ui/label"
 
 export function ReservationLimitManager() {
   const { toast } = useToast()
@@ -67,15 +69,39 @@ export function ReservationLimitManager() {
   }, [toast])
 
   /*──────────────────────────────────┐
-  │   SNAPSHOT: rezervări active     │
+  │   SNAPSHOT: rezervări active (smart)│
   └──────────────────────────────────*/
   useEffect(() => {
     const col = collection(db, "bookings")
-    const q = query(col, where("status", "!=", "cancelled"))
-    const unsub = onSnapshot(q, async () => {
-      const snap = await getCountFromServer(q)
-      setActiveBookings(snap.data().count)
+    
+    // Query mai inteligent: excludem rezervările expirate, anulate și cu erori
+    const q = query(col, where("status", "in", ["confirmed_paid", "confirmed_test", "confirmed", "paid"]))
+    
+    const unsub = onSnapshot(q, async (snapshot) => {
+      // Calculăm în timp real rezervările care sunt cu adevărat active ACUM
+      const now = new Date()
+      let reallyActiveCount = 0
+      
+      snapshot.forEach(doc => {
+        const booking = doc.data()
+        const endDateTime = new Date(`${booking.endDate}T${booking.endTime}:00`)
+        
+        // Verifică dacă rezervarea este încă activă (nu a expirat)
+        if (endDateTime > now) {
+          reallyActiveCount++
+        }
+      })
+      
+      setActiveBookings(reallyActiveCount)
+      
+      // Debug pentru transparență
+      console.log('📊 Smart active bookings count:', {
+        totalWithActiveStatus: snapshot.size,
+        reallyActiveNow: reallyActiveCount,
+        currentTime: now.toISOString()
+      })
     })
+    
     return () => unsub()
   }, [])
 
@@ -128,6 +154,82 @@ export function ReservationLimitManager() {
     }
   }
 
+  /**
+   * Cleanup manual pentru rezervările expirate
+   */
+  const handleExpiredCleanup = async () => {
+    setLoadingSettings(true)
+    try {
+      const now = new Date()
+      const currentDateStr = now.toISOString().split('T')[0] // YYYY-MM-DD
+      
+      console.log('🧹 Manual cleanup for expired bookings at:', currentDateStr)
+      
+      const bookingsRef = collection(db, 'bookings')
+      
+      // Query pentru rezervările care ar trebui să fie active dar poate au expirat
+      const potentiallyExpiredQuery = query(
+        bookingsRef,
+        where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']),
+        where('endDate', '<=', currentDateStr) // Toate rezervările care se termină astăzi sau în trecut
+      )
+      
+      const snapshot = await getDocs(potentiallyExpiredQuery)
+      let expiredCount = 0
+      
+      for (const docSnapshot of snapshot.docs) {
+        const booking = docSnapshot.data()
+        const endDateTime = new Date(`${booking.endDate}T${booking.endTime}:00`)
+        
+        if (endDateTime <= now) {
+          // Marchează rezervarea ca expirată
+          await updateDoc(docSnapshot.ref, {
+            status: 'expired',
+            expiredAt: serverTimestamp(),
+            lastUpdated: serverTimestamp()
+          })
+          
+          expiredCount++
+          console.log('⏰ Manually marked booking as expired:', {
+            id: docSnapshot.id,
+            licensePlate: booking.licensePlate,
+            endDate: booking.endDate,
+            endTime: booking.endTime
+          })
+        }
+      }
+      
+      if (expiredCount > 0) {
+        // Actualizează statisticile - scade numărul de rezervări active
+        const statsDocRef = doc(db, "config", "reservationStats")
+        await updateDoc(statsDocRef, {
+          activeBookingsCount: increment(-expiredCount),
+          lastUpdated: serverTimestamp()
+        })
+        
+        toast({
+          title: "Cleanup Finalizat",
+          description: `Au fost marcate ${expiredCount} rezervări ca expirate.`,
+        })
+      } else {
+        toast({
+          title: "Cleanup Complet",
+          description: "Nu au fost găsite rezervări expirate de curățat.",
+        })
+      }
+      
+    } catch (error) {
+      console.error('❌ Error during manual cleanup:', error)
+      toast({
+        title: "Eroare Cleanup",
+        description: "A apărut o eroare la curățarea rezervărilor expirate.",
+        variant: "destructive",
+      })
+    } finally {
+      setLoadingSettings(false)
+    }
+  }
+
   /*──────────────────────────────────┐
   │   DERIVED                        │
   └──────────────────────────────────*/
@@ -141,76 +243,105 @@ export function ReservationLimitManager() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Settings className="h-5 w-5" /> Management Rezervări
-        </CardTitle>
-        <CardDescription>Configurați limita maximă și activați/ dezactivați sistemul de rezervări.</CardDescription>
+        <CardTitle>Limită Rezervări & Cleanup</CardTitle>
+        <CardDescription>
+          Gestionează numărul maxim de rezervări și curăță rezervările expirate
+        </CardDescription>
       </CardHeader>
-
       <CardContent className="space-y-6">
-        {/* Limită maximă */}
-        <div>
-          <label htmlFor="maxReservations" className="block text-sm font-medium mb-1">
-            Limită Maximă Rezervări
-          </label>
-          <div className="flex items-end gap-4">
+        {/* Reservations Toggle */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <Label htmlFor="reservations-enabled">Rezervări Active</Label>
+            <p className="text-sm text-muted-foreground">
+              Activează sau dezactivează posibilitatea de a face rezervări noi
+            </p>
+          </div>
+          <Switch
+            id="reservations-enabled"
+            checked={reservationsEnabled ?? false}
+            onCheckedChange={toggleEnabled}
+            disabled={loadingSettings}
+          />
+        </div>
+
+        {/* Current Status */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Rezervări Active Acum</Label>
+            <div className="flex items-center space-x-2">
+              <Badge variant={(activeBookings ?? 0) >= (currentLimit ?? 0) ? "destructive" : "secondary"}>
+                {activeBookings ?? 0} / {currentLimit ?? 0}
+              </Badge>
+              {(activeBookings ?? 0) >= (currentLimit ?? 0) && (
+                <AlertTriangle className="h-4 w-4 text-destructive" />
+              )}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Status Rezervări</Label>
+            <Badge variant={reservationsEnabled ? "default" : "secondary"}>
+              {reservationsEnabled ? "ACTIVE" : "DEZACTIVATE"}
+            </Badge>
+          </div>
+        </div>
+
+        {/* Limit Management */}
+        <div className="space-y-2">
+          <Label htmlFor="max-reservations">Limită Maximă Rezervări</Label>
+          <div className="flex space-x-2">
             <Input
-              id="maxReservations"
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
+              id="max-reservations"
+              type="number"
+              min="0"
+              max="1000"
               value={maxInput}
               onChange={onLimitChange}
               placeholder="Ex: 100"
-              disabled={disabledAll}
-              className="flex-grow"
+              disabled={loadingSettings}
             />
-            <Button onClick={saveLimit} disabled={!limitDirty || disabledAll}>
-              {savingLimit ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-              Salvează
+            <Button onClick={saveLimit} disabled={loadingSettings || !limitDirty}>
+              {loadingSettings ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvează"}
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Setează 0 pentru rezervări nelimitate. Limita se aplică doar rezervărilor active (neexpirate).
+          </p>
+        </div>
+
+        {/* Expired Bookings Cleanup */}
+        <div className="border-t pt-4">
+          <div className="space-y-2">
+            <Label>Curățare Rezervări Expirate</Label>
+            <p className="text-sm text-muted-foreground">
+              Marchează automat rezervările expirate pentru a elibera locurile ocupate
+            </p>
+            <Button 
+              onClick={handleExpiredCleanup} 
+              disabled={loadingSettings}
+              variant="outline"
+              className="w-full"
+            >
+              {loadingSettings ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <RefreshCw className="h-4 w-4 mr-2" />
+              )}
+              Curăță Rezervările Expirate
             </Button>
           </div>
         </div>
 
-        <div className="border-t" />
-
-        {/* Toggle rezervări */}
-        <div>
-          <label htmlFor="reservationsEnabledSwitch" className="block text-sm font-medium mb-2">
-            Status Sistem Rezervări
-          </label>
-          {loadingSettings ? (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Se încarcă…
-            </div>
-          ) : (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {reservationsEnabled ? (
-                  <Power className="h-5 w-5 text-green-500" />
-                ) : (
-                  <PowerOff className="h-5 w-5 text-red-500" />
-                )}
-                <span className={`text-sm font-semibold ${reservationsEnabled ? "text-green-600" : "text-red-600"}`}>
-                  {reservationsEnabled ? "Rezervări ACTIVE" : "Rezervări OPRITE"}
-                </span>
-              </div>
-
-              <Switch
-                id="reservationsEnabledSwitch"
-                checked={reservationsEnabled ?? false}
-                onCheckedChange={toggleEnabled}
-                disabled={disabledAll}
-              />
-            </div>
-          )}
+        {/* Info Box */}
+        <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+          <h4 className="text-sm font-medium text-blue-900 mb-1">ℹ️ Cum funcționează</h4>
+          <ul className="text-xs text-blue-800 space-y-1">
+            <li>• Rezervările active = doar cele care nu au expirat încă</li>
+            <li>• Rezervările expirate sunt marcate automat ca "expired"</li>
+            <li>• Cleanup-ul manual verifică și curăță rezervările expirate</li>
+            <li>• Limita se aplică doar rezervărilor cu adevărat active</li>
+          </ul>
         </div>
-
-        {/* Statistici */}
-        <p className="text-sm text-muted-foreground pt-2">
-          Rezervări active curente: <strong className="text-primary">{activeBookings ?? "—"}</strong> /{' '}
-          <strong className="text-primary">{currentLimit ?? "—"}</strong>
-        </p>
       </CardContent>
     </Card>
   )

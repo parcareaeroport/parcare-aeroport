@@ -658,3 +658,92 @@ export async function cancelBooking(bookingNumber: string) {
     }
   }
 }
+
+/**
+ * Funcție publică pentru curățarea rezervărilor expirate
+ * Poate fi apelată manual sau programatic din alte părți ale aplicației
+ */
+export async function cleanupExpiredBookings(): Promise<{ cleanedCount: number, errors: string[] }> {
+  const errors: string[] = []
+  let cleanedCount = 0
+  
+  try {
+    const now = new Date()
+    const currentDateStr = now.toISOString().split('T')[0] // YYYY-MM-DD
+    
+    console.log('🧹 Starting cleanup of expired bookings at:', currentDateStr)
+    
+    const bookingsRef = collection(db, 'bookings')
+    
+    // Query pentru rezervările care ar trebui să fie active dar poate au expirat
+    const potentiallyExpiredQuery = query(
+      bookingsRef,
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']),
+      where('endDate', '<=', currentDateStr) // Toate rezervările care se termină astăzi sau în trecut
+    )
+    
+    const snapshot = await getDocs(potentiallyExpiredQuery)
+    const expiredBookings = []
+    
+    for (const docSnapshot of snapshot.docs) {
+      try {
+        const booking = docSnapshot.data()
+        const endDateTime = new Date(`${booking.endDate}T${booking.endTime}:00`)
+        
+        if (endDateTime <= now) {
+          // Marchează rezervarea ca expirată
+          await updateDoc(docSnapshot.ref, {
+            status: 'expired',
+            expiredAt: serverTimestamp(),
+            lastUpdated: serverTimestamp()
+          })
+          
+          expiredBookings.push({
+            id: docSnapshot.id,
+            licensePlate: booking.licensePlate,
+            endDate: booking.endDate,
+            endTime: booking.endTime
+          })
+          
+          cleanedCount++
+          console.log('⏰ Marked booking as expired:', {
+            id: docSnapshot.id,
+            licensePlate: booking.licensePlate,
+            endDate: booking.endDate,
+            endTime: booking.endTime
+          })
+        }
+      } catch (error) {
+        const errorMessage = `Failed to update booking ${docSnapshot.id}: ${error instanceof Error ? error.message : String(error)}`
+        errors.push(errorMessage)
+        console.error('❌ Error updating individual booking:', errorMessage)
+      }
+    }
+    
+    if (cleanedCount > 0) {
+      try {
+        // Actualizează statisticile - scade numărul de rezervări active
+        const statsDocRef = doc(db, "config", "reservationStats")
+        await updateDoc(statsDocRef, {
+          activeBookingsCount: increment(-cleanedCount),
+          lastUpdated: serverTimestamp()
+        })
+        console.log(`✅ Updated stats: decreased active count by ${cleanedCount}`)
+      } catch (error) {
+        const errorMessage = `Failed to update reservation stats: ${error instanceof Error ? error.message : String(error)}`
+        errors.push(errorMessage)
+        console.error('❌ Error updating stats:', errorMessage)
+      }
+    }
+    
+    console.log(`🧹 Cleanup completed: ${cleanedCount} bookings marked as expired, ${errors.length} errors`)
+    
+    return { cleanedCount, errors }
+    
+  } catch (error) {
+    const errorMessage = `Cleanup failed: ${error instanceof Error ? error.message : String(error)}`
+    errors.push(errorMessage)
+    console.error('❌ Critical error during cleanup:', errorMessage)
+    return { cleanedCount: 0, errors }
+  }
+}

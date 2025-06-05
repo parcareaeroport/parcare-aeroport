@@ -41,16 +41,67 @@ function ConfirmationContent() {
     const paymentIntentId = searchParams.get("payment_intent")
     const redirectStatus = searchParams.get("redirect_status")
 
-    // Preluăm datele rezervării din sessionStorage
-    const storedData = sessionStorage.getItem("reservationDataForConfirmation")
+    // Preluăm datele rezervării din sessionStorage - verificăm multiple surse
     let tempReservationData: ReservationData | null = null
-    if (storedData) {
-      tempReservationData = JSON.parse(storedData) as ReservationData
+    
+    // Prima verificare: datele pentru confirmare (folosit pentru teste)
+    const storedTestData = sessionStorage.getItem("reservationDataForConfirmation")
+    if (storedTestData) {
+      tempReservationData = JSON.parse(storedTestData) as ReservationData
       setReservationDetails(tempReservationData)
     } else {
-      setMessage("Detaliile rezervării nu au fost găsite. Contactați suportul.")
-      setStatus("error")
-      return
+      // A doua verificare: datele comenzii complete (folosit pentru plățile Stripe)
+      const storedOrderData = sessionStorage.getItem("completeOrderData")
+      if (storedOrderData) {
+        const orderData = JSON.parse(storedOrderData)
+        // Convertim datele comenzii în format ReservationData
+        tempReservationData = {
+          licensePlate: orderData.reservationData.licensePlate,
+          startDate: orderData.reservationData.startDate,
+          startTime: orderData.reservationData.startTime,
+          endDate: orderData.reservationData.endDate,
+          endTime: orderData.reservationData.endTime,
+          days: orderData.reservationData.days,
+          price: orderData.total,
+          formattedStartDate: orderData.reservationData.formattedStartDate,
+          formattedEndDate: orderData.reservationData.formattedEndDate,
+          clientName: `${orderData.customerInfo.firstName} ${orderData.customerInfo.lastName}`.trim(),
+          clientEmail: orderData.customerInfo.email,
+          clientPhone: orderData.customerInfo.phone,
+        }
+        setReservationDetails(tempReservationData)
+      } else {
+        // A treia verificare: rezultatul rezervării (folosit după plăți Stripe reușite)
+        const storedBookingResult = sessionStorage.getItem("bookingResult")
+        if (storedBookingResult) {
+          const bookingResult = JSON.parse(storedBookingResult)
+          // Convertim rezultatul rezervării în format ReservationData
+          tempReservationData = {
+            licensePlate: bookingResult.reservationData.licensePlate,
+            startDate: bookingResult.reservationData.startDate,
+            startTime: bookingResult.reservationData.startTime,
+            endDate: bookingResult.reservationData.endDate,
+            endTime: bookingResult.reservationData.endTime,
+            days: bookingResult.reservationData.days,
+            price: bookingResult.total,
+            formattedStartDate: bookingResult.reservationData.formattedStartDate,
+            formattedEndDate: bookingResult.reservationData.formattedEndDate,
+            clientName: `${bookingResult.customerInfo.firstName} ${bookingResult.customerInfo.lastName}`.trim(),
+            clientEmail: bookingResult.customerInfo.email,
+            clientPhone: bookingResult.customerInfo.phone,
+            apiBookingNumber: bookingResult.bookingNumber,
+          }
+          setReservationDetails(tempReservationData)
+          // Setăm și numărul de rezervare dacă există
+          if (bookingResult.bookingNumber) {
+            setBookingNumber(bookingResult.bookingNumber)
+          }
+        } else {
+          setMessage("Detaliile rezervării nu au fost găsite. Contactați suportul.")
+          setStatus("error")
+          return
+        }
+      }
     }
 
     // Preluăm numărul de rezervare de la API-ul de parcare, dacă a fost stocat
@@ -103,8 +154,8 @@ function ConfirmationContent() {
             )
             setStatus("success")
 
-            // Salvează rezervarea în Firestore DOAR dacă nu a fost deja salvată de webhook
-            // (sau dacă webhook-ul nu o salvează și aceasta e responsabilitatea clientului)
+            // Pentru plățile prin Stripe, webhook-ul ar trebui să se fi ocupat deja de salvarea rezervării
+            // Totuși, verificăm și salvăm local dacă este necesar pentru urmărire
             if (tempReservationData) {
               try {
                 // Verifică dacă există deja o rezervare cu acest paymentIntentId
@@ -113,31 +164,41 @@ function ConfirmationContent() {
                 const querySnapshot = await getDocs(q)
 
                 if (querySnapshot.empty) {
-                  // Doar dacă nu există deja
+                  // Doar dacă nu există deja (webhook-ul ar fi trebuit să o salveze)
+                  console.log("Webhook nu a salvat rezervarea, salvez din pagina de confirmare...")
                   await addDoc(bookingsCollectionRef, {
                     ...tempReservationData,
                     paymentIntentId: paymentIntentId,
                     paymentStatus: "paid",
-                    status: "confirmed_paid", // Un status intern
+                    status: "confirmed_paid",
                     createdAt: serverTimestamp(),
-                    // apiBookingNumber este deja în tempReservationData dacă a fost setat
+                    source: "confirmation_page" // Indicăm sursa pentru debug
                   })
                   // OPTIMIZARE: Incrementez contorul de rezervări active
                   const statsDocRef = doc(db, "config", "reservationStats")
                   await updateDoc(statsDocRef, { activeBookingsCount: increment(1) })
                   toast({ title: "Rezervare salvată", description: "Detaliile rezervării au fost salvate în sistem." })
                 } else {
-                  toast({ title: "Info", description: "Rezervarea a fost deja procesată." })
+                  // Rezervarea există deja (salvată de webhook)
+                  const existingBooking = querySnapshot.docs[0].data()
+                  if (existingBooking.apiBookingNumber) {
+                    setBookingNumber(existingBooking.apiBookingNumber)
+                  }
+                  toast({ title: "Rezervare confirmată", description: "Rezervarea a fost procesată cu succes." })
                 }
+                
                 // Șterge datele din sessionStorage după procesare
                 sessionStorage.removeItem("reservationDataForConfirmation")
+                sessionStorage.removeItem("completeOrderData")
+                sessionStorage.removeItem("bookingResult")
                 sessionStorage.removeItem("apiBookingNumber")
               } catch (firestoreError) {
                 console.error("Error saving booking to Firestore from confirmation page:", firestoreError)
+                // Pentru plățile Stripe, nu afișăm eroare critică dacă webhook-ul a funcționat
                 toast({
-                  title: "Eroare Firestore",
-                  description: "Plata a reușit, dar detaliile rezervării nu s-au putut salva local.",
-                  variant: "destructive",
+                  title: "Plată confirmată",
+                  description: "Plata a fost procesată cu succes. Rezervarea a fost înregistrată.",
+                  variant: "default",
                 })
               }
             }

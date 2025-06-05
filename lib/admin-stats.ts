@@ -1,5 +1,5 @@
 import { db } from './firebase'
-import { collection, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore'
+import { collection, query, where, getDocs, orderBy, limit, Timestamp, doc, updateDoc, increment, serverTimestamp } from 'firebase/firestore'
 
 // Interfețe pentru tipurile de date
 export interface MonthlyStats {
@@ -290,50 +290,149 @@ export async function getBookingStatusData(): Promise<BookingStatusStats[]> {
 }
 
 /**
+ * Marchează rezervările expirate ca fiind inactive
+ */
+async function markExpiredBookingsAsInactive() {
+  try {
+    const now = new Date()
+    const currentDateStr = now.toISOString().split('T')[0] // YYYY-MM-DD
+    const currentTimeStr = now.toTimeString().slice(0, 5) // HH:mm
+    
+    console.log('🕒 Checking for expired bookings at:', { currentDateStr, currentTimeStr })
+    
+    const bookingsRef = collection(db, 'bookings')
+    
+    // Query pentru rezervările care ar trebui să fie active dar poate au expirat
+    const potentiallyExpiredQuery = query(
+      bookingsRef,
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']),
+      where('endDate', '<=', currentDateStr) // Toate rezervările care se termină astăzi sau în trecut
+    )
+    
+    const snapshot = await getDocs(potentiallyExpiredQuery)
+    const expiredBookings = []
+    
+    for (const doc of snapshot.docs) {
+      const booking = doc.data()
+      const endDateTime = new Date(`${booking.endDate}T${booking.endTime}:00`)
+      
+      if (endDateTime <= now) {
+        expiredBookings.push({
+          id: doc.id,
+          ...booking,
+          endDateTime: endDateTime.toISOString()
+        })
+        
+        // Marchează rezervarea ca expirată
+        await updateDoc(doc.ref, {
+          status: 'expired',
+          expiredAt: serverTimestamp(),
+          lastUpdated: serverTimestamp()
+        })
+        
+        console.log('⏰ Marked booking as expired:', {
+          id: doc.id,
+          licensePlate: booking.licensePlate,
+          endDate: booking.endDate,
+          endTime: booking.endTime,
+          endDateTime: endDateTime.toISOString()
+        })
+      }
+    }
+    
+    if (expiredBookings.length > 0) {
+      console.log(`✅ Marked ${expiredBookings.length} bookings as expired`)
+      
+      // Actualizează statisticile - scade numărul de rezervări active
+      const statsDocRef = doc(db, "config", "reservationStats")
+      await updateDoc(statsDocRef, {
+        activeBookingsCount: increment(-expiredBookings.length),
+        lastUpdated: serverTimestamp()
+      })
+    }
+    
+    return expiredBookings.length
+    
+  } catch (error) {
+    console.error('❌ Error marking expired bookings:', error)
+    return 0
+  }
+}
+
+/**
  * Obține datele pentru graficul de ocupare
  */
 export async function getOccupancyData(): Promise<OccupancyStats[]> {
   try {
+    // Folosește query-ul inteligent pentru ocuparea curentă
+    const { getCurrentParkingOccupancy } = await import('./booking-utils')
+    const currentOccupancy = await getCurrentParkingOccupancy()
+    
+    // Opțional: cleanup soft dacă e necesar
+    const { softCleanupExpiredBookings } = await import('./booking-utils')
+    const expiredCount = await softCleanupExpiredBookings()
+    if (expiredCount > 0) {
+      console.log(`🔄 Soft cleanup: marked ${expiredCount} expired bookings`)
+    }
+    
     const bookingsRef = collection(db, 'bookings')
-    const today = new Date()
-    const todayStr = today.toISOString().split('T')[0]
+    const now = new Date()
+    const currentDateStr = now.toISOString().split('T')[0]
+    const currentTimeStr = now.toTimeString().slice(0, 5)
 
-    console.log('🔍 Checking occupancy for date:', todayStr)
+    console.log('🔍 Checking occupancy for date:', currentDateStr, 'time:', currentTimeStr)
 
-    // Query pentru rezervările active astăzi
+    // Query pentru rezervările REALMENTE active în acest moment
     const activeBookingsQuery = query(
       bookingsRef,
-      where('startDate', '<=', todayStr),
-      where('endDate', '>=', todayStr),
-      where('status', 'in', ['confirmed', 'paid'])
+      where('startDate', '<=', currentDateStr),
+      where('endDate', '>=', currentDateStr),
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid'])
     )
 
     const snapshot = await getDocs(activeBookingsQuery)
-    const occupiedSpots = snapshot.size
     
-    console.log('📊 Active bookings found:', occupiedSpots)
+    // Filtrează rezervările care sunt REALMENTE active acum (incluzând ora)
+    let reallyActiveBookings = 0
+    const now_timestamp = now.getTime()
     
-    // Debug: să vedem ce rezervări active există
     snapshot.forEach(doc => {
       const booking = doc.data()
-      console.log('📋 Active booking:', {
-        id: doc.id,
-        startDate: booking.startDate,
-        endDate: booking.endDate,
-        status: booking.status,
-        licensePlate: booking.licensePlate
-      })
+      const startDateTime = new Date(`${booking.startDate}T${booking.startTime}:00`)
+      const endDateTime = new Date(`${booking.endDate}T${booking.endTime}:00`)
+      
+      // Verifică dacă rezervarea este activă chiar acum
+      if (startDateTime.getTime() <= now_timestamp && endDateTime.getTime() > now_timestamp) {
+        reallyActiveBookings++
+        console.log('📋 Active booking now:', {
+          id: doc.id,
+          licensePlate: booking.licensePlate,
+          start: startDateTime.toISOString(),
+          end: endDateTime.toISOString(),
+          status: booking.status
+        })
+      } else {
+        console.log('⏰ Booking not currently active:', {
+          id: doc.id,
+          licensePlate: booking.licensePlate,
+          start: startDateTime.toISOString(),
+          end: endDateTime.toISOString(),
+          status: booking.status,
+          reason: startDateTime.getTime() > now_timestamp ? 'Not started yet' : 'Already ended'
+        })
+      }
     })
 
     const totalSpots = 100 // Presupunem 100 locuri total
-    const occupiedPercentage = Math.round((occupiedSpots / totalSpots) * 100)
+    const occupiedPercentage = Math.round((reallyActiveBookings / totalSpots) * 100)
     const freePercentage = 100 - occupiedPercentage
 
-    console.log('📈 Occupancy calculation:', {
-      occupiedSpots,
+    console.log('📈 Real-time occupancy calculation:', {
+      reallyActiveBookings,
       totalSpots,
       occupiedPercentage,
-      freePercentage
+      freePercentage,
+      currentDateTime: now.toISOString()
     })
 
     return [

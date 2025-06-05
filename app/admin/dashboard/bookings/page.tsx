@@ -35,11 +35,11 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Calendar } from "@/components/ui/calendar" // Shadcn Calendar
 import { format as formatDateFn, parseISO } from "date-fns" // Renamed to avoid conflict
 import { ro } from "date-fns/locale"
-import { CalendarIcon, MoreHorizontal, Search, Eye, Loader2, AlertCircle } from "lucide-react"
+import { CalendarIcon, MoreHorizontal, Search, Eye, Loader2, AlertCircle, RefreshCw } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/context/auth-context"
-import { cancelBooking as cancelParkingApiBooking } from "@/app/actions/booking-actions" // Acțiunea server pentru API parcare
+import { cancelBooking as cancelParkingApiBooking, cleanupExpiredBookings } from "@/app/actions/booking-actions" // Acțiunea server pentru API parcare
 import { recoverSpecificBooking } from "@/app/actions/booking-recovery" // Recovery pentru rezervări eșuate
 
 interface Booking {
@@ -60,7 +60,7 @@ interface Booking {
   amount?: number
   
   // Status și plată
-  status: "confirmed_test" | "confirmed_paid" | "cancelled_by_admin" | "cancelled_by_api" | "api_error" | string
+  status: "confirmed_test" | "confirmed_paid" | "cancelled_by_admin" | "cancelled_by_api" | "api_error" | "expired" | string
   paymentStatus?: "paid" | "pending" | "refunded" | "n/a"
   paymentIntentId?: string
   
@@ -77,6 +77,7 @@ interface Booking {
   source?: "webhook" | "test_mode" | "manual"
   createdAt: Timestamp // Firestore Timestamp
   lastUpdated?: Timestamp
+  expiredAt?: Timestamp // Când a fost marcată ca expirată
 }
 
 function BookingsPageContent() {
@@ -92,6 +93,7 @@ function BookingsPageContent() {
   const [isLoading, setIsLoading] = useState(true)
   const [isCancelling, setIsCancelling] = useState(false)
   const [isRecovering, setIsRecovering] = useState(false)
+  const [isCleaningUp, setIsCleaningUp] = useState(false)
 
   const fetchBookings = async () => {
     setIsLoading(true)
@@ -245,14 +247,57 @@ function BookingsPageContent() {
     }
   }
 
+  const handleCleanupExpired = async () => {
+    setIsCleaningUp(true)
+    try {
+      // Folosește funcția soft cleanup care e mai eficientă
+      const { softCleanupExpiredBookings } = await import('@/lib/booking-utils')
+      const expiredCount = await softCleanupExpiredBookings()
+      
+      if (expiredCount > 0) {
+        toast({
+          title: "Cleanup Finalizat",
+          description: `Au fost marcate ${expiredCount} rezervări ca expirate și excluse din categoria activă.`,
+        })
+      } else {
+        toast({
+          title: "Cleanup Complet", 
+          description: "Nu au fost găsite rezervări expirate de curățat.",
+        })
+      }
+      
+      // Reîncarcă lista
+      fetchBookings()
+      
+    } catch (error) {
+      console.error('Error during cleanup:', error)
+      toast({
+        title: "Eroare Cleanup",
+        description: "A apărut o eroare la curățarea rezervărilor expirate.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsCleaningUp(false)
+    }
+  }
+
   const getStatusBadge = (status: string) => {
-    // Adaptează culorile și textele pentru noile statusuri
-    if (status.startsWith("confirmed")) return <Badge className="bg-green-500">Confirmată</Badge>
-    if (status.startsWith("cancelled")) return <Badge className="bg-red-500">Anulată</Badge>
-    if (status.includes("pending") || status.includes("test"))
-      return <Badge className="bg-amber-500">În Procesare/Test</Badge>
-    if (status.includes("error")) return <Badge variant="destructive">Eroare API</Badge>
-    return <Badge className="bg-gray-500">{status}</Badge>
+    switch (status) {
+      case "confirmed_paid":
+        return <Badge className="bg-green-100 text-green-800">Confirmat (Plătit)</Badge>
+      case "confirmed_test":
+        return <Badge className="bg-blue-100 text-blue-800">Confirmat (Test)</Badge>
+      case "cancelled_by_admin":
+        return <Badge className="bg-red-100 text-red-800">Anulat (Admin)</Badge>
+      case "cancelled_by_api":
+        return <Badge className="bg-red-100 text-red-800">Anulat (API)</Badge>
+      case "api_error":
+        return <Badge className="bg-orange-100 text-orange-800">Eroare API</Badge>
+      case "expired":
+        return <Badge className="bg-gray-100 text-gray-800">Expirat</Badge>
+      default:
+        return <Badge className="bg-gray-100 text-gray-800">{status}</Badge>
+    }
   }
 
   const getPaymentStatusBadge = (status?: string) => {
@@ -296,7 +341,26 @@ function BookingsPageContent() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Gestionare Rezervări</h1>
-        {/* <Button variant="outline"><Download className="mr-2 h-4 w-4" /> Export</Button> */}
+        <div className="flex gap-2">
+          <Button 
+            onClick={handleCleanupExpired}
+            disabled={isCleaningUp}
+            variant="outline"
+            size="sm"
+          >
+            {isCleaningUp ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <RefreshCw className="h-4 w-4 mr-2" />
+            )}
+            Curăță Expirate
+          </Button>
+          <Button onClick={fetchBookings} disabled={isLoading} size="sm">
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+            Reîncarcă
+          </Button>
+          {/* <Button variant="outline"><Download className="mr-2 h-4 w-4" /> Export</Button> */}
+        </div>
       </div>
 
       <Tabs defaultValue="all" className="space-y-4">
@@ -312,6 +376,9 @@ function BookingsPageContent() {
           </TabsTrigger>
           <TabsTrigger value="cancelled_by_admin" onClick={() => setStatusFilter("cancelled_by_admin")}>
             Anulate
+          </TabsTrigger>
+          <TabsTrigger value="expired" onClick={() => setStatusFilter("expired")}>
+            Expirate
           </TabsTrigger>
         </TabsList>
 
