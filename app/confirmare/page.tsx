@@ -1,14 +1,33 @@
 "use client"
 
+import type { Metadata } from "next"
 import { useEffect, useState, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { CheckCircle, XCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
+import CheckoutSteps from "@/components/checkout-steps"
 import { getStripe } from "@/lib/stripe" // Pentru a prelua instanța Stripe.js
 import { collection, addDoc, serverTimestamp, query, where, getDocs, doc, updateDoc, increment } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useToast } from "@/components/ui/use-toast"
+
+export const metadata: Metadata = {
+  title: "Confirmare Rezervare | Parcare-Aeroport Otopeni",
+  description:
+    "Confirmarea rezervării pentru locul de parcare la Aeroportul Otopeni. Verifică detaliile rezervării și statusul plății.",
+  keywords: [
+    "confirmare rezervare parcare otopeni",
+    "confirmare plată parcare aeroport",
+    "rezervare confirmată otopeni",
+    "status rezervare parcare",
+  ],
+  alternates: {
+    canonical: "/confirmare",
+  },
+}
 
 interface ReservationData {
   licensePlate: string
@@ -285,69 +304,98 @@ function ConfirmationContent() {
   }, [searchParams, router, toast]) // Am adăugat toast la dependențe
 
   return (
-    <div className="container mx-auto px-4 py-12 flex flex-col items-center text-center">
-      {status === "loading" && (
-        <>
-          <Loader2 className="h-16 w-16 text-primary animate-spin mb-6" />
-          <h1 className="text-3xl font-bold mb-2">Procesare...</h1>
-        </>
-      )}
-      {status === "success" && (
-        <>
-          <CheckCircle className="h-16 w-16 text-green-500 mb-6" />
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Confirmare Rezervare</h1>
-        </>
-      )}
-      {status === "error" && (
-        <>
-          <XCircle className="h-16 w-16 text-red-500 mb-6" />
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Eroare Tranzacție</h1>
-        </>
-      )}
-      {status === "requires_action" && (
-        <>
-          <Loader2 className="h-16 w-16 text-amber-500 animate-spin mb-6" />
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Acțiune Necesară</h1>
-        </>
-      )}
-
-      <p className="text-gray-600 text-lg mb-8 max-w-xl">{message}</p>
-
-      {status === "success" && reservationDetails && (
-        <div className="bg-gray-50 p-6 rounded-lg shadow-sm w-full max-w-md mb-8 text-left">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Detalii Rezervare</h2>
-          {bookingNumber && (
-            <p className="mb-2">
-              <strong>Număr Rezervare (Parcare):</strong> {bookingNumber}
-            </p>
+    <div className="max-w-7xl mx-auto">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
+        <div className="flex flex-col items-center text-center">
+          {status === "loading" && (
+            <>
+              <Loader2 className="h-16 w-16 text-primary animate-spin mb-6" />
+              <h1 className="text-3xl font-bold mb-2">Procesare...</h1>
+            </>
           )}
-          <p className="mb-2">
-            <strong>Număr Înmatriculare:</strong> {reservationDetails.licensePlate}
-          </p>
-          <p className="mb-2">
-            <strong>Data Intrare:</strong> {reservationDetails.formattedStartDate} ora {reservationDetails.startTime}
-          </p>
-          <p className="mb-2">
-            <strong>Data Ieșire:</strong> {reservationDetails.formattedEndDate} ora {reservationDetails.endTime}
-          </p>
-          <p className="mb-2">
-            <strong>Total Zile:</strong> {reservationDetails.days}
-          </p>
-          <p className="font-bold text-lg">
-            <strong>Total Plătit:</strong> {reservationDetails.price.toFixed(2)} LEI
-          </p>
-        </div>
-      )}
+          {status === "success" && (
+            <>
+              <CheckCircle className="h-16 w-16 text-green-500 mb-6" />
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Confirmare Rezervare</h1>
+            </>
+          )}
+          {status === "error" && (
+            <>
+              <XCircle className="h-16 w-16 text-red-500 mb-6" />
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Eroare Tranzacție</h1>
+            </>
+          )}
+          {status === "requires_action" && (
+            <>
+              <Loader2 className="h-16 w-16 text-amber-500 animate-spin mb-6" />
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Acțiune Necesară</h1>
+            </>
+          )}
 
-      <div className="flex space-x-4">
-        <Button asChild className="gradient-bg">
-          <Link href="/">Pagina Principală</Link>
-        </Button>
-        {status === "error" && (
-          <Button asChild variant="outline">
-            <Link href="/plasare-comanda">Încearcă din nou</Link>
-          </Button>
-        )}
+          <p className="text-gray-600 text-lg mb-8 max-w-xl">{message}</p>
+
+          {status === "success" && reservationDetails && (
+            <div className="bg-gray-50 rounded-xl border border-gray-200 p-6 mb-8 w-full max-w-2xl text-left">
+              <h2 className="text-xl font-semibold text-gray-700 mb-6 text-center">🎉 Detalii Rezervare Confirmată</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                {bookingNumber && (
+                  <div className="bg-white rounded-lg p-4 border border-green-200">
+                    <div className="text-sm text-gray-600 mb-1">Număr Rezervare</div>
+                    <div className="text-lg font-bold text-green-600">{bookingNumber}</div>
+                  </div>
+                )}
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="text-sm text-gray-600 mb-1">Număr Înmatriculare</div>
+                  <div className="text-lg font-bold">{reservationDetails.licensePlate}</div>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="text-sm text-gray-600 mb-1">Data Intrare</div>
+                  <div className="font-bold">{reservationDetails.formattedStartDate}</div>
+                  <div className="text-sm text-gray-500">ora {reservationDetails.startTime}</div>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="text-sm text-gray-600 mb-1">Data Ieșire</div>
+                  <div className="font-bold">{reservationDetails.formattedEndDate}</div>
+                  <div className="text-sm text-gray-500">ora {reservationDetails.endTime}</div>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="text-sm text-gray-600 mb-1">Durată</div>
+                  <div className="text-lg font-bold">{reservationDetails.days} {reservationDetails.days === 1 ? 'zi' : 'zile'}</div>
+                </div>
+                <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
+                  <div className="text-sm text-green-700 mb-1">Total Plătit</div>
+                  <div className="text-xl font-bold text-green-600">{reservationDetails.price.toFixed(2)} LEI</div>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <h3 className="font-medium text-blue-800 mb-2">📧 Următorii Pași</h3>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Veți primi un email de confirmare cu codul QR</li>
+                  <li>• Folosiți codul QR pentru accesul la parcare</li>
+                  <li>• Prezentați-vă cu maximum 2 ore înainte de ora rezervată</li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild className="gradient-bg px-8 py-3">
+              <Link href="/">Pagina Principală</Link>
+            </Button>
+            {status === "success" && (
+              <Button asChild variant="outline" className="px-8 py-3">
+                <Link href="/rezerva">Rezervare Nouă</Link>
+              </Button>
+            )}
+            {status === "error" && (
+              <Button asChild variant="outline" className="px-8 py-3">
+                <Link href="/plasare-comanda">Încearcă din nou</Link>
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -356,15 +404,27 @@ function ConfirmationContent() {
 // Folosim Suspense pentru a gestiona parametrii de căutare
 export default function ConfirmationPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />{" "}
-          <p className="ml-3 text-lg">Se încarcă detaliile confirmării...</p>
-        </div>
-      }
-    >
-      <ConfirmationContent />
-    </Suspense>
+    <main className="min-h-screen bg-gray-50">
+      <Header />
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <CheckoutSteps activeStep={3} />
+        <Suspense
+          fallback={
+            <div className="max-w-7xl mx-auto">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
+                <div className="flex flex-col items-center text-center">
+                  <Loader2 className="h-16 w-16 text-primary animate-spin mb-6" />
+                  <h1 className="text-2xl md:text-3xl font-bold mb-2">Se încarcă detaliile confirmării...</h1>
+                  <p className="text-gray-600">Vă rugăm să așteptați...</p>
+                </div>
+              </div>
+            </div>
+          }
+        >
+          <ConfirmationContent />
+        </Suspense>
+      </div>
+      <Footer />
+    </main>
   )
 }
