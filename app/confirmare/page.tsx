@@ -111,6 +111,60 @@ function ConfirmationContent() {
       if (tempReservationData) tempReservationData.apiBookingNumber = apiBookingNum
     }
 
+    // Funcție asincronă pentru verificarea rezervării existente
+    const checkExistingBooking = async (paymentIntentId: string, tempReservationData: ReservationData) => {
+      try {
+        console.log("Checking for existing booking processed by webhook...")
+        
+        // Verifică dacă există deja o rezervare cu acest paymentIntentId procesată de webhook
+        const bookingsCollectionRef = collection(db, "bookings")
+        const q = query(bookingsCollectionRef, where("paymentIntentId", "==", paymentIntentId))
+        const querySnapshot = await getDocs(q)
+        
+        if (!querySnapshot.empty) {
+          // Rezervarea există deja (salvată de webhook)
+          const existingBooking = querySnapshot.docs[0].data()
+          console.log("Found existing booking from webhook:", existingBooking.apiBookingNumber)
+          
+          setStatus("success")
+          setMessage("Plata a fost efectuată cu succes! Rezervarea este confirmată. Veți primi un email de confirmare.")
+          
+          if (existingBooking.apiBookingNumber) {
+            setBookingNumber(existingBooking.apiBookingNumber)
+          }
+          
+          // Actualizăm datele de rezervare cu numărul real din API
+          if (existingBooking.apiBookingNumber && tempReservationData) {
+            tempReservationData.apiBookingNumber = existingBooking.apiBookingNumber
+            setReservationDetails(tempReservationData)
+          }
+          
+          toast({ title: "Rezervare confirmată", description: "Rezervarea a fost procesată cu succes de sistemul de plăți." })
+          
+          // Șterge datele din sessionStorage după procesare
+          sessionStorage.removeItem("reservationDataForConfirmation")
+          sessionStorage.removeItem("completeOrderData")
+          sessionStorage.removeItem("bookingResult")
+          sessionStorage.removeItem("apiBookingNumber")
+          
+          return true // Rezervarea a fost găsită și procesată
+        } else {
+          console.log("No existing booking found, might be processing delay...")
+          // Poate că webhook-ul încă nu a procesat - dăm un timeout scurt și reîncercăm
+          setTimeout(() => {
+            window.location.reload() // Reîncarcă pagina pentru a verifica din nou
+          }, 3000)
+          
+          setStatus("loading")
+          setMessage("Se verifică statusul rezervării... Vă rugăm să așteptați.")
+          return false // Rezervarea nu a fost găsită încă
+        }
+      } catch (firestoreError) {
+        console.error("Error checking existing booking:", firestoreError)
+        return false // Eroare - continuă cu fluxul normal
+      }
+    }
+
     if (!clientSecret || !paymentIntentId) {
       // Verificăm dacă este o confirmare de test (fără plată)
       const testBookingNumber = searchParams.get("bookingNumber") // Trimis de la OrderPlacementForm pentru test
@@ -122,9 +176,12 @@ function ConfirmationContent() {
           `Rezervarea de test (nr. ${testBookingNumber}) a fost înregistrată cu succes! Veți primi un email de confirmare.`,
         )
         setBookingNumber(testBookingNumber) // Setează numărul de rezervare pentru afișare
-        // Nu mai este nevoie să ștergem aici, se face în OrderPlacementForm
-        // sessionStorage.removeItem("reservationDataForConfirmation");
-        // sessionStorage.removeItem("apiBookingNumber");
+        return
+      }
+
+      // Dacă avem paymentIntentId dar nu clientSecret, verificăm dacă webhook-ul a procesat deja rezervarea
+      if (paymentIntentId && !clientSecret && tempReservationData) {
+        checkExistingBooking(paymentIntentId, tempReservationData)
         return
       }
 
