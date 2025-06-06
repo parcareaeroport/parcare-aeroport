@@ -53,26 +53,13 @@ export default function Footer() {
                   Acasă
                 </Link>
               </li>
-              <li>
-                <Link href="/plasare-comanda" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Rezervare online
-                </Link>
-              </li>
+      
               <li>
                 <Link href="/tarife" className="text-gray-300 hover:text-white transition-colors text-sm">
                   Tarife
                 </Link>
               </li>
-              <li>
-                <Link href="/admin/dashboard" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Dashboard Admin
-                </Link>
-              </li>
-              <li>
-                <Link href="/confirmare" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Confirmare rezervare
-                </Link>
-              </li>
+          
               <li>
                 <Link href="/termeni" className="text-gray-300 hover:text-white transition-colors text-sm">
                   Termeni și condiții
