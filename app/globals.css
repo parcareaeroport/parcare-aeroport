@@ -278,7 +278,7 @@ EXEMPLE DE UTILIZARE:
   animation: subtle-pulse 1s ease-in-out;
 }
 
-/* Stiluri pentru calendar */
+/* Stiluri pentru calendar - compatibil cu react-day-picker v9 */
 .rdp {
   --rdp-cell-size: 40px;
   /* Actualizăm culorile calendarului pentru a folosi albastrul navy */
@@ -292,51 +292,51 @@ EXEMPLE DE UTILIZARE:
 }
 
 /* Stilizare pentru zilele selectate - doar acestea sunt evidențiate */
-.rdp-day_selected,
-.rdp-day_selected:focus-visible,
-.rdp-day_selected:hover {
+.rdp-selected,
+.rdp-selected:focus-visible,
+.rdp-selected:hover {
   background-color: var(--rdp-accent-color) !important;
   color: white !important;
 }
 
 /* Eliminăm orice stilizare specială pentru ziua curentă */
-.rdp-day_today {
+.rdp-today {
   /* Nu aplicăm niciun stil special pentru ziua curentă */
 }
 
 /* Stiluri pentru zilele din calendar */
-.rdp-day {
+.rdp-day_button {
   border-radius: 100% !important;
   transition: all 0.2s ease;
   position: relative;
 }
 
-.rdp-day:hover:not(.rdp-day_outside):not(.rdp-day_selected) {
+.rdp-day_button:hover:not(.rdp-outside):not(.rdp-selected) {
   background-color: var(--rdp-background-color) !important;
 }
 
-.rdp-day_disabled {
+.rdp-disabled {
   opacity: 0.25 !important;
 }
 
-.rdp-day_outside {
+.rdp-outside {
   opacity: 0.5 !important;
 }
 
-.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+.rdp-day_button:hover:not([disabled]):not(.rdp-selected) {
   background-color: var(--rdp-background-color);
 }
 
 /* Asigurăm că nu există nicio evidențiere pentru ziua curentă */
-.custom-calendar .rdp-day_today:not(.rdp-day_selected) {
+.custom-calendar .rdp-today:not(.rdp-selected) {
   background-color: transparent !important;
   color: inherit !important;
   font-weight: normal !important;
 }
 
 /* Eliminăm orice border sau indicator pentru ziua curentă */
-.custom-calendar .rdp-day_today::after,
-.custom-calendar .rdp-day_today::before {
+.custom-calendar .rdp-today::after,
+.custom-calendar .rdp-today::before {
   display: none !important;
 }
 
