@@ -138,3 +138,5 @@ Admin Dashboard Updated
 - [ ] Subscription payments pentru abonamente lunare
 
 **Totul este funcțional! Webhook-ul salvează automat rezervările în API + Firestore după plată. 🎉** 
+
+**Totul este funcțional! Webhook-ul salvează automat rezervările în API + Firestore după plată. 🎉** 
