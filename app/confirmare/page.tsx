@@ -1,6 +1,5 @@
 "use client"
 
-import type { Metadata } from "next"
 import { useEffect, useState, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { CheckCircle, XCircle, Loader2 } from "lucide-react"
@@ -13,21 +12,6 @@ import { getStripe } from "@/lib/stripe" // Pentru a prelua instanța Stripe.js
 import { collection, addDoc, serverTimestamp, query, where, getDocs, doc, updateDoc, increment } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useToast } from "@/components/ui/use-toast"
-
-export const metadata: Metadata = {
-  title: "Confirmare Rezervare | Parcare-Aeroport Otopeni",
-  description:
-    "Confirmarea rezervării pentru locul de parcare la Aeroportul Otopeni. Verifică detaliile rezervării și statusul plății.",
-  keywords: [
-    "confirmare rezervare parcare otopeni",
-    "confirmare plată parcare aeroport",
-    "rezervare confirmată otopeni",
-    "status rezervare parcare",
-  ],
-  alternates: {
-    canonical: "/confirmare",
-  },
-}
 
 interface ReservationData {
   licensePlate: string
