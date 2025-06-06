@@ -199,7 +199,18 @@ export default function OrderPlacementForm() {
         paymentStatus: "n/a", // Mod test - fără plată
         amount: calculateTotal(),
         days: reservationData.days,
-        source: "test_mode"
+        source: "test_mode",
+        // Date pentru facturare și adresă
+        company: needInvoice ? company : undefined,
+        companyVAT: needInvoice ? companyVAT : undefined,
+        companyReg: needInvoice ? companyReg : undefined,
+        companyAddress: needInvoice ? companyAddress : undefined,
+        needInvoice: needInvoice,
+        address: address,
+        city: city,
+        county: county,
+        postalCode: postalCode,
+        orderNotes: orderNotes
       })
 
       // Log pentru debugging doar în caz de eroare
@@ -340,6 +351,16 @@ export default function OrderPlacementForm() {
             lastName,
             email,
             phone,
+            address,
+            city,
+            county,
+            postalCode,
+            company: needInvoice ? company : undefined,
+            companyVAT: needInvoice ? companyVAT : undefined,
+            companyReg: needInvoice ? companyReg : undefined,
+            companyAddress: needInvoice ? companyAddress : undefined,
+            notes: orderNotes,
+            needInvoice: needInvoice,
           },
           orderId: completeOrderData.orderId,
         }),

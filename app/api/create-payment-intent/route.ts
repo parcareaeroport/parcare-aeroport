@@ -21,19 +21,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
+    // Pregătim metadata pentru PaymentIntent
+    const metadata: Record<string, string> = {
+      orderId,
+      customerName: `${customerInfo.firstName} ${customerInfo.lastName}`,
+      customerEmail: customerInfo.email,
+      customerPhone: customerInfo.phone || "",
+      licensePlate: bookingData.licensePlate,
+      startDate: bookingData.startDate,
+      endDate: bookingData.endDate,
+    }
+
+    // Adăugăm datele de facturare dacă sunt disponibile
+    if (customerInfo.address) metadata.address = customerInfo.address
+    if (customerInfo.city) metadata.city = customerInfo.city
+    if (customerInfo.county) metadata.county = customerInfo.county
+    if (customerInfo.postalCode) metadata.postalCode = customerInfo.postalCode
+    if (customerInfo.company) metadata.company = customerInfo.company
+    if (customerInfo.companyVAT) metadata.companyVAT = customerInfo.companyVAT
+    if (customerInfo.companyReg) metadata.companyReg = customerInfo.companyReg
+    if (customerInfo.companyAddress) metadata.companyAddress = customerInfo.companyAddress
+    if (customerInfo.notes) metadata.orderNotes = customerInfo.notes
+    if (customerInfo.needInvoice !== undefined) metadata.needInvoice = customerInfo.needInvoice.toString()
+
     // Creăm un obiect de plată în Stripe
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Stripe folosește cenți/bani, nu lei/euro
       currency: "ron",
       payment_method_types: ["card"], // Specificați explicit 'card'
-      metadata: {
-        orderId,
-        customerName: `${customerInfo.firstName} ${customerInfo.lastName}`,
-        customerEmail: customerInfo.email,
-        licensePlate: bookingData.licensePlate,
-        startDate: bookingData.startDate,
-        endDate: bookingData.endDate,
-      },
+      metadata,
     })
 
     // Returnăm client_secret pentru a putea finaliza plata pe client

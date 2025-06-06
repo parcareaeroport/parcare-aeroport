@@ -47,6 +47,20 @@ interface CompleteBookingData {
   days?: number
   amount?: number
   
+  // Date pentru facturare (persoană juridică)
+  company?: string
+  companyVAT?: string // CUI/CIF
+  companyReg?: string // Număr Registrul Comerțului
+  companyAddress?: string
+  needInvoice?: boolean
+  orderNotes?: string
+  
+  // Date adresă personală
+  address?: string
+  city?: string
+  county?: string
+  postalCode?: string
+  
   // Date plată
   paymentIntentId?: string
   paymentStatus: "paid" | "n/a" | "pending" | "refunded"
@@ -456,6 +470,17 @@ export async function createBookingWithFirestore(
     amount?: number
     days?: number
     source?: "webhook" | "test_mode" | "manual"
+    // Date pentru facturare și adresă
+    company?: string
+    companyVAT?: string
+    companyReg?: string
+    companyAddress?: string
+    needInvoice?: boolean
+    address?: string
+    city?: string
+    county?: string
+    postalCode?: string
+    orderNotes?: string
   }
 ) {
   const debugLogs: string[] = []
@@ -526,6 +551,20 @@ export async function createBookingWithFirestore(
       createdAt: serverTimestamp()
     }
     
+    // Adăugăm datele pentru facturare și adresă
+    if (additionalData) {
+      completeBookingData.company = additionalData.company
+      completeBookingData.companyVAT = additionalData.companyVAT
+      completeBookingData.companyReg = additionalData.companyReg
+      completeBookingData.companyAddress = additionalData.companyAddress
+      completeBookingData.needInvoice = additionalData.needInvoice
+      completeBookingData.orderNotes = additionalData.orderNotes
+      completeBookingData.address = additionalData.address
+      completeBookingData.city = additionalData.city
+      completeBookingData.county = additionalData.county
+      completeBookingData.postalCode = additionalData.postalCode
+    }
+    
     if (apiResult.success) {
       debugLogs.push(`🎟️ Booking number: ${completeBookingData.apiBookingNumber}`)
     }
@@ -560,27 +599,98 @@ export async function createBookingWithFirestore(
           debugLogs.push(`⚠️ API failed, skipping QR/email generation`)
         }
       }
+
+      console.log("✅ Rezervare confirmată:", firestoreResult.firestoreId)
+      
+      // Generează factură OBLIO automată pentru TOATE rezervările plătite
+      if (additionalData?.paymentStatus === 'paid' || additionalData?.source === 'webhook') {
+        try {
+          const { generateOblioInvoice } = await import('@/lib/oblio-integration')
+          
+          const oblioInvoiceData = {
+            bookingId: completeBookingData.apiBookingNumber!,
+            clientName: completeBookingData.clientName || 'Client Site Parcări',
+            clientEmail: additionalData.clientEmail || '',
+            clientPhone: additionalData.clientPhone,
+            licensePlate: completeBookingData.licensePlate,
+            startDate: completeBookingData.startDate,
+            endDate: completeBookingData.endDate,
+            location: 'Site Parcări', // Ai putea să îl faci dinamic
+            parkingSpot: completeBookingData.apiBookingNumber || '',
+            totalCost: additionalData.amount || 0,
+            billingType: (additionalData.company ? 'corporate' : 'individual') as 'corporate' | 'individual',
+            company: additionalData.company,
+            companyVAT: additionalData.companyVAT,
+            companyReg: additionalData.companyReg,
+            companyAddress: additionalData.companyAddress,
+          }
+
+          const invoiceResult = await generateOblioInvoice(oblioInvoiceData)
+          
+          if (invoiceResult.success) {
+            console.log('✅ Factură Oblio generată cu succes:', invoiceResult.invoiceNumber, '- Link:', invoiceResult.invoiceUrl)
+          } else {
+            console.error('❌ Eroare la generarea facturii Oblio:', invoiceResult.error)
+          }
+        } catch (error) {
+          console.error('❌ Eroare critică la generarea facturii Oblio:', error)
+          // Nu oprim procesul pentru erori la facturare
+        }
+      } else {
+        console.log("ℹ️ Factură Oblio nu se generează - rezervare în test mode sau fără plată")
+      }
+
+      return {
+        firestoreId: firestoreResult.firestoreId,
+        firestoreSuccess: true,
+        firestoreError: undefined,
+        debugLogs,
+        success: true,
+        message: `Rezervare confirmată cu numărul ${completeBookingData.apiBookingNumber}`,
+        bookingNumber: completeBookingData.apiBookingNumber,
+        reservationData: completeBookingData,
+        qrData: `MPK_RES=${completeBookingData.apiBookingNumber}`,
+        bookingDetails: {
+          bookingNumber: completeBookingData.apiBookingNumber,
+          licensePlate: completeBookingData.licensePlate,
+          startDateTime: `${completeBookingData.startDate} ${completeBookingData.startTime}`,
+          endDateTime: `${completeBookingData.endDate} ${completeBookingData.endTime}`,
+          customerName: completeBookingData.clientName || 'N/A',
+          customerEmail: additionalData?.clientEmail || '',
+          amount: additionalData?.amount || 0,
+          paymentStatus: additionalData?.paymentStatus || 'n/a'
+        }
+      }
     } else {
       debugLogs.push(`❌ Firestore failed: ${firestoreResult.error}`)
-    }
-    
-    // Returnează rezultatul final
-    return {
-      ...apiResult,
-      firestoreId: firestoreResult.firestoreId,
-      firestoreSuccess: firestoreResult.success,
-      firestoreError: firestoreResult.error,
-      debugLogs
+      return {
+        firestoreId: undefined,
+        firestoreSuccess: false,
+        firestoreError: firestoreResult.error,
+        debugLogs,
+        success: false,
+        message: `Eroare la salvarea în Firestore: ${firestoreResult.error}`,
+        bookingNumber: null,
+        reservationData: null,
+        qrData: null,
+        bookingDetails: null
+      }
     }
     
   } catch (error) {
     debugLogs.push(`💥 Exception: ${error instanceof Error ? error.message : String(error)}`)
     console.error("Error in createBookingWithFirestore:", error)
     return {
+      firestoreId: undefined,
+      firestoreSuccess: false,
+      firestoreError: error instanceof Error ? error.message : "Eroare necunoscută",
+      debugLogs,
       success: false,
       message: "Eroare la procesarea rezervării complete",
-      error: error instanceof Error ? error.message : "Eroare necunoscută",
-      debugLogs
+      bookingNumber: null,
+      reservationData: null,
+      qrData: null,
+      bookingDetails: null
     }
   }
 }

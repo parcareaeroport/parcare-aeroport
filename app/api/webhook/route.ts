@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { headers } from "next/headers"
 import { createBookingWithFirestore } from "@/app/actions/booking-actions" // Folosim versiunea extinsă
 
+
 // Inițializăm clientul Stripe cu cheia secretă
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2025-05-28.basil", // Versiune actualizată
@@ -77,12 +78,23 @@ export async function POST(req: Request) {
       // Folosim noua funcție care salvează totul în Firestore
       const bookingResult = await createBookingWithFirestore(formData, {
         clientEmail: bookingMetadata.customerEmail,
-        clientPhone: undefined, // Nu e în metadata momentan
+        clientPhone: bookingMetadata.customerPhone || undefined,
         paymentIntentId: paymentIntent.id,
         paymentStatus: "paid",
         amount: amount,
         days: days,
-        source: "webhook"
+        source: "webhook",
+        // Date pentru facturare și adresă din metadata
+        company: bookingMetadata.company || undefined,
+        companyVAT: bookingMetadata.companyVAT || undefined,
+        companyReg: bookingMetadata.companyReg || undefined,
+        companyAddress: bookingMetadata.companyAddress || undefined,
+        needInvoice: bookingMetadata.needInvoice ? bookingMetadata.needInvoice === 'true' : undefined,
+        address: bookingMetadata.address || undefined,
+        city: bookingMetadata.city || undefined,
+        county: bookingMetadata.county || undefined,
+        postalCode: bookingMetadata.postalCode || undefined,
+        orderNotes: bookingMetadata.orderNotes || undefined
       })
 
       // Verificăm dacă au reușit ambele operațiuni
@@ -96,8 +108,8 @@ export async function POST(req: Request) {
           apiBookingNumber: bookingNumber,
           firestoreId: firestoreId,
           paymentIntentId: paymentIntent.id
-        })
-        
+                  })
+
         return NextResponse.json({ 
           success: true, 
           bookingNumber: bookingNumber,

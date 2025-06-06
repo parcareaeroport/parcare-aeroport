@@ -16,10 +16,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: {
     template: "%s | Parcare-Aeroport Otopeni",
-    default: "Parcare-Aeroport Otopeni - Rezervă parcare lângă Aeroportul Henri Coandă",
+    default: "Parcare Aeroport Otopeni - Parcare Privată Otopeni - Tarif Mic",
   },
   description:
-    "Rezervă-ți locul de parcare la Aeroportul Otopeni. Parcare sigură, supravegheată 24/7, la doar 500m de Aeroportul Henri Coandă cu transfer gratuit.",
+    "Alege inteligent, alege siguranța, alege confortul. Alege Parcare Aeroport Otopeni la un tarif avantajos pentru tine!",
   keywords: [
     "parcare aeroport otopeni",
     "parcare henri coanda",
@@ -48,9 +48,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ro_RO",
     url: "https://parcare-aeroport.ro",
-    title: "Parcare-Aeroport Otopeni - Rezervă parcare lângă Aeroportul Henri Coandă",
+    title: "Parcare Aeroport Otopeni - Parcare Privată Otopeni - Tarif Mic",
     description:
-      "Rezervă-ți locul de parcare la Aeroportul Otopeni. Parcare sigură, supravegheată 24/7, la doar 500m de Aeroportul Henri Coandă cu transfer gratuit.",
+      "Alege inteligent, alege siguranța, alege confortul. Alege Parcare Aeroport Otopeni la un tarif avantajos pentru tine!",
     siteName: "Parcare-Aeroport Otopeni",
     images: [
       {
@@ -63,9 +63,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Parcare-Aeroport Otopeni - Rezervă parcare lângă Aeroportul Henri Coandă",
+    title: "Parcare Aeroport Otopeni - Parcare Privată Otopeni - Tarif Mic",
     description:
-      "Rezervă-ți locul de parcare la Aeroportul Otopeni. Parcare sigură, supravegheată 24/7, la doar 500m de Aeroportul Henri Coandă cu transfer gratuit.",
+      "Alege inteligent, alege siguranța, alege confortul. Alege Parcare Aeroport Otopeni la un tarif avantajos pentru tine!",
     images: ["/og-image.jpg"],
     creator: "@parcareaeroport",
   },
@@ -83,7 +83,17 @@ export const metadata: Metadata = {
   verification: {
     google: "verificare-google",
   },
-    generator: 'v0.dev'
+  icons: {
+    icon: [
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/icon.png',
+  },
+  generator: 'v0.dev'
 }
 
 export default function RootLayout({

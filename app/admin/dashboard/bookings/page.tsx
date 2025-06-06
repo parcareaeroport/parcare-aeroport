@@ -59,6 +59,20 @@ interface Booking {
   days?: number
   amount?: number
   
+  // Date pentru facturare (persoană juridică)
+  company?: string
+  companyVAT?: string // CUI/CIF
+  companyReg?: string // Număr Registrul Comerțului
+  companyAddress?: string
+  needInvoice?: boolean
+  orderNotes?: string
+  
+  // Date adresă personală
+  address?: string
+  city?: string
+  county?: string
+  postalCode?: string
+  
   // Status și plată
   status: "confirmed_test" | "confirmed_paid" | "cancelled_by_admin" | "cancelled_by_api" | "api_error" | "expired" | string
   paymentStatus?: "paid" | "pending" | "refunded" | "n/a"
@@ -577,7 +591,46 @@ function BookingsPageContent() {
                   <p>
                     <strong>Telefon:</strong> {selectedBooking.clientPhone || "N/A"}
                   </p>
+                  {selectedBooking.address && (
+                    <p>
+                      <strong>Adresă:</strong> {selectedBooking.address}
+                    </p>
+                  )}
+                  {(selectedBooking.city || selectedBooking.county || selectedBooking.postalCode) && (
+                    <p>
+                      <strong>Localitate:</strong> {[selectedBooking.city, selectedBooking.county, selectedBooking.postalCode].filter(Boolean).join(", ")}
+                    </p>
+                  )}
                 </div>
+                
+                {selectedBooking.needInvoice && (
+                  <>
+                    <h3 className="text-lg font-medium mt-4 mb-2 text-gray-800">Date Facturare</h3>
+                    <div className="space-y-1 text-sm">
+                      {selectedBooking.company && (
+                        <p>
+                          <strong>Denumire firmă:</strong> {selectedBooking.company}
+                        </p>
+                      )}
+                      {selectedBooking.companyVAT && (
+                        <p>
+                          <strong>CUI/CIF:</strong> {selectedBooking.companyVAT}
+                        </p>
+                      )}
+                      {selectedBooking.companyReg && (
+                        <p>
+                          <strong>Nr. Reg. Comerțului:</strong> {selectedBooking.companyReg}
+                        </p>
+                      )}
+                      {selectedBooking.companyAddress && (
+                        <p>
+                          <strong>Adresa firmei:</strong> {selectedBooking.companyAddress}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
+                
                 <h3 className="text-lg font-medium mt-4 mb-2 text-gray-800">Informații Plată</h3>
                 <div className="space-y-1 text-sm">
                   <p>
@@ -589,6 +642,11 @@ function BookingsPageContent() {
                   <p>
                     <strong>ID Tranzacție Stripe:</strong> {selectedBooking.paymentIntentId || "N/A"}
                   </p>
+                  {selectedBooking.orderNotes && (
+                    <p>
+                      <strong>Observații:</strong> {selectedBooking.orderNotes}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
