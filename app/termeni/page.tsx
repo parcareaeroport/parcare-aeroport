@@ -3,7 +3,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 
 export const metadata: Metadata = {
-  title: "Termeni de Utilizare | Parcare-Aeroport Otopeni",
+  title: "Termeni de Utilizare site | Parcare-Aeroport Otopeni",
   description: "Termenii și condițiile de utilizare a serviciilor de parcare oferite de Parcare-Aeroport Otopeni.",
   keywords: ["termeni utilizare", "conditii parcare", "reguli parcare otopeni"],
   alternates: {
