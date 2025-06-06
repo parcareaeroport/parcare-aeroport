@@ -1,5 +1,3 @@
-"use client"
-
 import { Shield, Clock, Car, MapPin, Banknote, Phone, Star, Zap } from "lucide-react"
 
 export default function WhyChooseSection() {

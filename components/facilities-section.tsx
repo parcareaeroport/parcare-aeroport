@@ -1,4 +1,3 @@
-"use client"
 import { Plane, MapPin, Palmtree, Luggage, Laptop, TrendingUp, Music, Sparkles } from "lucide-react"
 
 export default function FacilitiesSection() {
