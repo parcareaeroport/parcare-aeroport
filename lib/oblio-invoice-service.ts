@@ -227,7 +227,7 @@ const oblioConfig: OblioConfig = {
   clientId: process.env.OBLIO_CLIENT_ID!, // Email-ul tău Oblio
   clientSecret: process.env.OBLIO_CLIENT_SECRET!, // Token din setări Oblio
   companyCif: process.env.OBLIO_COMPANY_CIF!, // CIF-ul companiei tale
-  defaultSeries: 'FCT', // Seria de facturi
+  defaultSeries: process.env.OBLIO_SERIES!, // Seria de facturi
 };
 
 // Export serviciu configurat
