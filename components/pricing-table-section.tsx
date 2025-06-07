@@ -109,7 +109,7 @@ export default function PricingTableSection() {
       <div className="container mx-auto px-4">
         {/* ---------- HEADER ---------- */}
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-waze-blue">
             Parcare Otopeni preț avantajos
           </h2>
           <p className="text-lg sm:text-xl mb-4 sm:mb-5">
@@ -122,9 +122,9 @@ export default function PricingTableSection() {
             <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Proximitate aeroport</span>
             <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Transfer gratuit</span>
           </div>
-          <div className="text-primary font-bold text-base sm:text-lg mb-2">
+          <div className="text-base sm:text-lg mb-2">
             Profită de promoțiile noastre și rezervă acum!<br />
-            <span className="text-primary">30% reducere începând cu a-2-a zi de parcare</span>
+            <span>30% reducere începând cu a-2-a zi de parcare</span>
           </div>
         </div>
 

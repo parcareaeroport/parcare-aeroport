@@ -17,12 +17,12 @@ export default function Footer() {
       <div className="container mx-auto px-4">
 
 
-        {/* Main Footer Content - Three Equal Sections */}
-        <div className="flex flex-col md:flex-row gap-8 md:gap-6 mb-8 md:mb-12">
+        {/* Main Footer Content - Three Sections with Better Visual Balance */}
+        <div className="flex flex-col md:flex-row gap-8 md:gap-8 mb-8 md:mb-12">
           
-          {/* Left Section - Description */}
-          <div className="flex-1 space-y-3">
-            <h3 className="text-lg font-semibold mb-4 text-white">Despre noi</h3>
+          {/* Left Section - Description - Takes more space */}
+          <div className="md:flex-[1] space-y-3">
+            <h3 className="text-lg font-semibold mb-4 text-white inline-block">Despre noi</h3>
             <p className="text-gray-300 text-sm leading-relaxed">
               Oferim servicii de parcare securizată la doar 2 km de aeroportul Henri Coandă. 
               Cu transfer gratuit, supraveghere 24/7 și facilități moderne, suntem alegerea ideală pentru călătoriile tale.
@@ -32,10 +32,12 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Middle Section - Utile (Site Pages) */}
-          <div className="flex-1 space-y-3">
-            <h3 className="text-lg font-semibold mb-4 text-white">Utile</h3>
+          {/* Middle Section - Utile (Site Pages) - Compact to bring Contact closer */}
+          <div className="md:flex-[1] space-y-3 md:flex md:flex-col md:items-center">
             <ul className="space-y-3">
+            <li>
+            <h3 className="text-lg font-semibold mb-4 text-white inline-block">Utile</h3>
+            </li>
               <li>
                 <Link href="/" className="text-gray-300 hover:text-white transition-colors text-sm">
                   Acasă
@@ -61,10 +63,12 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Right Section - Contact rapid */}
-          <div className="flex-1 space-y-3">
-            <h3 className="text-lg font-semibold mb-4 text-white">Contact rapid</h3>
+          {/* Right Section - Contact rapid - Half size */}
+          <div className="md:flex-[1] space-y-3 md:flex md:flex-col md:items-center">
             <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+            <h3 className="text-lg font-semibold mb-4 text-white inline-block">Contact rapid</h3>
+            </div>
               {/* Phone */}
               <div className="flex items-center space-x-3">
                 <Phone size={16} className="text-[#FF0066] flex-shrink-0" />

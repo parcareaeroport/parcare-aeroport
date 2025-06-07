@@ -34,7 +34,7 @@ export default function FacilitiesSection() {
                       />
                     </div>
                   </div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center group-hover:text-indigo-700 transition-colors duration-300">City break</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300">City break</h3>
                 </div>
                 <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-yellow-400 to-yellow-500 hidden md:block shadow-lg"></div>
               </div>
@@ -56,7 +56,7 @@ export default function FacilitiesSection() {
                       />
                     </div>
                   </div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center group-hover:text-emerald-700 transition-colors duration-300">Sejur prelungit</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300">Sejur prelungit</h3>
                 </div>
                 <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-yellow-400 to-yellow-500 hidden md:block shadow-lg"></div>
               </div>
@@ -78,7 +78,7 @@ export default function FacilitiesSection() {
                       />
                     </div>
                   </div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center group-hover:text-blue-700 transition-colors duration-300">Business trip</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300">Business trip</h3>
                 </div>
                 <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-yellow-400 to-yellow-500 hidden md:block shadow-lg"></div>
               </div>
@@ -100,7 +100,7 @@ export default function FacilitiesSection() {
                       />
                     </div>
                   </div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center group-hover:text-pink-700 transition-colors duration-300">Călătorii pentru evenimente</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300">Călătorii pentru evenimente</h3>
                 </div>
                 <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-yellow-400 to-yellow-500 hidden md:block shadow-lg"></div>
               </div>

@@ -78,7 +78,7 @@ export default function ParkingRulesTabs() {
                         <CreditCard className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">1. Prezentați confirmarea rezervării</h3>
+                        <h3 className="font-medium mb-1 text-waze-blue">1. Prezentați confirmarea rezervării</h3>
                         <p className="text-gray-600 text-sm">
                           La bariera de intrare, prezentați codul QR primit pe email sau introduceți codul de rezervare.
                         </p>
@@ -90,7 +90,7 @@ export default function ParkingRulesTabs() {
                         <Car className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">2. Parcați în zona desemnată</h3>
+                        <h3 className="font-medium mb-1 text-waze-blue">2. Parcați în zona desemnată</h3>
                         <p className="text-gray-600 text-sm">
                           Urmați indicatoarele către zona de parcare și parcați în spațiul desemnat. Asigurați-vă că
                           respectați marcajele.
@@ -103,7 +103,7 @@ export default function ParkingRulesTabs() {
                         <Clock className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">3. Notați ora de sosire</h3>
+                        <h3 className="font-medium mb-1 text-waze-blue">3. Notați ora de sosire</h3>
                         <p className="text-gray-600 text-sm">
                           Rețineți ora la care ați parcat. Sistemul nostru înregistrează automat ora, dar este bine să o
                           verificați și dvs.
@@ -116,7 +116,7 @@ export default function ParkingRulesTabs() {
                         <CheckCircle className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">4. Utilizați serviciul de transfer (opțional)</h3>
+                        <h3 className="font-medium mb-1 text-waze-blue">4. Utilizați serviciul de transfer (opțional)</h3>
                         <p className="text-gray-600 text-sm">
                           Dacă aveți nevoie de transfer către aeroport, prezentați-vă la punctul de întâlnire marcat.
                           Serviciul este gratuit și disponibil 24/7.
@@ -132,7 +132,7 @@ export default function ParkingRulesTabs() {
                         <Car className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">1. Pregătiți-vă pentru plecare</h3>
+                        <h3 className="font-medium mb-1 text-waze-blue">1. Pregătiți-vă pentru plecare</h3>
                         <p className="text-gray-600 text-sm">
                           Verificați că nu ați uitat nimic în parcare și că aveți toate documentele necesare.
                         </p>
@@ -144,7 +144,7 @@ export default function ParkingRulesTabs() {
                         <CreditCard className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">2. Verificați plata</h3>
+                        <h3 className="font-medium mb-1 text-waze-blue">2. Verificați plata</h3>
                         <p className="text-gray-600 text-sm">
                           Dacă ați depășit perioada rezervată inițial, efectuați plata suplimentară la automatul de
                           plată sau online.
@@ -157,7 +157,7 @@ export default function ParkingRulesTabs() {
                         <Clock className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">3. Respectați timpul de ieșire</h3>
+                        <h3 className="font-medium mb-1 text-waze-blue">3. Respectați timpul de ieșire</h3>
                         <p className="text-gray-600 text-sm">
                           Aveți la dispoziție 15 minute pentru a părăsi parcarea după efectuarea plății suplimentare.
                         </p>
@@ -169,7 +169,7 @@ export default function ParkingRulesTabs() {
                         <CheckCircle className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1">4. Ieșiți prin bariera automată</h3>
+                        <h3 className="font-medium mb-1 text-waze-blue">4. Ieșiți prin bariera automată</h3>
                         <p className="text-gray-600 text-sm">
                           Sistemul va recunoaște automat numărul de înmatriculare sau puteți scana codul QR. Bariera se
                           va ridica automat.

@@ -39,7 +39,7 @@ export default function ReviewsSection() {
     <section className="py-12 md:py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-gray-800">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-waze-blue">
             Ce spun șoferii despre noi
           </h2>
           <p className="text-base sm:text-lg mb-10 sm:mb-16 text-gray-600">

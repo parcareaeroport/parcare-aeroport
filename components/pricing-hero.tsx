@@ -21,7 +21,7 @@ export default function PricingHero() {
                 <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] right-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform translate-x-full">
                   <div className="absolute right-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">49,98 LEI</h3>
+                <h3 className="text-2xl md:text-3xl font-bold text-waze-blue">49,98 LEI</h3>
                 <p className="text-gray-600">preț pentru o zi de parcare</p>
               </div>
 
@@ -30,7 +30,7 @@ export default function PricingHero() {
                 <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] right-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform translate-x-full">
                   <div className="absolute right-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">500m</h3>
+                <h3 className="text-2xl md:text-3xl font-bold text-waze-blue">500m</h3>
                 <p className="text-gray-600">distanță față de aeroport</p>
               </div>
             </div>
@@ -54,7 +54,7 @@ export default function PricingHero() {
                 <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] left-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform -translate-x-full">
                   <div className="absolute left-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">24/7</h3>
+                <h3 className="text-2xl md:text-3xl font-bold text-waze-blue">24/7</h3>
                 <p className="text-gray-600">supraveghere video și pază</p>
               </div>
 
@@ -63,7 +63,7 @@ export default function PricingHero() {
                 <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] left-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform -translate-x-full">
                   <div className="absolute left-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">30%</h3>
+                <h3 className="text-2xl md:text-3xl font-bold text-waze-blue">30%</h3>
                 <p className="text-gray-600">reducere pentru rezervări online</p>
               </div>
             </div>
@@ -80,15 +80,15 @@ export default function PricingHero() {
           {/* Additional features below the image */}
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
-              <h3 className="font-bold text-lg mb-2">Parcare asfaltată</h3>
+              <h3 className="font-bold text-lg mb-2 text-waze-blue">Parcare asfaltată</h3>
               <p className="text-gray-600 text-sm">Suprafață asfaltată și marcată pentru confort maxim</p>
             </div>
             <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
-              <h3 className="font-bold text-lg mb-2">Transfer gratuit</h3>
+              <h3 className="font-bold text-lg mb-2 text-waze-blue">Transfer gratuit</h3>
               <p className="text-gray-600 text-sm">Transport gratuit dus-întors la terminal</p>
             </div>
             <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
-              <h3 className="font-bold text-lg mb-2">Rezervare online</h3>
+              <h3 className="font-bold text-lg mb-2 text-waze-blue">Rezervare online</h3>
               <p className="text-gray-600 text-sm">Sistem simplu de rezervare cu confirmare instantă</p>
             </div>
           </div>

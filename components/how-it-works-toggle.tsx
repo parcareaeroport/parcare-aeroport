@@ -42,7 +42,7 @@ export default function HowItWorksToggle() {
                   <Search className="h-5 w-5 sm:h-6 sm:w-6 text-waze-blue" />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Efectuarea rezervării</h3>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-blue">Efectuarea rezervării</h3>
                   <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
                     Alege metoda preferată: rapid și ușor pe site-ul nostru securizat sau direct la locația parcării, în funcție de disponibilitate.
                   </p>
@@ -55,7 +55,7 @@ export default function HowItWorksToggle() {
                   <Search className="h-5 w-5 sm:h-6 sm:w-6 text-waze-blue" />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Găsește-ne fără efort</h3>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-blue">Găsește-ne fără efort</h3>
                   <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
                     Dacă dorești să ne găsești rapid, apasă click pe pictograma locației de pe site-ul nostru sau folosește aplicația preferată de navigație. Alege o parcare lângă aeroportul Otopeni, astfel încât să beneficiezi de transfer rapid.
                   </p>
@@ -68,7 +68,7 @@ export default function HowItWorksToggle() {
                   <Car className="h-5 w-5 sm:h-6 sm:w-6 text-waze-blue" />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Sosirea la parcare</h3>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-blue">Sosirea la parcare</h3>
                   <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
                     Când ai sosit, intră în parcare, vei fi întâmpinat cu un călduros "Bine ați venit!" de către personalul nostru amabil. Apoi, poți parca mașina în locul indicat. În doar câteva minute, șoferul nostru te va prelua pentru transfer.
                   </p>
@@ -81,7 +81,7 @@ export default function HowItWorksToggle() {
                   <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 text-waze-blue" />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Transfer Gratuit la Aeroport</h3>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-blue">Transfer Gratuit la Aeroport</h3>
                   <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
                     Beneficiezi de transfer gratuit la aeroport în mașina noastră de modernă și confortabilă. Te conducem pe tine și pe însoțitorii tăi gratuit și în siguranță la terminalul de plecări al aeroportului.
                   </p>
@@ -97,7 +97,7 @@ export default function HowItWorksToggle() {
                   <Car className="h-5 w-5 sm:h-6 sm:w-6 text-waze-blue" />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Pregătește-te de plecare</h3>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-blue">Pregătește-te de plecare</h3>
                   <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
                     Când ești gata să pleci, nu este nevoie de nicio acțiune suplimentară. Totul este deja configurat în
                     sistem în baza rezervării tale.
@@ -110,7 +110,7 @@ export default function HowItWorksToggle() {
                   <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 text-waze-blue" />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Ieșire automată</h3>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-blue">Ieșire automată</h3>
                   <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
                     Apropie-te de bariera de ieșire. Sistemul nostru va recunoaște automat numărul de înmatriculare și
                     bariera se va ridica. Nu este nevoie de bilet sau de alte formalități.
@@ -123,7 +123,7 @@ export default function HowItWorksToggle() {
                   <Star className="h-5 w-5 sm:h-6 sm:w-6 text-waze-blue" />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-blue">
                     Feedback și următoarea rezervare
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
