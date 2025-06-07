@@ -48,6 +48,19 @@ const fmt = new Intl.NumberFormat("ro-RO", {
 export default function PricingTable() {
   const { toast } = useToast()
 
+  // Helper pentru rotunjirea inteligentă a procentelor (doar pentru afișare)
+  const roundPercentageForDisplay = (percentage: number): number => {
+    const fractionalPart = percentage % 1
+    
+    // Dacă este foarte aproape de .5, rotunjește la .5
+    if (Math.abs(fractionalPart - 0.5) <= 0.1) {
+      return Math.floor(percentage) + 0.5
+    }
+    
+    // Altfel, rotunjește la cel mai apropiat întreg
+    return Math.round(percentage)
+  }
+
   /* ---------- state ---------- */
   const [initialLoading, setInitialLoading] = useState(true)
   const [rows, setRows] = useState<PriceRow[]>([])
@@ -68,6 +81,8 @@ export default function PricingTable() {
           const disc = s * (pct / 100)
           const final = s - disc
 
+          const displayPercentage = roundPercentageForDisplay(pct)
+          
           return {
             id: d.id,
             days: p.days,
@@ -77,7 +92,7 @@ export default function PricingTable() {
             finalPrice: final,
             discountNote:
               pct > 0
-                ? `${fmt.format(disc)} RON (${pct}%)`
+                ? `${fmt.format(disc)} RON (${displayPercentage}%)`
                 : "Fără reducere",
           }
         })
@@ -118,7 +133,7 @@ export default function PricingTable() {
     <section className="py-12 md:py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-waze-pink">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-primary">
             Parcare Otopeni preț (prețuri per număr de zile)
           </h2>
           <p className="text-center text-sm text-gray-600 mb-6">

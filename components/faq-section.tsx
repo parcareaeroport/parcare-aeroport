@@ -56,7 +56,7 @@ export default function FAQSection() {
     <section className="py-12 md:py-16 bg-gray-50">
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center">Întrebări frecvente</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center text-primary">Întrebări frecvente</h2>
 
           <div className="space-y-4">
             {faqItems.map((item, index) => (
@@ -68,7 +68,7 @@ export default function FAQSection() {
                   aria-controls={`faq-answer-${index}`}
                 >
                   <h3 className="text-lg font-medium text-gray-900">{item.question}</h3>
-                  <span className="ml-6 flex-shrink-0 text-green-600">
+                  <span className="ml-6 flex-shrink-0 text-primary">
                     {openIndex === index ? <Minus className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
                   </span>
                 </button>
@@ -87,7 +87,7 @@ export default function FAQSection() {
           <div className="mt-12 text-center">
             <p className="text-gray-600">
               Ai alte întrebări?{" "}
-              <a href="/contact" className="text-green-600 font-medium hover:underline">
+              <a href="/contact" className="text-primary font-medium hover:underline">
                 Contactează-ne
               </a>
             </p>

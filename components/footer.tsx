@@ -30,13 +30,13 @@ export default function Footer() {
         </div>
 
         {/* Main Footer Content - Three Equal Sections */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8 md:mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 mb-8 md:mb-12">
           
           {/* Left Section - Description */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium mb-4 text-white">Despre noi</h3>
+            <h3 className="text-lg font-semibold mb-6 text-white">Despre noi</h3>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Parcare Aeroport Otopeni oferă servicii de parcare securizată la doar 2 km de aeroportul Henri Coandă. 
+              Oferim servicii de parcare securizată la doar 2 km de aeroportul Henri Coandă. 
               Cu transfer gratuit, supraveghere 24/7 și facilități moderne, suntem alegerea ideală pentru călătoriile tale.
             </p>
             <p className="text-gray-300 text-sm">
@@ -46,7 +46,7 @@ export default function Footer() {
 
           {/* Middle Section - Utile (Site Pages) */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium mb-4 text-white">Utile</h3>
+            <h3 className="text-lg font-semibold mb-6 text-white">Utile</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/" className="text-gray-300 hover:text-white transition-colors text-sm">
@@ -75,7 +75,7 @@ export default function Footer() {
 
           {/* Right Section - Contact rapid */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium mb-4 text-white">Contact rapid</h3>
+            <h3 className="text-lg font-semibold mb-6 text-white">Contact rapid</h3>
             <div className="space-y-4">
               {/* Phone */}
               <div className="flex items-center space-x-3">

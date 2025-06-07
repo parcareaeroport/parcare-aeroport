@@ -20,6 +20,7 @@ interface PriceData extends DocumentData {
   days: number
   standardPrice: number
   discountPercentage: number
+  reducereAplicata?: number // Noua structură din backend
 }
 
 const initialPricePlaceholder = "N/A"
@@ -50,16 +51,25 @@ export default function PricingTableSection() {
         const reduced: Record<string, string> = {}
         const standard: Record<string, string> = {}
         const keys: string[] = []
+        
+        // Sortează și limitează la primele 8 zile
+        const sortedPrices = snap.docs
+          .map(d => ({ id: d.id, ...d.data() as PriceData }))
+          .sort((a, b) => a.days - b.days)
+          .slice(0, 8) // Limitează la primele 8 zile
 
-        snap.forEach((d) => {
-          const p = d.data() as PriceData
+        sortedPrices.forEach((p) => {
           const k = p.days.toString()
           keys.push(k)
 
           standard[k] = formatPrice(p.standardPrice)
-          const final =
-            p.standardPrice - (p.standardPrice * p.discountPercentage) / 100
-          reduced[k] = formatPrice(final, p.discountPercentage > 0)
+          
+          // Folosește reducereAplicata dacă există, altfel calculează din procent
+          const reduction = p.reducereAplicata ?? (p.standardPrice * p.discountPercentage / 100)
+          const final = p.standardPrice - reduction
+          const hasDiscount = reduction > 0
+          
+          reduced[k] = formatPrice(final, hasDiscount)
         })
 
         setDayKeys(keys)
@@ -114,7 +124,7 @@ export default function PricingTableSection() {
           </div>
           <div className="text-primary font-bold text-base sm:text-lg mb-2">
             Profită de promoțiile noastre și rezervă acum!<br />
-            <span className="text-primary">30% reducere începând cu a2a zi de parcare</span>
+            <span className="text-primary">30% reducere începând cu a-2-a zi de parcare</span>
           </div>
         </div>
 
@@ -131,7 +141,7 @@ export default function PricingTableSection() {
 
           {/* ======================= MOBILE ======================= */}
           <div className="p-4 sm:p-6 md:hidden">
-            <div className="flex items-center gap-4 mb-6 bg-primary/10 p-3 rounded-xl">
+            <div className="flex items-center gap-4 mb-6 b  g-primary/10 p-3 rounded-xl">
               <span className="text-xl font-bold text-primary">30%</span>
               <span className="text-primary font-medium text-sm">REDUCERE</span>
             </div>
@@ -336,13 +346,16 @@ export default function PricingTableSection() {
           </div>
 
           {/* CTA la finalul containerului alb */}
-          <div className="w-full flex justify-center py-8">
+          <div className="w-full flex flex-col items-center gap-2 py-8">
+            <p className="text-sm text-gray-600 text-center">
+              Afișând primele 8 zile. Pentru tarife complete:
+            </p>
             {/* Buton Secundar - Fundal alb + Border & Text roz */}
             <Link
               href="/tarife"
               className="inline-flex items-center gap-2 bg-white hover:bg-[#ff0066]/5 text-[#ff0066] hover:text-[#ff0066] border-2 border-[#ff0066] hover:border-[#e6005c] px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-sm hover:shadow-md"
             >
-              Vezi tarife pe 100 de zile
+              Vezi toate tarifele (100+ zile)
             </Link>
           </div>
         </div>

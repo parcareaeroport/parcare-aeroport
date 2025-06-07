@@ -17,7 +17,7 @@ export default function ParkingRulesTabs() {
               <button
                 className={`py-4 px-6 font-medium text-center transition-colors ${
                   activeTab === "sosire"
-                    ? "bg-blue-50 text-[#0099cc] border-b-2 border-[#33CCFF]"
+                    ? "bg-blue-50 text-primary border-b-2 border-primary"
                     : "text-gray-600 hover:bg-gray-50"
                 }`}
                 onClick={() => setActiveTab("sosire")}
@@ -27,7 +27,7 @@ export default function ParkingRulesTabs() {
               <button
                 className={`py-4 px-6 font-medium text-center transition-colors ${
                   activeTab === "plecare"
-                    ? "bg-blue-50 text-[#0099cc] border-b-2 border-[#33CCFF]"
+                    ? "bg-blue-50 text-primary border-b-2 border-primary"
                     : "text-gray-600 hover:bg-gray-50"
                 }`}
                 onClick={() => setActiveTab("plecare")}

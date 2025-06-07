@@ -44,19 +44,22 @@ export default function Header() {
         isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto flex items-center justify-between py-4">
-        <div className="flex items-center gap-4 md:gap-8">
-          <Link href="/" className="flex items-center" title="Parcare-Aeroport Otopeni" aria-label="Acasă">
-            <Image
-              src="/sigla-transparenta.png"
-              alt="Parcare-Aeroport Logo"
-              width={140}
-              height={45}
-              className="h-10 md:h-12 w-auto"
-              priority
-            />
-          </Link>
+      <div className="container mx-auto flex items-center justify-between py-3">
+        {/* Logo în stânga */}
+        <Link href="/" className="flex items-center" title="Parcare-Aeroport Otopeni" aria-label="Acasă">
+          <Image
+            src="/sigla-transparenta.png"
+            alt="Parcare-Aeroport Logo"
+            width={170}
+            height={55}
+            className="h-12 md:h-14 w-auto"
+            priority
+          />
+        </Link>
 
+        {/* Meniul și butoanele în dreapta */}
+        <div className="flex items-center gap-2 md:gap-6">
+          {/* Meniul de navigare */}
           <nav className="hidden md:flex items-center space-x-1" aria-label="Navigare principală">
             <div className="flex items-center space-x-1">
               {navItems.map((item) => (
@@ -68,7 +71,7 @@ export default function Header() {
                 >
                   <Button
                     variant="ghost"
-                    className={`flex items-center gap-1 rounded-full text-sm font-medium transition-all duration-200 hover:bg-waze-blue/10 hover:text-waze-blue hover:scale-105 ${
+                    className={`flex items-center gap-1 rounded-md text-sm font-medium transition-all duration-200 hover:bg-waze-blue/10 hover:text-waze-blue hover:scale-105 ${
                       pathname === item.href ? "bg-waze-blue/10 text-waze-blue" : ""
                     }`}
                   >
@@ -78,9 +81,6 @@ export default function Header() {
               ))}
             </div>
           </nav>
-        </div>
-
-        <div className="flex items-center gap-2 md:gap-4">
           {/* Buton Secundar - Fundal alb + Border & Text roz */}
           <Link href="/tarife">
             <Button

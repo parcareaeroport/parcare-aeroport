@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export default function VideoSection() {
   return (
-    <section className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full overflow-hidden">
+    <section className="relative h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px] w-full overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
