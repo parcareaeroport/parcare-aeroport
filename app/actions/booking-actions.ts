@@ -602,8 +602,8 @@ export async function createBookingWithFirestore(
 
       console.log("✅ Rezervare confirmată:", firestoreResult.firestoreId)
       
-      // Generează factură OBLIO automată pentru TOATE rezervările plătite
-      if (additionalData?.paymentStatus === 'paid' || additionalData?.source === 'webhook') {
+      // Generează factură OBLIO automată pentru TOATE rezervările plătite ȘI în test mode
+      if (additionalData?.paymentStatus === 'paid' || additionalData?.source === 'webhook' || additionalData?.source === 'test_mode') {
         try {
           const { generateOblioInvoice } = await import('@/lib/oblio-integration')
           
@@ -637,7 +637,7 @@ export async function createBookingWithFirestore(
           // Nu oprim procesul pentru erori la facturare
         }
       } else {
-        console.log("ℹ️ Factură Oblio nu se generează - rezervare în test mode sau fără plată")
+        console.log("ℹ️ Factură Oblio nu se generează - rezervare fără plată")
       }
 
       return {
