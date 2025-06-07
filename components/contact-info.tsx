@@ -9,15 +9,15 @@ export default function ContactInfo() {
     {
       title: "Telefon",
       items: [
-        { label: "Rezervări și informații", value: "+40 123 456 789" },
-        { label: "Urgențe și asistență", value: "+40 123 456 790" },
+        { label: "Rezervări și informații", value: "+40 734 292 818" },
+        { label: "Urgențe și asistență", value: "+40 734 292 818" },
       ],
     },
     {
       title: "Email",
       items: [
-        { label: "Rezervări", value: "rezervari@parcare-aeroport.ro" },
-        { label: "Support", value: "contact@parcare-aeroport.ro" },
+        { label: "Rezervări", value: "contact.parcareaeroport@gmail.com" },
+        { label: "Support", value: "contact.parcareaeroport@gmail.com" },
       ],
     },
     {

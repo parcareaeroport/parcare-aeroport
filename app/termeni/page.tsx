@@ -162,8 +162,8 @@ export default function TermsOfServicePage() {
             <h2>10. Contact</h2>
             <p>Dacă aveți întrebări despre acești Termeni, vă rugăm să ne contactați:</p>
             <ul>
-              <li>Email: legal@parcare-aeroport.ro</li>
-              <li>Telefon: 0740.123.456</li>
+                              <li>Email: contact.parcareaeroport@gmail.com</li>
+                              <li>Telefon: +40 734 292 818</li>
               <li>Adresă: Strada Aeroportului 10, Otopeni, Ilfov</li>
             </ul>
           </div>

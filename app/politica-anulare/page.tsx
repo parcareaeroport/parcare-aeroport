@@ -71,8 +71,8 @@ export default function CancellationPolicyPage() {
             <p>Pentru a anula o rezervare, vă rugăm să urmați unul dintre pașii de mai jos:</p>
             <ul>
               <li>Accesați link-ul de anulare din email-ul de confirmare a rezervării</li>
-              <li>Contactați serviciul nostru de relații cu clienții la numărul de telefon 0740.123.456</li>
-              <li>Trimiteți un email la adresa anulari@parcare-aeroport.ro cu numărul rezervării și detaliile dvs.</li>
+                              <li>Contactați serviciul nostru de relații cu clienții la numărul de telefon +40 734 292 818</li>
+                              <li>Trimiteți un email la adresa contact.parcareaeroport@gmail.com cu numărul rezervării și detaliile dvs.</li>
             </ul>
 
             <p>
@@ -99,8 +99,8 @@ export default function CancellationPolicyPage() {
               Pentru orice întrebări sau clarificări privind politica noastră de anulare, vă rugăm să ne contactați la:
             </p>
             <ul>
-              <li>Telefon: 0740.123.456</li>
-              <li>Email: contact@parcare-aeroport.ro</li>
+                              <li>Telefon: +40 734 292 818</li>
+                              <li>Email: contact.parcareaeroport@gmail.com</li>
               <li>Adresă: Strada Aeroportului 10, Otopeni, Ilfov</li>
             </ul>
           </div>

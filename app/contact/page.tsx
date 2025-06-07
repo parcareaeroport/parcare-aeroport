@@ -49,8 +49,8 @@ export default function ContactPage() {
             "mainEntity": {
               "@type": "Organization",
               "name": "Parcare-Aeroport SRL",
-              "telephone": "+40740123456",
-              "email": "contact@parcare-aeroport.ro",
+              "telephone": "+40734292818",
+              "email": "contact.parcareaeroport@gmail.com",
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "Strada Aeroportului 10",
@@ -61,7 +61,7 @@ export default function ContactPage() {
               },
               "contactPoint": {
                 "@type": "ContactPoint",
-                "telephone": "+40740123456",
+                "telephone": "+40734292818",
                 "contactType": "customer service",
                 "availableLanguage": ["Romanian", "English"],
                 "hoursAvailable": {

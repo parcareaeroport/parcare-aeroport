@@ -130,8 +130,8 @@ export default function PrivacyPolicyPage() {
             <h2>9. Contact</h2>
             <p>Dacă aveți întrebări despre această Politică de Confidențialitate, vă rugăm să ne contactați:</p>
             <ul>
-              <li>Email: gdpr@parcare-aeroport.ro</li>
-              <li>Telefon: 0740.123.456</li>
+                              <li>Email: contact.parcareaeroport@gmail.com</li>
+                              <li>Telefon: +40 734 292 818</li>
               <li>Adresă: Strada Aeroportului 10, Otopeni, Ilfov</li>
             </ul>
           </div>

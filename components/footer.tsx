@@ -15,26 +15,14 @@ export default function Footer() {
   return (
     <footer className="bg-[#0A1172] text-white pt-10 sm:pt-16 pb-8">
       <div className="container mx-auto px-4">
-        {/* Logo Section */}
-        <div className="mb-8 md:mb-12 text-center md:text-left">
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
-            {/* <Image
-              src="/sigla-transparenta.png"
-              alt="Parcare-Aeroport Logo"
-              width={200}
-              height={80}
-              className="h-16 md:h-20 w-auto"
-            /> */}
-            <h2 className="text-xl sm:text-2xl font-bold text-[#FF0066]">Parcare-Aeroport</h2>
-          </div>
-        </div>
+
 
         {/* Main Footer Content - Three Equal Sections */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 mb-8 md:mb-12">
+        <div className="flex flex-col md:flex-row gap-8 md:gap-6 mb-8 md:mb-12">
           
           {/* Left Section - Description */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-6 text-white">Despre noi</h3>
+          <div className="flex-1 space-y-3">
+            <h3 className="text-lg font-semibold mb-4 text-white">Despre noi</h3>
             <p className="text-gray-300 text-sm leading-relaxed">
               Oferim servicii de parcare securizată la doar 2 km de aeroportul Henri Coandă. 
               Cu transfer gratuit, supraveghere 24/7 și facilități moderne, suntem alegerea ideală pentru călătoriile tale.
@@ -45,8 +33,8 @@ export default function Footer() {
           </div>
 
           {/* Middle Section - Utile (Site Pages) */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-6 text-white">Utile</h3>
+          <div className="flex-1 space-y-3">
+            <h3 className="text-lg font-semibold mb-4 text-white">Utile</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/" className="text-gray-300 hover:text-white transition-colors text-sm">
@@ -62,34 +50,34 @@ export default function Footer() {
           
               <li>
                 <Link href="/termeni" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Termeni și condiții
+                  Termeni
                 </Link>
               </li>
               <li>
                 <Link href="/confidentialitate" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Politica de confidențialitate
+                  Confidențialitate
                 </Link>
               </li>
             </ul>
           </div>
 
           {/* Right Section - Contact rapid */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-6 text-white">Contact rapid</h3>
+          <div className="flex-1 space-y-3">
+            <h3 className="text-lg font-semibold mb-4 text-white">Contact rapid</h3>
             <div className="space-y-4">
               {/* Phone */}
               <div className="flex items-center space-x-3">
                 <Phone size={16} className="text-[#FF0066] flex-shrink-0" />
-                <a href="tel:+40123456789" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  +40 123 456 789
+                <a href="tel:+40734292818" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  +40 734 292 818
                 </a>
               </div>
               
               {/* Email */}
               <div className="flex items-center space-x-3">
                 <Mail size={16} className="text-[#FF0066] flex-shrink-0" />
-                <a href="mailto:contact@parcare-aeroport.ro" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  contact@parcare-aeroport.ro
+                <a href="mailto:contact.parcareaeroport@gmail.com" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  contact.parcareaeroport@gmail.com
                 </a>
               </div>
 
@@ -101,7 +89,7 @@ export default function Footer() {
                 <div className="flex items-center space-x-3">
                   <MapPin size={16} className="text-[#FF0066] flex-shrink-0" />
                   <a 
-                    href="https://maps.google.com/?q=Parcare+Aeroport+Otopeni,+DN1,+Otopeni,+Romania" 
+                    href="https://maps.google.com/?q=Site+Parcari+Otopeni,+DN1,+Otopeni,+Romania" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-gray-300 hover:text-white transition-colors text-sm"
@@ -114,7 +102,7 @@ export default function Footer() {
                 <div className="flex items-center space-x-3">
                   <Navigation size={16} className="text-[#FF0066] flex-shrink-0" />
                   <a 
-                    href="https://waze.com/ul?q=Parcare%20Aeroport%20Otopeni&navigate=yes" 
+                    href="https://waze.com/ul?q=Site%20Parcari%20Otopeni&navigate=yes" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-gray-300 hover:text-white transition-colors text-sm"
@@ -130,24 +118,23 @@ export default function Footer() {
         {/* Social Media Links */}
         <div className="flex flex-col md:flex-row justify-between items-center border-t border-[#1a2285] pt-6 md:pt-8">
           <div className="flex space-x-4 mb-6 md:mb-0">
-            <Link href="#" className="text-gray-300 hover:text-white transition-colors">
+            <Link href="https://www.instagram.com/parcare_aeroport?igsh=MXV5d2d2M3NibHh0Yg%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
               <Instagram size={20} className="sm:w-5 sm:h-5" />
             </Link>
-            <Link href="#" className="text-gray-300 hover:text-white transition-colors">
+            <Link href="https://www.facebook.com/share/1EYNt8Zp19/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
               <Facebook size={20} className="sm:w-5 sm:h-5" />
             </Link>
-            <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-              <Twitter size={20} className="sm:w-5 sm:h-5" />
-            </Link>
-            <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-              <Linkedin size={20} className="sm:w-5 sm:h-5" />
+            <Link href="https://www.tiktok.com/@parcare_aeroport?_t=ZN-8wmzQZdnbra&_r=1" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              </svg>
             </Link>
           </div>
         </div>
 
         {/* Copyright and Legal */}
         <div className="flex flex-col md:flex-row justify-between items-center border-t border-[#1a2285] pt-6 md:pt-8 mt-6 md:mt-8 text-xs sm:text-sm text-gray-400">
-          <div className="mb-4 md:mb-0">© Copyright Parcare-Aeroport {new Date().getFullYear()}</div>
+          <div className="mb-4 md:mb-0">© Copyright Site Parcări {new Date().getFullYear()}</div>
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
             <Link href="/politica-anulare" className="hover:text-white transition-colors">
               Politica de anulare
@@ -163,7 +150,7 @@ export default function Footer() {
 
         {/* Company Info */}
         <div className="text-[10px] sm:text-xs text-gray-500 mt-6 md:mt-8 text-center md:text-left">
-          Parcare-Aeroport este numele comercial al Parcare-Aeroport SRL Înregistrat în România cu nr. J40/12345/2023.
+          Site Parcări este numele comercial al Site Parcări SRL Înregistrat în România cu nr. J40/12345/2023.
           Strada Parcărilor, Nr. 10, București, România
         </div>
 

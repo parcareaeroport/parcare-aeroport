@@ -763,12 +763,12 @@ export default function OrderPlacementForm() {
                     <span>-{calculateDiscount().toFixed(2)} RON</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Subtotal:</span>
-                    <span>{(reservationData.price - calculateDiscount()).toFixed(2)} RON</span>
+                    <span className="text-gray-600">Subtotal (fără TVA):</span>
+                    <span>{(calculateTotal() / 1.19).toFixed(2)} RON</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">TVA (19%):</span>
-                    <span>{(calculateTotal() * 0.19).toFixed(2)} RON</span>
+                    <span>{(calculateTotal() - (calculateTotal() / 1.19)).toFixed(2)} RON</span>
                   </div>
                 </div>
 
@@ -778,7 +778,7 @@ export default function OrderPlacementForm() {
                     <span className="font-bold text-xl">{calculateTotal().toFixed(2)} RON</span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    (include TVA 19% - {(calculateTotal() * 0.19).toFixed(2)} RON)
+                    (include TVA 19% - {(calculateTotal() - (calculateTotal() / 1.19)).toFixed(2)} RON)
                   </p>
                 </div>
               </div>
