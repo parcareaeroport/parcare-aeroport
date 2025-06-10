@@ -210,12 +210,12 @@ export default function OrderPlacementForm() {
   // Calculate discount and total
   const calculateDiscount = () => {
     if (!reservationData) return 0
-    return reservationData.days > 1 ? reservationData.price * 0.3 : 0
+    return 0 // Discount eliminat
   }
 
   const calculateTotal = () => {
     if (!reservationData) return 0
-    return reservationData.price - calculateDiscount()
+    return reservationData.price // Preț integral, fără discount
   }
 
   // Test mode booking function
@@ -816,12 +816,8 @@ export default function OrderPlacementForm() {
               <div className="p-6 bg-gray-50">
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Preț standard:</span>
+                    <span className="text-gray-600">Preț parcare:</span>
                     <span>{reservationData.price.toFixed(2)} RON</span>
-                  </div>
-                  <div className="flex justify-between text-green-600">
-                    <span>Discount (30%):</span>
-                    <span>-{calculateDiscount().toFixed(2)} RON</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Subtotal (fără TVA):</span>
