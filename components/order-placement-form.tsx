@@ -144,8 +144,9 @@ export default function OrderPlacementForm() {
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
   
-  // Test mode toggle
-  const [isTestMode, setIsTestMode] = useState(false)
+  // Test mode toggle - COMENTAT
+  // const [isTestMode, setIsTestMode] = useState(false)
+  const isTestMode = false // Forțat să fie false
 
   // Detalii client
   const [firstName, setFirstName] = useState("")
@@ -218,8 +219,11 @@ export default function OrderPlacementForm() {
     return reservationData.price // Preț integral, fără discount
   }
 
-  // Test mode booking function
+  // Test mode booking function - COMENTAT
   const handleTestBooking = async () => {
+    // Funcție comentată - mod test dezactivat
+    return
+    /*
     if (!reservationData) {
       toast({
         title: "Eroare",
@@ -335,6 +339,7 @@ export default function OrderPlacementForm() {
     } finally {
       setIsSubmitting(false)
     }
+    */
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -358,11 +363,13 @@ export default function OrderPlacementForm() {
       return
     }
 
-    // Dacă este modul de test, apelează direct API-ul
+    // Dacă este modul de test, apelează direct API-ul - COMENTAT
+    /*
     if (isTestMode) {
       await handleTestBooking()
       return
     }
+    */
 
     setIsSubmitting(true)
 
@@ -486,7 +493,8 @@ export default function OrderPlacementForm() {
           {showPaymentForm ? "Finalizare plată" : "Plasare comandă"}
         </h1>
 
-        {/* Test Mode Toggle */}
+        {/* Test Mode Toggle - COMENTAT */}
+        {/*
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -504,6 +512,7 @@ export default function OrderPlacementForm() {
             </p>
           )}
         </div>
+        */}
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left column - Customer details form or Payment form */}
