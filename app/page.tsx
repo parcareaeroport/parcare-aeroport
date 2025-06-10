@@ -160,7 +160,7 @@ export default function Home() {
                 "name": "Există serviciu de transfer către aeroport?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Da, oferim un serviciu gratuit de transfer către și de la Aeroportul Otopeni. Transferul funcționează 24/7 și durează aproximativ 4 minute. După ce parcați mașina, vă rugăm să vă prezentați la punctul de întâlnire marcat, iar șoferul nostru vă va prelua în cel mai scurt timp."
+                  "text": "Da, oferim un serviciu gratuit de transfer către și de la Aeroportul Otopeni. Transferul funcționează 24/7 și durează aproximativ 4 minute."
                 }
               }
             ]

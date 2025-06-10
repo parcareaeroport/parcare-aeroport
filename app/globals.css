@@ -177,7 +177,7 @@ body {
 GHID CULORI APLICAȚIE:
 
 LINKURI ȘI TEXTE:
-- Culoare: albastru #0A1172 (waze-blue)
+- Culoare: albastru #06048c (waze-blue)
 - Hover: albastru mai închis
 - Utilizare: navigare, linkuri, titluri, text-primary
 
@@ -240,12 +240,12 @@ EXEMPLE DE UTILIZARE:
 
 /* Actualizăm bg-color pentru a folosi culoarea albastru navy */
 .waze-button {
-  background-color: #0a1172;
+  background-color: #06048c;
   color: white;
 }
 
 .waze-button:hover {
-  background-color: #080d5a;
+  background-color: #050373;
 }
 
 /* Group hover utilities */
@@ -285,10 +285,10 @@ EXEMPLE DE UTILIZARE:
 .rdp {
   --rdp-cell-size: 40px;
   /* Actualizăm culorile calendarului pentru a folosi albastrul navy */
-  --rdp-accent-color: #0a1172;
-  --rdp-background-color: rgba(10, 17, 114, 0.1);
-  --rdp-accent-color-dark: #0a1172;
-  --rdp-background-color-dark: rgba(10, 17, 114, 0.2);
+  --rdp-accent-color: #06048c;
+  --rdp-background-color: rgba(6, 4, 140, 0.1);
+  --rdp-accent-color-dark: #06048c;
+  --rdp-background-color-dark: rgba(6, 4, 140, 0.2);
   --rdp-outline: 2px solid var(--rdp-accent-color);
   --rdp-outline-selected: 2px solid var(--rdp-accent-color);
   margin: 0;

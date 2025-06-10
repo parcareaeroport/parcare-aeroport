@@ -40,9 +40,10 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-transparent"
-      }`}
+      className={`sticky top-0 z-50 transition-all duration-300`}
+      style={{
+        backgroundColor: isScrolled ? "#06048c" : "#06048c"
+      }}
     >
       <div className="container mx-auto flex items-center justify-between py-3">
         {/* Logo în stânga */}
@@ -71,8 +72,8 @@ export default function Header() {
                 >
                   <Button
                     variant="ghost"
-                    className={`flex items-center gap-1 rounded-md text-sm font-medium transition-all duration-200 hover:bg-waze-blue/10 hover:text-waze-blue hover:scale-105 ${
-                      pathname === item.href ? "bg-waze-blue/10 text-waze-blue" : ""
+                    className={`flex items-center gap-1 rounded-md text-sm font-medium transition-all duration-200 text-white hover:bg-white/10 hover:text-white hover:scale-105 ${
+                      pathname === item.href ? "bg-white/20 text-white" : ""
                     }`}
                   >
                     {item.name}
@@ -81,13 +82,13 @@ export default function Header() {
               ))}
             </div>
           </nav>
-          {/* Buton Secundar - Fundal alb + Border & Text roz */}
+          {/* Buton Secundar - Border alb + Text alb + Fundal transparent */}
           <Link href="/tarife">
             <Button
-              className="bg-white hover:bg-[#ff0066]/5 text-[#ff0066] hover:text-[#ff0066] border-2 border-[#ff0066] hover:border-[#e6005c] rounded-md text-sm font-medium px-3 md:px-4 py-2 h-auto transition-all duration-200 shadow-sm hover:shadow-md"
+              className="group bg-transparent hover:bg-white text-white border-2 border-white hover:border-white rounded-md text-sm font-medium px-3 md:px-4 py-2 h-auto transition-all duration-200 shadow-sm hover:shadow-md"
               aria-label="Vezi tarifele"
             >
-              <span>Tarife</span>
+              <span className="group-hover:text-[#06048c] transition-colors duration-200">Tarife</span>
             </Button>
           </Link>
           {/* Buton Principal - Fundal roz + Text alb */}
@@ -102,7 +103,7 @@ export default function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden rounded-full"
+            className="md:hidden rounded-full text-white hover:bg-white/10"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
@@ -172,8 +173,8 @@ export default function Header() {
                     >
                       <Button
                         variant="ghost"
-                        className={`flex items-center justify-start w-full rounded-lg text-left h-auto py-3 transition-all duration-200 hover:bg-waze-blue/10 hover:text-waze-blue hover:pl-4 ${
-                          pathname === item.href ? "bg-waze-blue/10 text-waze-blue" : ""
+                        className={`flex items-center justify-start w-full rounded-lg text-left h-auto py-3 transition-all duration-200 hover:bg-[#06048c]/10 hover:text-[#06048c] hover:pl-4 ${
+                          pathname === item.href ? "bg-[#06048c]/10 text-[#06048c]" : ""
                         }`}
                       >
                         <span className="font-medium">{item.name}</span>
@@ -183,11 +184,30 @@ export default function Header() {
                 </div>
               </div>
 
+              {/* Butoane în sidebar mobil */}
+              <div className="space-y-3 pt-4 border-t border-gray-100">
+                <Link href="/tarife" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full bg-transparent hover:bg-[#06048c] text-[#06048c] hover:text-white border-2 border-[#06048c] hover:border-[#06048c] rounded-md text-sm font-medium py-3 transition-all duration-200">
+                    Tarife
+                  </Button>
+                </Link>
+                <Link 
+                  href="tel:0740123456" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block"
+                >
+                  <Button className="w-full bg-[#ff0066] hover:bg-[#e6005c] text-white rounded-md text-sm font-medium py-3 transition-all duration-200 shadow-md hover:shadow-lg">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Contact rapid
+                  </Button>
+                </Link>
+              </div>
+
               <div className="pt-4 border-t border-gray-100">
                 <div className="flex justify-center space-x-4 mt-6">
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-waze-blue transition-all duration-200 hover:scale-110"
+                    className="text-gray-400 hover:text-[#06048c] transition-all duration-200 hover:scale-110"
                     aria-label="Instagram"
                     title="Urmărește-ne pe Instagram"
                   >
@@ -211,7 +231,7 @@ export default function Header() {
                   </a>
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-waze-blue transition-all duration-200 hover:scale-110"
+                    className="text-gray-400 hover:text-[#06048c] transition-all duration-200 hover:scale-110"
                     aria-label="Facebook"
                     title="Urmărește-ne pe Facebook"
                   >
@@ -233,7 +253,7 @@ export default function Header() {
                   </a>
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-waze-blue transition-all duration-200 hover:scale-110"
+                    className="text-gray-400 hover:text-[#06048c] transition-all duration-200 hover:scale-110"
                     aria-label="Twitter"
                     title="Urmărește-ne pe Twitter"
                   >

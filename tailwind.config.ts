@@ -55,8 +55,8 @@ const config = {
         },
         // Actualizăm culorile Waze
         waze: {
-          blue: "#0A1172", // Albastru închis (navy blue) ca în imaginea Wizz Air
-          pink: "#FF0066", // Roz magenta
+          blue: "#06048c", // Albastru închis pentru navbar
+          pink: "#FF0066", // Roz magenta pentru butoane
         },
         // Păstrăm culorile verde pentru compatibilitate, dar le vom înlocui treptat
         green: {

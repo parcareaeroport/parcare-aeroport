@@ -29,17 +29,17 @@ export default function FAQSection() {
     {
       question: "Pot să prelungesc perioada de parcare dacă am nevoie de mai mult timp?",
       answer:
-        "Da, puteți prelungi perioada de parcare dacă este necesar. Vă recomandăm să ne contactați cu cel puțin 24 de ore înainte de expirarea rezervării inițiale. Prelungirea se poate face online prin contul dvs. sau contactând serviciul nostru de relații cu clienții.",
+        "Prelungirea se poate face online pe site-ul nostru. Vă recomandăm să faceți prelungirea cu cel puțin 24 de ore înainte de expirarea rezervării inițiale.",
     },
     {
       question: "Ce metode de plată acceptați?",
       answer:
-        "Acceptăm plăți cu cardul de credit/debit (Visa, Mastercard), plăți prin transfer bancar și plăți prin aplicații mobile precum Apple Pay și Google Pay. Pentru rezervări pe termen lung, oferim și opțiunea de plată în rate.",
+        "Acceptăm plăți cu cardul de credit/debit (Visa, Mastercard), plăți prin transfer bancar și plăți prin aplicații mobile precum Apple Pay și Google Pay.",
     },
     {
       question: "Există serviciu de transfer către aeroport?",
       answer:
-        "Da, oferim un serviciu gratuit de transfer către și de la Aeroportul Otopeni. Transferul funcționează 24/7 și durează aproximativ 4 minute. După ce parcați mașina, vă rugăm să vă prezentați la punctul de întâlnire marcat, iar șoferul nostru vă va prelua în cel mai scurt timp.",
+        "Da, oferim un serviciu gratuit de transfer către și de la Aeroportul Otopeni. Transferul funcționează 24/7 și durează aproximativ 4 minute.",
     },
     {
       question: "Ce măsuri de siguranță sunt implementate în parcare?",
