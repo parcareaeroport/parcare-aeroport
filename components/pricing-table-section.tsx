@@ -355,7 +355,7 @@ export default function PricingTableSection() {
               href="/tarife"
               className="inline-flex items-center gap-2 bg-white hover:bg-[#ff0066]/5 text-[#ff0066] hover:text-[#ff0066] border-2 border-[#ff0066] hover:border-[#e6005c] px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-sm hover:shadow-md"
             >
-              Vezi toate tarifele (100+ zile)
+              Vezi toate tarifele (30+ zile)
             </Link>
           </div>
         </div>
