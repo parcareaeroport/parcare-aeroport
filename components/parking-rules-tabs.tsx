@@ -92,31 +92,18 @@ export default function ParkingRulesTabs() {
                       <div>
                         <h3 className="font-medium mb-1 text-waze-blue">2. Parcați în zona desemnată</h3>
                         <p className="text-gray-600 text-sm">
-                          Urmați indicatoarele către zona de parcare și parcați în spațiul desemnat. Asigurați-vă că
-                          respectați marcajele.
+                        La intrare în parcare veți fi întâmpinat de un operator care vă va ghida în toate demersurile privind parcarea în siguranță a autovehiculului dumneavoastră.
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
-                        <Clock className="h-5 w-5 text-slate-700" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium mb-1 text-waze-blue">3. Notați ora de sosire</h3>
-                        <p className="text-gray-600 text-sm">
-                          Rețineți ora la care ați parcat. Sistemul nostru înregistrează automat ora, dar este bine să o
-                          verificați și dvs.
-                        </p>
-                      </div>
-                    </div>
-
+    
                     <div className="flex items-start">
                       <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
                         <CheckCircle className="h-5 w-5 text-slate-700" />
                       </div>
                       <div>
-                        <h3 className="font-medium mb-1 text-waze-blue">4. Utilizați serviciul de transfer (opțional)</h3>
+                        <h3 className="font-medium mb-1 text-waze-blue">3. Veți fi transferat la terminalul aeroportului Henri Coandă</h3>
                         <p className="text-gray-600 text-sm">
                           Dacă aveți nevoie de transfer către aeroport, prezentați-vă la punctul de întâlnire marcat.
                           Serviciul este gratuit și disponibil 24/7.

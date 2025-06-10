@@ -57,7 +57,7 @@ export default function HowItWorksToggle() {
                 <div>
                   <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-blue">Găsește-ne fără efort</h3>
                   <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
-                    Dacă dorești să ne găsești rapid, apasă click pe pictograma locației de pe site-ul nostru sau folosește aplicația preferată de navigație. Alege o parcare lângă aeroportul Otopeni, astfel încât să beneficiezi de transfer rapid.
+                    Dacă dorești să ne găsești rapid, apasă click pe pictograma locației de pe site-ul nostru sau folosește aplicația preferată de navigație.
                   </p>
                 </div>
               </div>
@@ -83,7 +83,7 @@ export default function HowItWorksToggle() {
                 <div>
                   <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-waze-blue">Transfer Gratuit la Aeroport</h3>
                   <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
-                    Beneficiezi de transfer gratuit la aeroport în mașina noastră de modernă și confortabilă. Te conducem pe tine și pe însoțitorii tăi gratuit și în siguranță la terminalul de plecări al aeroportului.
+                    Beneficiezi de transfer gratuit la aeroport în mașina noastră modernă și confortabilă. Te conducem pe tine și pe însoțitorii tăi gratuit și în siguranță la terminalul de plecări al aeroportului.
                   </p>
                 </div>
               </div>

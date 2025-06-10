@@ -151,7 +151,7 @@ Urgențe: +40 123 456 790      Support: contact@parcare-aeroport.ro
 🕒 Program                    📍 Locație
 L-V: 06:00 - 22:00           Șoseaua București-Ploiești 42A
 S-D: 08:00 - 20:00           Otopeni, Ilfov
-                             La 2 km de Aeroportul Henri Coandă
+                             La 500 m de Aeroportul Henri Coandă
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Parcare-Aeroport SRL | contact@parcare-aeroport.ro

@@ -47,7 +47,7 @@ const COMPANY_DATA = {
   name: "PARCARE-AEROPORT SRL",
   cui: "RO12345678",
   regCom: "J23/1234/2023",
-  address: "Șoseaua București-Ploiești 42A",
+      address: "Str. Calea Bucureştilor, Nr.303A1",
   city: "Otopeni",
   county: "Ilfov",
   postalCode: "075100",

@@ -19,7 +19,7 @@ export default function FAQSection() {
     {
       question: "Cum pot rezerva un loc de parcare?",
       answer:
-        "Rezervarea unui loc de parcare este simplă. Accesați site-ul nostru, introduceți datele de sosire și plecare, selectați tipul de parcare dorit și urmați pașii pentru finalizarea plății. Veți primi o confirmare pe email cu toate detaliile necesare.",
+        "Rezervarea unui loc de parcare este simplă. Accesați site-ul nostru, introduceți datele de sosire și plecare și urmați pașii pentru finalizarea plății. Veți primi o confirmare pe email cu toate detaliile necesare.",
     },
     {
       question: "Ce se întâmplă dacă întârzii la ora rezervată?",

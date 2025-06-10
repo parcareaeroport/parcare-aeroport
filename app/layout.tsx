@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
 export const viewport: Viewport = {
-  themeColor: "#22c55e",
+  themeColor: "#E6005C",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -105,6 +105,12 @@ export default function RootLayout({
   return (
     <html lang="ro" className="scroll-smooth">
       <head>
+        {/* Enhanced Theme Color Support */}
+        <meta name="theme-color" content="#E6005C" />
+        <meta name="msapplication-TileColor" content="#E6005C" />
+        <meta name="msapplication-navbutton-color" content="#E6005C" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="#E6005C" />
+        
         {/* Google Tag Manager */}
         <Script
           id="gtm-script"

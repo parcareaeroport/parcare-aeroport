@@ -53,10 +53,57 @@ function CheckoutForm({
       })
 
       if (error) {
-        toast({
-          title: "Eroare la procesarea plății",
-          description: error.message || "A apărut o eroare. Vă rugăm să încercați din nou.",
-          variant: "destructive",
+        // Afișăm toast cu eroare detaliată în formularul de checkout
+        const getErrorMessage = (errorCode: string, declineCode?: string) => {
+          const errorMessages: Record<string, { title: string; description: string }> = {
+            'card_declined': {
+              title: 'Card respins',
+              description: declineCode === 'insufficient_funds' 
+                ? 'Fonduri insuficiente pe card. Verificați soldul sau folosiți alt card.'
+                : declineCode === 'lost_card'
+                ? 'Cardul a fost raportat ca pierdut. Contactați banca sau folosiți alt card.'
+                : declineCode === 'stolen_card' 
+                ? 'Cardul a fost raportat ca furat. Contactați banca sau folosiți alt card.'
+                : 'Cardul a fost respins de bancă. Verificați datele sau folosiți alt card.'
+            },
+            'expired_card': {
+              title: 'Card expirat',
+              description: 'Cardul a expirat. Verificați data de expirare sau folosiți alt card.'
+            },
+            'incorrect_cvc': {
+              title: 'CVC incorect',
+              description: 'Codul de securitate (CVC) este incorect. Verificați codul de pe spatele cardului.'
+            },
+            'incorrect_number': {
+              title: 'Număr card invalid',
+              description: 'Numărul cardului nu este valid. Verificați numerele introduse.'
+            },
+            'processing_error': {
+              title: 'Eroare de procesare',
+              description: 'Eroare temporară la procesare. Încercați din nou în câteva minute.'
+            }
+          }
+          
+          return errorMessages[errorCode] || {
+            title: 'Eroare plată',
+            description: error.message || 'A apărut o eroare la procesarea plății. Încercați din nou.'
+          }
+        }
+
+        const errorMsg = getErrorMessage(error.code || 'unknown', error.decline_code)
+        
+                 toast({
+           title: errorMsg.title,
+           description: errorMsg.description,
+           variant: "destructive",
+           duration: error.decline_code === 'lost_card' || error.decline_code === 'stolen_card' ? 10000 : 5000,
+         })
+
+        console.log('Payment Error Details:', {
+          code: error.code,
+          message: error.message,
+          decline_code: error.decline_code,
+          type: error.type
         })
       } else if (paymentIntent && paymentIntent.status === "succeeded") {
         // Plata a reușit, apelăm callback-ul de succes
@@ -120,8 +167,22 @@ export default function OrderPlacementForm() {
   const [reservationData, setReservationData] = useState<any>(null)
   const [orderData, setOrderData] = useState<any>(null)
 
-  // Load reservation data from sessionStorage
+  // Load reservation data from sessionStorage and check for error parameters
   useEffect(() => {
+    // Check for error parameter in URL
+    const urlParams = new URLSearchParams(window.location.search)
+    const errorParam = urlParams.get('error')
+    
+    if (errorParam === 'payment_failed') {
+      toast({
+        title: "Plată eșuată",
+        description: "Plata anterioară a eșuat. Verificați datele cardului sau încercați cu un alt card.",
+        variant: "destructive",
+      })
+      // Clear the error parameter from URL
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+    
     try {
       const storedData = sessionStorage.getItem("reservationData")
       if (storedData) {

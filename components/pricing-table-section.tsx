@@ -244,7 +244,7 @@ export default function PricingTableSection() {
               * TVA&nbsp;19&nbsp;%. Reducerea de 30&nbsp;% se aplică începând cu
               a&nbsp;2-a zi de staționare.{" "}
               <Link
-                href="/rezerva"
+                href="/#rezerva-formular"
                 className="text-primary hover:underline font-medium"
               >
                 Vezi detalii și rezervă
@@ -254,7 +254,7 @@ export default function PricingTableSection() {
             <div className="mt-6 text-center">
               {/* Buton Principal - Fundal roz + Text alb */}
               <Link
-                href="/rezerva"
+                href="/#rezerva-formular"
                 className="inline-flex items-center gap-2 bg-[#ff0066] hover:bg-[#e6005c] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105"
               >
                 <span>Rezervă acum</span>

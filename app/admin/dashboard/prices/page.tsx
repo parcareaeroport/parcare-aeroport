@@ -689,17 +689,17 @@ export default function PricesPage() {
 
                 {/* Input pentru discount sau preț redus în funcție de mod */}
                 {inputMode === 'discount' ? (
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="discountPercentage" className="text-right">
-                      Discount (%)
-                    </Label>
-                    <Input
-                      id="discountPercentage"
-                      type="number"
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="discountPercentage" className="text-right">
+                    Discount (%)
+                  </Label>
+                  <Input
+                    id="discountPercentage"
+                    type="number"
                       step="0.01"
-                      min="0"
-                      max="100"
-                      value={newPrice.discountPercentage}
+                    min="0"
+                    max="100"
+                    value={newPrice.discountPercentage}
                       onChange={(e) => handleDiscountChange(Number(e.target.value))}
                       className="col-span-3"
                       placeholder="Introdu discount-ul în %"
@@ -718,9 +718,9 @@ export default function PricesPage() {
                       max={newPrice.standardPrice}
                       value={newPrice.reducedPrice.toFixed(2)}
                       onChange={(e) => handleReducedPriceChange(Number(e.target.value))}
-                      className="col-span-3"
+                    className="col-span-3"
                       placeholder="Introdu prețul redus"
-                    />
+                  />
                   </div>
                 )}
 
@@ -797,26 +797,26 @@ export default function PricesPage() {
                     const currentFinalPrice = currentStandardPrice - currentReduction
                     
                     return (
-                      <TableRow key={price.id}>
-                        <TableCell className="font-medium">{price.days}</TableCell>
-                        <TableCell>
-                          {editingId === price.id ? (
-                            <Input
-                              type="number"
-                              step="0.01"
-                              value={editValues.standardPrice}
+                    <TableRow key={price.id}>
+                      <TableCell className="font-medium">{price.days}</TableCell>
+                      <TableCell>
+                        {editingId === price.id ? (
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={editValues.standardPrice}
                               onChange={(e) => handleEditStandardPriceChange(Number(e.target.value))}
-                              className="w-24"
+                            className="w-24"
                               placeholder="Preț standard"
-                            />
-                          ) : (
-                            price.standardPrice.toFixed(2)
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {editingId === price.id ? (
-                            <Input
-                              type="number"
+                          />
+                        ) : (
+                          price.standardPrice.toFixed(2)
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {editingId === price.id ? (
+                          <Input
+                            type="number"
                               step="0.1"
                               min="0"
                               max="100"
@@ -838,17 +838,17 @@ export default function PricesPage() {
                               max={editValues.standardPrice}
                               value={editValues.reducereAplicata.toFixed(2)}
                               onChange={(e) => handleEditReductionChange(Number(e.target.value))}
-                              className="w-20"
+                            className="w-20"
                               placeholder="Reducere"
-                            />
-                          ) : (
+                          />
+                        ) : (
                             currentReduction.toFixed(2)
-                          )}
-                        </TableCell>
+                        )}
+                      </TableCell>
                         <TableCell className="text-green-600 font-medium">
                           {currentFinalPrice.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-right">
+                      </TableCell>
+                      <TableCell className="text-right">
                         {editingId === price.id ? (
                           <Button variant="outline" size="icon" onClick={() => handleSave(price.id)}>
                             <Save className="h-4 w-4" />
@@ -863,8 +863,8 @@ export default function PricesPage() {
                             </Button>
                           </div>
                         )}
-                        </TableCell>
-                      </TableRow>
+                      </TableCell>
+                    </TableRow>
                     )
                   })}
                 </TableBody>

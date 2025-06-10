@@ -162,9 +162,9 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
               </div>
               <div class="contact-item">
                 <h4>📍 Locație</h4>
-                <p>Șoseaua București-Ploiești 42A</p>
+                <p>Str. Calea Bucureştilor, Nr.303A1</p>
                 <p>Otopeni, Ilfov</p>
-                <p><small>La 2 km de Aeroportul Henri Coandă</small></p>
+                <p><small>La 500 m de Aeroportul Henri Coandă</small></p>
               </div>
             </div>
           </div>
@@ -175,7 +175,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
           <p>Rezervarea a fost creată la: ${bookingData.createdAt.toLocaleString('ro-RO')}</p>
           <p style="margin-top: 10px;">
             <strong>Parcare-Aeroport SRL</strong> | 
-            Șoseaua București-Ploiești 42A, Otopeni, Ilfov | 
+                          Str. Calea Bucureştilor, Nr.303A1, Otopeni, Ilfov | 
             contact@parcare-aeroport.ro
           </p>
         </div>

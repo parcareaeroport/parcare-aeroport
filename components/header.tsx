@@ -46,16 +46,16 @@ export default function Header() {
     >
       <div className="container mx-auto flex items-center justify-between py-3">
         {/* Logo în stânga */}
-        <Link href="/" className="flex items-center" title="Parcare-Aeroport Otopeni" aria-label="Acasă">
-          <Image
-            src="/sigla-transparenta.png"
-            alt="Parcare-Aeroport Logo"
+          <Link href="/" className="flex items-center" title="Parcare-Aeroport Otopeni" aria-label="Acasă">
+            <Image
+              src="/sigla-transparenta.png"
+              alt="Parcare-Aeroport Logo"
             width={170}
             height={55}
             className="h-12 md:h-14 w-auto"
-            priority
-          />
-        </Link>
+              priority
+            />
+          </Link>
 
         {/* Meniul și butoanele în dreapta */}
         <div className="flex items-center gap-2 md:gap-6">

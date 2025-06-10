@@ -101,7 +101,7 @@ export default function CancellationPolicyPage() {
             <ul>
                               <li>Telefon: +40 734 292 818</li>
                               <li>Email: contact.parcareaeroport@gmail.com</li>
-              <li>Adresă: Strada Aeroportului 10, Otopeni, Ilfov</li>
+                              <li>Adresă: Str. Calea Bucureştilor, Nr.303A1, Otopeni, Ilfov</li>
             </ul>
           </div>
         </div>

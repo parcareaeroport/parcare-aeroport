@@ -1,4 +1,5 @@
 "use client"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import HowItWorksToggle from "@/components/how-it-works-toggle"
 
@@ -17,9 +18,12 @@ export default function HowItWorksSection() {
           <HowItWorksToggle />
 
           <div className="mt-10 md:mt-12 text-center">
-            <Button className="bg-[#ff0066] hover:bg-[#e6005c] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105">
+            <Link
+              href="/#rezerva-formular"
+              className="inline-flex items-center gap-2 bg-[#ff0066] hover:bg-[#e6005c] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105"
+            >
               Rezervă locul tău acum
-            </Button>
+            </Link>
           </div>
         </div>
       </div>

@@ -74,28 +74,31 @@ export default function PricingTable() {
     const unsub = onSnapshot(
       q,
       (snap) => {
-        const parsed: PriceRow[] = snap.docs.map((d) => {
-          const p = d.data() as Omit<PriceDataFirestore, "id">
-          const s = Number(p.standardPrice) || 0
-          const pct = Number(p.discountPercentage) || 0
-          const disc = s * (pct / 100)
-          const final = s - disc
+        const parsed: PriceRow[] = snap.docs
+          .map((d) => {
+            const p = d.data() as Omit<PriceDataFirestore, "id">
+            const s = Number(p.standardPrice) || 0
+            const pct = Number(p.discountPercentage) || 0
+            const disc = s * (pct / 100)
+            const final = s - disc
 
-          const displayPercentage = roundPercentageForDisplay(pct)
-          
-          return {
-            id: d.id,
-            days: p.days,
-            standardPrice: s,
-            discountPercentage: pct,
-            discountValue: disc,
-            finalPrice: final,
-            discountNote:
-              pct > 0
-                ? `${fmt.format(disc)} RON (${displayPercentage}%)`
-                : "Fără reducere",
-          }
-        })
+            const displayPercentage = roundPercentageForDisplay(pct)
+
+            return {
+              id: d.id,
+              days: p.days,
+              standardPrice: s,
+              discountPercentage: pct,
+              discountValue: disc,
+              finalPrice: final,
+              discountNote:
+                pct > 0
+                  ? `${fmt.format(disc)} RON (${displayPercentage}%)`
+                  : "Fără reducere",
+            }
+          })
+          // Filtrăm să afișăm doar până la 30 de zile inclusiv
+          .filter((row) => row.days <= 30)
 
         setRows(parsed)
         setPage(0)
@@ -134,11 +137,10 @@ export default function PricingTable() {
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-primary">
-            Parcare Otopeni preț (prețuri per număr de zile)
+            Tarife Parcare Otopeni (1-30 zile)
           </h2>
           <p className="text-center text-sm text-gray-600 mb-6">
-            Prețurile sunt actualizate dinamic. Verificați întotdeauna prețul
-            final în pagina de rezervare.
+            Prețurile sunt actualizate dinamic.
           </p>
 
           {/* ---------------- table shell ---------------- */}
@@ -245,6 +247,19 @@ export default function PricingTable() {
             )}
           </div>
 
+          {/* Notă pentru zilele 31+ */}
+          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-start gap-2">
+              <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-blue-800">
+                {/* <p className="font-medium mb-1">Tarif pentru șederi lungi (30+ zile):</p> */}
+                <p>
+                  <strong>Începând cu ziua 30, tariful este de 24.33 RON/zi</strong>, indiferent de câte zile veți sta.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* footnote + CTA */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-start gap-2 text-sm text-gray-600">
@@ -255,7 +270,7 @@ export default function PricingTable() {
               </p>
             </div>
 
-            <Link href="/rezerva">
+            <Link href="/#rezerva-formular">
               <Button className="bg-[#ff0066] hover:bg-[#e6005c] rounded-full px-8 py-4 h-auto shadow-md hover:shadow-lg flex items-center gap-2 text-white font-medium transition-all duration-200 hover:scale-105">
                 <Calendar className="h-5 w-5" />
                 <span>REZERVĂ ACUM</span>

@@ -10,27 +10,25 @@ export default function ContactInfo() {
       title: "Telefon",
       items: [
         { label: "Rezervări și informații", value: "+40 734 292 818" },
-        { label: "Urgențe și asistență", value: "+40 734 292 818" },
       ],
     },
     {
       title: "Email",
       items: [
-        { label: "Rezervări", value: "contact.parcareaeroport@gmail.com" },
         { label: "Support", value: "contact.parcareaeroport@gmail.com" },
       ],
     },
     {
       title: "Program",
       items: [
-        { label: "Luni - Vineri", value: "06:00 - 22:00" },
-        { label: "Sâmbătă - Duminică", value: "08:00 - 20:00" },
+        { label: "Servicii", value: "24/24" },
+        { label: "Acces", value: "7/7" },
       ],
     },
     {
       title: "Locație",
       items: [
-        { label: "Adresa", value: "Șoseaua București-Ploiești 42A" },
+        { label: "Adresa", value: "Str. Calea Bucureştilor, Nr.303A1" },
         { label: "Localitate", value: "Otopeni, Ilfov" },
       ],
     },
@@ -45,8 +43,7 @@ export default function ContactInfo() {
   }
 
   const handleLocationClick = () => {
-    const address = "Șoseaua București-Ploiești 42A, Otopeni, Ilfov"
-    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+    const googleMapsUrl = "https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw"
     window.open(googleMapsUrl, '_blank')
   }
 

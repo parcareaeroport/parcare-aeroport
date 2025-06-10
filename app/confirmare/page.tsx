@@ -361,6 +361,33 @@ function ConfirmationContent() {
                   <li>• Prezentați-vă cu maximum 2 ore înainte de ora rezervată</li>
                 </ul>
               </div>
+
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                <h3 className="font-medium text-green-800 mb-2">📍 Locația Parcării</h3>
+                <p className="text-sm text-green-700 mb-3">
+                  <strong>Str. Calea Bucureştilor, Nr.303A1, Otopeni, Ilfov</strong>
+                  <br />
+                  La doar 500 m de Aeroportul Henri Coandă București
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <a
+                    href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[#ff0066] hover:bg-[#e6005c] text-white px-4 py-2 rounded-md transition-all duration-200 font-medium text-sm"
+                  >
+                    📍 Google Maps
+                  </a>
+                  <a
+                    href="https://waze.com/ul/hsv8tkpnqe"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[#0099ff] hover:bg-[#007acc] text-white px-4 py-2 rounded-md transition-all duration-200 font-medium text-sm"
+                  >
+                    🚗 Waze
+                  </a>
+                </div>
+              </div>
             </div>
           )}
 

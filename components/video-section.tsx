@@ -23,7 +23,7 @@ export default function VideoSection() {
         </p>
 
         <Link
-          href="/rezerva"
+          href="/#rezerva-formular"
           className="inline-flex items-center gap-3 bg-[#ff0066] hover:bg-[#e6005c] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105"
         >
           <span>Rezervă locul tău de parcare și zboară liniștit</span>

@@ -144,7 +144,7 @@ export default function Home() {
                 "name": "Cum pot rezerva un loc de parcare?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Rezervarea unui loc de parcare este simplă. Accesați site-ul nostru, introduceți datele de sosire și plecare, selectați tipul de parcare dorit și urmați pașii pentru finalizarea plății. Veți primi o confirmare pe email cu toate detaliile necesare."
+                  "text": "Rezervarea unui loc de parcare este simplă. Accesați site-ul nostru, introduceți datele de sosire și plecare și urmați pașii pentru finalizarea plății. Veți primi o confirmare pe email cu toate detaliile necesare."
                 }
               },
               {

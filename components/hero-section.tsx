@@ -9,7 +9,7 @@ const SLIDES = [
   {
     headline: "Parcare aeroport Otopeni",
     subheadline:
-      "Parcarea ta inteligentă și sigură, la doar 3 minute de aeroportul Otopeni. Confort garantat, transfer rapid și zero stres, la un preț avantajos. Pentru călătoria ta perfectă!",
+      "Parcarea ta inteligentă și sigură, la doar 500 metri de aeroportul Otopeni. Confort garantat, transfer rapid și zero stres, la un preț avantajos. Pentru călătoria ta perfectă!",
     image: "/parcare_aeroport_otopeni_slider.jpg",
     alt: "Parcare Otopeni lângă Aeroportul Henri Coandă - vedere panoramică a parcării asfaltate"
   },
@@ -37,7 +37,7 @@ export default function HeroSection() {
   }, [current])
 
   return (
-    <section className="relative w-full bg-gradient-to-br from-[#e6007a] to-[#0a1172] py-10 md:py-16 overflow-hidden min-h-[600px] md:min-h-[700px] flex flex-col justify-end">
+    <section id="rezerva-formular" className="relative w-full bg-gradient-to-br from-[#e6007a] to-[#0a1172] py-10 md:py-16 overflow-hidden min-h-[600px] md:min-h-[700px] flex flex-col justify-end">
       {/* Imagine de fundal cu fade pentru fiecare slide, toate în DOM pentru SEO */}
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
         {SLIDES.map((slide, idx) => (

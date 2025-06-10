@@ -24,7 +24,7 @@ export default function Footer() {
           <div className="md:flex-[1] space-y-3">
             <h3 className="text-lg font-semibold mb-4 text-white inline-block">Despre noi</h3>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Oferim servicii de parcare securizată la doar 2 km de aeroportul Henri Coandă. 
+              Oferim servicii de parcare securizată la doar 500 m de aeroportul Henri Coandă. 
               Cu transfer gratuit, supraveghere 24/7 și facilități moderne, suntem alegerea ideală pentru călătoriile tale.
             </p>
             <p className="text-gray-300 text-sm">

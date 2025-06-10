@@ -13,7 +13,7 @@ export default function SeoTextSection() {
             </p>
 
             <p className="text-gray-700 mb-4">
-              <strong>Parcare privată în Otopeni</strong>, la doar <strong>2 Km distanță</strong> față de aeroport, apropierea optimă care garantează un transfer ultra-rapid.
+              <strong>Parcare privată în Otopeni</strong>, la doar <strong>500 m distanță</strong> față de aeroport, apropierea optimă care garantează un transfer ultra-rapid.
             </p>
 
             <p className="text-gray-700 mb-4">
@@ -28,7 +28,7 @@ export default function SeoTextSection() {
 
             <p className="text-gray-700 mb-4">
               <strong>Cum pot face o rezervare?</strong><br />
-              Poți rezerva un loc de parcare online, direct pe site-ul nostru, urmând pașii indicați, sau poți veni direct la parcare, însă disponibilitatea locurilor nu este garantată fără rezervare prealabilă. Recomandăm rezervarea online pentru a-ți locul.
+              Poți rezerva un loc de parcare online, direct pe site-ul nostru, urmând pașii indicați, sau poți veni direct la parcare, însă disponibilitatea locurilor nu este garantată fără rezervare prealabilă. Recomandăm rezervarea online pentru a-ți asigura locul.
             </p>
 
             <p className="text-gray-700 mb-4">
@@ -66,10 +66,7 @@ export default function SeoTextSection() {
               Parcarea noastră este deschisă non-stop, 24 de ore din 24, 7 zile din 7.
             </p>
 
-            <p className="text-gray-700">
-              <strong>Mă puteți ajuta cu bagajele?</strong><br />
-              Da, șoferii noștri vă vor ajuta cu plăcere la încărcarea și descărcarea bagajelor în/din mașina de transfer.
-            </p>
+        
           </div>
         </div>
       </div>

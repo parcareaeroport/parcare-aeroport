@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { CalendarIcon, Clock, Loader2, AlertTriangle, XCircle } from "lucide-react" // Adăugăm iconițe noi
+import { CalendarIcon, Clock, Loader2, AlertTriangle, XCircle, MapPin, Navigation } from "lucide-react" // Adăugăm iconițe noi
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
@@ -405,6 +405,28 @@ export default function ReservationForm() {
             </PopoverContent>
           </Popover>
         </div>
+            {/* Start Time */}
+            <div className="flex flex-col flex-1 min-w-[100px]">
+          <label className="text-xs font-semibold text-gray-700 mb-1">Ora intrare</label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-left font-normal h-10 border border-gray-200 bg-white hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 hover:bg-white focus:bg-white text-gray-900 hover:text-gray-900"
+                type="button"
+              >
+                <Clock className="mr-2 h-4 w-4 text-gray-500" />
+                {startTime}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-4" align="start">
+              <div className="space-y-2">
+                <Label>Ora Intrare</Label>
+                <TimePickerDemo value={startTime} onChange={setStartTime} />
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
         {/* End Date */}
         <div className="flex flex-col flex-1 min-w-[120px]">
           <label className="text-xs font-semibold text-gray-700 mb-1">Data ieșire</label>
@@ -431,30 +453,8 @@ export default function ReservationForm() {
             </PopoverContent>
           </Popover>
         </div>
-        {/* Start Time */}
-        <div className="flex flex-col flex-1 min-w-[100px]">
-          <label className="text-xs font-semibold text-gray-700 mb-1">Ora intrare</label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-left font-normal h-10 border border-gray-200 bg-white hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 hover:bg-white focus:bg-white text-gray-900 hover:text-gray-900"
-                type="button"
-              >
-                <Clock className="mr-2 h-4 w-4 text-gray-500" />
-                {startTime}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-4" align="start">
-              <div className="space-y-2">
-                <Label>Ora Intrare</Label>
-                <TimePickerDemo value={startTime} onChange={setStartTime} />
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-        {/* End Time */}
-        <div className="flex flex-col flex-1 min-w-[100px]">
+          {/* End Time */}
+          <div className="flex flex-col flex-1 min-w-[100px]">
           <label className="text-xs font-semibold text-gray-700 mb-1">Ora ieșire</label>
           <Popover>
             <PopoverTrigger asChild>
@@ -475,6 +475,8 @@ export default function ReservationForm() {
             </PopoverContent>
           </Popover>
         </div>
+    
+      
         {/* License Plate */}
         <div className="flex flex-col flex-1 min-w-[120px]">
           <label htmlFor="licensePlate" className="text-xs font-semibold text-gray-700 mb-1">Număr înmatriculare</label>
@@ -508,10 +510,11 @@ export default function ReservationForm() {
         </div>
       </div>
       
-      {/* Afișare preț calculat */}
+            {/* Afișare preț calculat */}
       {calculatedDays > 0 && !isLoadingPrices && (
         <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-          <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            {/* Perioada și interval */}
             <div className="flex flex-col">
               <span className="text-sm font-medium text-gray-600">
                 Perioada: {calculatedDays} {calculatedDays === 1 ? 'zi' : 'zile'}
@@ -523,11 +526,39 @@ export default function ReservationForm() {
                 }
               </span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-orange-600 font-medium">
-              <AlertTriangle className="w-3 h-3" />
-              Acces cu max 2h înainte
+            
+            {/* Acces și butoane locație */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1 text-xs text-orange-600 font-medium">
+                <AlertTriangle className="w-3 h-3" />
+                Acces cu max 2h înainte
+              </div>
+              <div className="flex gap-2">
+                <a
+                  href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 bg-[#ff0066] hover:bg-[#e6005c] text-white px-2 py-1 rounded text-xs font-medium transition-all duration-200"
+                  title="Deschide în Google Maps"
+                >
+                  <MapPin className="w-3 h-3" />
+                  Maps
+                </a>
+                <a
+                  href="https://waze.com/ul/hsv8tkpnqe"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-2 py-1 rounded text-xs font-medium transition-all duration-200"
+                  title="Deschide în Waze"
+                >
+                  <Navigation className="w-3 h-3" />
+                  Waze
+                </a>
+              </div>
             </div>
-            <div className="text-right">
+            
+            {/* Preț */}
+            <div className="text-left md:text-right">
               <div className="text-xl font-bold text-primary">
                 {calculatePrice().toFixed(2)} LEI
               </div>

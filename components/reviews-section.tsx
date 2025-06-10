@@ -10,19 +10,19 @@ export default function ReviewsSection() {
     {
       text: "Atât de ușor să găsești un loc de parcare potrivit înainte de călătorie. Elimină stresul de a găsi un loc când ajungi la aeroport.",
       author: "Andrei M.",
-      date: "12 Mai 2023",
+      date: "12 Mai 2025",
       rating: 5,
     },
     {
       text: "Totul a decurs conform planului în ceea ce privește comunicarea, indicațiile și programul... ca să fiu sincer, cu întârzierile zborurilor și o ofertă consistentă pentru un transfer cu autobuzul... parcarea a fost cea mai bună opțiune.",
       author: "Maria D.",
-      date: "3 Aprilie 2023",
+      date: "3 Aprilie 2025",
       rating: 5,
     },
     {
       text: "Liniște sufletească prin rezervarea cu ușurință în avans. Multe opțiuni și valoare rezonabilă pentru parcare. Cu siguranță voi folosi din nou.",
       author: "Ion P.",
-      date: "27 Martie 2023",
+      date: "27 Martie 2025",
       rating: 5,
     },
   ]
