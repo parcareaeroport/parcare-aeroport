@@ -28,28 +28,29 @@ const trackPurchase = (reservationData: ReservationData, bookingNumber?: string)
     if (typeof window !== 'undefined') {
       window.dataLayer = window.dataLayer || [];
       
-      // Push ecommerce purchase event to data layer
+      // Push purchase event to data layer (following Gabriel's structure)
       window.dataLayer.push({
-        event: 'purchase',
-        ecommerce: {
-          value: reservationData.price,
-          currency: 'RON',
-          transaction_id: bookingNumber || `booking_${Date.now()}`,
-          items: [{
-            item_id: `parking_${reservationData.days}d`,
-            item_name: `Parcare Aeroport ${reservationData.days} ${reservationData.days === 1 ? 'zi' : 'zile'}`,
-            category: 'Parcare',
-            quantity: 1,
-            price: reservationData.price
-          }]
-        },
+        'event': 'purchase',
+        'transaction_id': bookingNumber || `booking_${Date.now()}`,
+        'currency': 'RON',
+        'value': reservationData.price,
+        'items': [
+          {
+            'item_id': `parking_${reservationData.days}d`,
+            'item_name': `Parcare Aeroport ${reservationData.days} ${reservationData.days === 1 ? 'zi' : 'zile'}`,
+            'item_brand': 'Parcare Aeroport',
+            'item_category': 'Parcare',
+            'price': reservationData.price,
+            'quantity': 1
+          }
+        ],
         // Additional booking details
-        booking_details: {
-          license_plate: reservationData.licensePlate,
-          start_date: reservationData.startDate,
-          end_date: reservationData.endDate,
-          duration_days: reservationData.days,
-          location: 'Otopeni Airport'
+        'booking_details': {
+          'license_plate': reservationData.licensePlate,
+          'start_date': reservationData.startDate,
+          'end_date': reservationData.endDate,
+          'duration_days': reservationData.days,
+          'location': 'Otopeni Airport'
         }
       });
 
@@ -58,7 +59,7 @@ const trackPurchase = (reservationData: ReservationData, bookingNumber?: string)
         window.gtag('event', 'purchase', {
           transaction_id: bookingNumber || `booking_${Date.now()}`,
           value: reservationData.price,
-          currency: 'lei',
+          currency: 'RON',
           items: [{
             item_id: `parking_${reservationData.days}d`,
             item_name: `Parcare Aeroport ${reservationData.days} ${reservationData.days === 1 ? 'zi' : 'zile'}`,
@@ -69,10 +70,11 @@ const trackPurchase = (reservationData: ReservationData, bookingNumber?: string)
         });
       }
 
-      console.log('GA4 Purchase tracking sent:', {
+      console.log('Data Layer Purchase tracking sent:', {
+        event: 'purchase',
         transaction_id: bookingNumber || `booking_${Date.now()}`,
-        value: reservationData.price,
-        currency: 'lei'
+        currency: 'RON',
+        value: reservationData.price
       });
     }
   } catch (error) {
