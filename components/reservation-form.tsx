@@ -244,6 +244,23 @@ export default function ReservationForm() {
     // VERIFICARE NOUĂ: Disponibilitate pentru perioada specifică selectată
     if (reservationSettings?.maxTotalReservations && reservationSettings.maxTotalReservations > 0) {
       try {
+        console.log('🚀 ÎNCEPERE VERIFICARE DISPONIBILITATE - Butón "Continuă" apăsat', {
+          timestamp: new Date().toISOString(),
+          userInput: {
+            startDate: format(startDate, "yyyy-MM-dd"),
+            startTime,
+            endDate: format(endDate, "yyyy-MM-dd"), 
+            endTime,
+            licensePlate,
+            calculatedDays: calculateDaysAndDuration().days
+          },
+          systemSettings: {
+            maxTotalReservations: reservationSettings.maxTotalReservations,
+            reservationsEnabled: reservationSettings.reservationsEnabled,
+            currentActiveBookings: activeBookingsCount
+          }
+        })
+
         const availabilityCheck = await checkAvailability(
           format(startDate, "yyyy-MM-dd"),
           startTime,
@@ -251,18 +268,27 @@ export default function ReservationForm() {
           endTime
         )
 
-        console.log('🔍 Verificare disponibilitate pentru perioada:', {
-          startDate: format(startDate, "yyyy-MM-dd"),
-          startTime,
-          endDate: format(endDate, "yyyy-MM-dd"),
-          endTime,
+        console.log('📊 REZULTAT VERIFICARE DISPONIBILITATE:', {
+          period: `${format(startDate, "d MMM", { locale: ro })} - ${format(endDate, "d MMM", { locale: ro })}`,
           conflictingBookings: availabilityCheck.conflictingBookings,
           totalSpots: availabilityCheck.totalSpots,
-          available: availabilityCheck.available
+          maxBookingsInPeriod: availabilityCheck.maxBookingsInPeriod,
+          available: availabilityCheck.available,
+          wouldExceedAfterAdding: (availabilityCheck.conflictingBookings + 1) > reservationSettings.maxTotalReservations,
+          occupancyRate: `${(availabilityCheck.conflictingBookings / availabilityCheck.totalSpots * 100).toFixed(1)}%`,
+          spotsRemaining: availabilityCheck.totalSpots - availabilityCheck.conflictingBookings
         })
 
         // Verifică dacă adăugarea acestei rezervări ar depăși limita pentru perioada selectată
         const wouldExceedLimit = (availabilityCheck.conflictingBookings + 1) > reservationSettings.maxTotalReservations
+
+        console.log('🧮 CALCUL LIMITĂ:', {
+          conflictingBookings: availabilityCheck.conflictingBookings,
+          maxTotalReservations: reservationSettings.maxTotalReservations,
+          afterAddingThis: availabilityCheck.conflictingBookings + 1,
+          wouldExceedLimit,
+          decision: wouldExceedLimit ? '❌ REZERVARE BLOCATĂ - Limită depășită' : '✅ REZERVARE PERMISĂ'
+        })
 
         if (wouldExceedLimit) {
           const availableSpots = reservationSettings.maxTotalReservations - availabilityCheck.conflictingBookings
@@ -284,15 +310,37 @@ export default function ReservationForm() {
         // Informare utilizator despre disponibilitate
         if (availabilityCheck.conflictingBookings > 0) {
           const remainingSpots = reservationSettings.maxTotalReservations - availabilityCheck.conflictingBookings - 1
+          console.log('ℹ️ INFORMARE UTILIZATOR:', {
+            conflictingBookings: availabilityCheck.conflictingBookings,
+            remainingSpots,
+            message: `Rezervarea este posibilă. În perioada selectată mai sunt ${remainingSpots} locuri libere.`
+          })
           toast({
             title: "Loc Disponibil",
             description: `Rezervarea este posibilă. În perioada selectată mai sunt ${remainingSpots} locuri libere.`,
             duration: 3000,
           })
+        } else {
+          console.log('✨ PERIOADA LIBERĂ:', {
+            message: 'Nicio rezervare existentă în perioada selectată - disponibilitate completă',
+            totalSpots: reservationSettings.maxTotalReservations
+          })
         }
 
       } catch (error) {
-        console.error("Eroare la verificarea disponibilității:", error)
+        console.error("❌ EROARE CRITICĂ în verificarea disponibilității:", {
+          error: error,
+          errorMessage: error instanceof Error ? error.message : 'Eroare necunoscută',
+          stack: error instanceof Error ? error.stack : undefined,
+          timestamp: new Date().toISOString(),
+          userInput: {
+            startDate: format(startDate, "yyyy-MM-dd"),
+            startTime,
+            endDate: format(endDate, "yyyy-MM-dd"),
+            endTime,
+            licensePlate
+          }
+        })
         toast({
           title: "Eroare Verificare",
           description: "Nu s-a putut verifica disponibilitatea pentru perioada selectată. Vă rugăm încercați din nou.",
@@ -303,6 +351,8 @@ export default function ReservationForm() {
       }
     }
     // Sfârșit verificări noi
+    
+    console.log('🎉 VERIFICĂRI DISPONIBILITATE FINALIZATE CU SUCCES - Continuă la procesarea rezervării')
 
     try {
       const { days, durationMinutes } = calculateDaysAndDuration()
@@ -596,12 +646,12 @@ export default function ReservationForm() {
                 <AlertTriangle className="w-3 h-3" />
                 Acces cu max 2h înainte
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full">
                 <a
                   href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 bg-[#ff0066] hover:bg-[#e6005c] text-white px-2 py-1 rounded text-xs font-medium transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#ff0066] hover:bg-[#e6005c] text-white px-2 py-1 rounded text-xs font-medium transition-all duration-200"
                   title="Deschide în Google Maps"
                 >
                   <MapPin className="w-3 h-3" />
@@ -611,7 +661,7 @@ export default function ReservationForm() {
                   href="https://waze.com/ul/hsv8tkpnqe"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-2 py-1 rounded text-xs font-medium transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-2 py-1 rounded text-xs font-medium transition-all duration-200"
                   title="Deschide în Waze"
                 >
                   <Navigation className="w-3 h-3" />

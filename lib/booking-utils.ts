@@ -178,10 +178,11 @@ export async function checkAvailability(
     const newStartDateTime = new Date(`${startDate}T${startTime}:00`)
     const newEndDateTime = new Date(`${endDate}T${endTime}:00`)
     
-    console.log('🔍 Checking availability for period:', {
+    console.log('🔍 CHECKAVAILABILITY - Primire cerere:', {
       start: newStartDateTime.toISOString(),
       end: newEndDateTime.toISOString(),
-      period: `${startDate} ${startTime} → ${endDate} ${endTime}`
+      period: `${startDate} ${startTime} → ${endDate} ${endTime}`,
+      durationHours: ((newEndDateTime.getTime() - newStartDateTime.getTime()) / (1000 * 60 * 60)).toFixed(1)
     })
     
     // Încarcă setările din Firestore pentru a obține numărul maxim real
@@ -191,9 +192,17 @@ export async function checkAvailability(
       if (settingsDoc.exists()) {
         const settings = settingsDoc.data()
         maxTotalReservations = settings.maxTotalReservations || 100
+        console.log('⚙️ SETĂRI SISTEM ÎNCĂRCATE:', {
+          maxTotalReservations,
+          reservationsEnabled: settings.reservationsEnabled,
+          source: 'Firestore config/reservationSettings'
+        })
+      } else {
+        console.warn('⚠️ SETĂRI LIPSĂ: Document config/reservationSettings nu există, folosesc default 100')
       }
     } catch (settingsError) {
-      console.warn('Could not load reservation settings, using default limit of 100')
+      console.error('❌ EROARE ÎNCĂRCARE SETĂRI:', settingsError)
+      console.warn('🔄 Folosesc limita default de 100 locuri')
     }
     
     const bookingsRef = collection(db, 'bookings')
@@ -206,7 +215,17 @@ export async function checkAvailability(
       where('endDate', '>=', startDate)
     )
     
+    console.log('🔎 QUERY FIRESTORE pentru rezervări suprapuse:', {
+      whereConditions: {
+        status: ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid'],
+        startDate_lte: endDate,
+        endDate_gte: startDate
+      },
+      explanation: 'Caută rezervări active care se suprapun cu perioada solicitată'
+    })
+    
     const snapshot = await getDocs(overlappingQuery)
+    console.log(`📄 REZULTAT QUERY: Găsite ${snapshot.size} documente potențial suprapuse`)
     let conflictingBookings = 0
     let maxBookingsInPeriod = 0
     
@@ -214,9 +233,17 @@ export async function checkAvailability(
     const currentDate = new Date(startDate)
     const lastDate = new Date(endDate)
     
+    console.log('📅 ANALIZA PE ZILE pentru perioada solicitată:', {
+      startDate,
+      endDate,
+      totalDaysToCheck: Math.ceil((lastDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+    })
+    
     while (currentDate <= lastDate) {
       const currentDateStr = currentDate.toISOString().split('T')[0]
       let bookingsOnThisDay = 0
+      
+      console.log(`🗓️ Verificare zi: ${currentDateStr}`)
       
              snapshot.forEach((docSnapshot) => {
          const booking = docSnapshot.data()
@@ -240,9 +267,15 @@ export async function checkAvailability(
         }
       })
       
+      console.log(`  📊 Rezervări pentru ${currentDateStr}: ${bookingsOnThisDay}`)
       maxBookingsInPeriod = Math.max(maxBookingsInPeriod, bookingsOnThisDay)
       currentDate.setDate(currentDate.getDate() + 1)
     }
+    
+    console.log('🔢 OCUPARE MAXIMĂ în perioada solicitată:', {
+      maxBookingsInPeriod,
+      explanation: 'Numărul maxim de rezervări simultane în orice zi din perioadă'
+    })
     
     // Calculează și rezervările care se suprapun direct cu noua rezervare
     snapshot.forEach((docSnapshot) => {
@@ -263,11 +296,29 @@ export async function checkAvailability(
           newEndDateTime > existingStartDateTime
         ) {
           conflictingBookings++
-          console.log('⚠️ Conflicting booking with new reservation:', {
-            id: docSnapshot.id,
-            licensePlate: booking.licensePlate,
-            start: existingStartDateTime.toISOString(),
-            end: existingEndDateTime.toISOString()
+          console.log('⚠️ CONFLICT DETECTAT:', {
+            conflictNumber: conflictingBookings,
+            existingBooking: {
+              id: docSnapshot.id,
+              licensePlate: booking.licensePlate,
+              start: existingStartDateTime.toISOString(),
+              end: existingEndDateTime.toISOString(),
+              status: booking.status
+            },
+            newBooking: {
+              start: newStartDateTime.toISOString(),
+              end: newEndDateTime.toISOString()
+            },
+            overlapType: 'Suprapunere de timp exactă'
+          })
+        } else {
+          console.log('✅ Nu se suprapune cu noua rezervare:', {
+            existingBooking: {
+              id: docSnapshot.id,
+              licensePlate: booking.licensePlate,
+              start: existingStartDateTime.toISOString(),
+              end: existingEndDateTime.toISOString()
+            }
           })
         }
       }
@@ -275,14 +326,22 @@ export async function checkAvailability(
     
     const available = (conflictingBookings + 1) <= maxTotalReservations
     
-    console.log('📊 Detailed availability check result:', {
-      available,
-      conflictingBookings,
-      maxBookingsInPeriod,
-      totalSpots: maxTotalReservations,
-      wouldBeAfterAdding: conflictingBookings + 1,
-      occupancyRate: `${(conflictingBookings / maxTotalReservations * 100).toFixed(1)}%`,
-      periodRequested: `${startDate} ${startTime} → ${endDate} ${endTime}`
+    console.log('🏁 REZULTAT FINAL CHECKAVAILABILITY:', {
+      '🎯 Decision': available ? '✅ REZERVARE PERMISĂ' : '❌ REZERVARE BLOCATĂ',
+      '📊 Statistici': {
+        conflictingBookings,
+        maxBookingsInPeriod,
+        totalSpots: maxTotalReservations,
+        wouldBeAfterAdding: conflictingBookings + 1,
+        occupancyRate: `${(conflictingBookings / maxTotalReservations * 100).toFixed(1)}%`,
+        spotsRemaining: maxTotalReservations - conflictingBookings
+      },
+      '🗓️ Perioada': `${startDate} ${startTime} → ${endDate} ${endTime}`,
+      '🧮 Logic': {
+        formula: '(conflictingBookings + 1) <= maxTotalReservations',
+        calculation: `(${conflictingBookings} + 1) <= ${maxTotalReservations}`,
+        result: `${conflictingBookings + 1} <= ${maxTotalReservations} = ${available}`
+      }
     })
     
     return {
