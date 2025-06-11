@@ -418,4 +418,98 @@ export async function softCleanupExpiredBookings(): Promise<number> {
     console.error('❌ Error in soft cleanup:', error)
     return 0
   }
+}
+
+/**
+ * Verifică dacă există o rezervare activă cu același număr de înmatriculare
+ */
+export async function checkExistingReservationByLicensePlate(
+  licensePlate: string
+): Promise<{
+  exists: boolean
+  existingBooking?: {
+    id: string
+    licensePlate: string
+    startDate: string
+    endDate: string
+    startTime: string
+    endTime: string
+    status: string
+    apiBookingNumber?: string
+  }
+}> {
+  try {
+    const bookingsRef = collection(db, 'bookings')
+    
+    // Query pentru rezervările active cu același număr de înmatriculare
+    const existingQuery = query(
+      bookingsRef,
+      where('licensePlate', '==', licensePlate.toUpperCase()),
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid'])
+    )
+    
+    console.log('🔍 VERIFICARE DUPLICAT NUMĂR ÎNMATRICULARE:', {
+      licensePlate: licensePlate.toUpperCase(),
+      activeStatuses: ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']
+    })
+    
+    const snapshot = await getDocs(existingQuery)
+    
+    if (snapshot.empty) {
+      console.log('✅ NU EXISTĂ REZERVARE ACTIVĂ cu același număr de înmatriculare')
+      return { exists: false }
+    }
+    
+    // Verifică dacă rezervările găsite nu sunt expirate
+    const now = new Date()
+    let activeBookingFound = false
+    let existingBookingData = null
+    
+    for (const docSnapshot of snapshot.docs) {
+      const booking = docSnapshot.data()
+      
+      // Verifică dacă rezervarea nu este expirată
+      if (!isBookingExpired({
+        endDate: booking.endDate,
+        endTime: booking.endTime,
+        status: booking.status
+      })) {
+        activeBookingFound = true
+        existingBookingData = {
+          id: docSnapshot.id,
+          licensePlate: booking.licensePlate,
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+          startTime: booking.startTime,
+          endTime: booking.endTime,
+          status: booking.status,
+          apiBookingNumber: booking.apiBookingNumber
+        }
+        
+        console.log('⚠️ REZERVARE ACTIVĂ GĂSITĂ cu același număr de înmatriculare:', {
+          id: docSnapshot.id,
+          licensePlate: booking.licensePlate,
+          period: `${booking.startDate} ${booking.startTime} - ${booking.endDate} ${booking.endTime}`,
+          status: booking.status,
+          bookingNumber: booking.apiBookingNumber
+        })
+        break
+      }
+    }
+    
+    if (activeBookingFound && existingBookingData) {
+      return {
+        exists: true,
+        existingBooking: existingBookingData
+      }
+    } else {
+      console.log('✅ Rezervările găsite sunt expirate - se poate continua')
+      return { exists: false }
+    }
+    
+  } catch (error) {
+    console.error('❌ EROARE la verificarea duplicatului de număr înmatriculare:', error)
+    // În caz de eroare, permitem continuarea pentru a nu bloca utilizatorul
+    return { exists: false }
+  }
 } 

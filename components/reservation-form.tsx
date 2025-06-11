@@ -15,7 +15,7 @@ import { TimePickerDemo } from "@/components/time-picker"
 import { Label } from "@/components/ui/label"
 import { collection, getDocs, query, orderBy, doc, getDoc, getCountFromServer, where, onSnapshot } from "firebase/firestore" // Importuri Firestore necesare
 import { db } from "@/lib/firebase"
-import { checkAvailability } from "@/lib/booking-utils" // Import pentru verificarea disponibilității
+import { checkAvailability, checkExistingReservationByLicensePlate } from "@/lib/booking-utils" // Import pentru verificarea disponibilității și duplicatelor
 
 interface PriceTier {
   id: string
@@ -40,6 +40,7 @@ export default function ReservationForm() {
   const [endTime, setEndTime] = useState("08:30")
   const [licensePlate, setLicensePlate] = useState("")
   const [dateError, setDateError] = useState<string | null>(null)
+  const [duplicateError, setDuplicateError] = useState<string | null>(null)
   const [openCalendar, setOpenCalendar] = useState<"start" | "end" | null>(null)
   const [priceTiers, setPriceTiers] = useState<PriceTier[]>([])
   const [isLoadingPrices, setIsLoadingPrices] = useState(true)
@@ -158,11 +159,15 @@ export default function ReservationForm() {
       setEndDate(addDays(date, 1))
     }
     setTimeout(() => setOpenCalendar(null), 100)
+    // Golește erorile când utilizatorul schimbă datele
+    setDuplicateError(null)
   }
 
   const handleEndDateChange = (date: Date | undefined) => {
     setEndDate(date)
     setTimeout(() => setOpenCalendar(null), 100)
+    // Golește erorile când utilizatorul schimbă datele
+    setDuplicateError(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -193,6 +198,55 @@ export default function ReservationForm() {
       return
     }
     setDateError(null)
+
+    // VERIFICARE NOUĂ: Verifică dacă există deja o rezervare activă cu același număr de înmatriculare
+    try {
+      console.log('🔍 VERIFICARE DUPLICAT NUMĂR ÎNMATRICULARE - Înainte de continuare', {
+        licensePlate: licensePlate.toUpperCase(),
+        timestamp: new Date().toISOString()
+      })
+
+      const duplicateCheck = await checkExistingReservationByLicensePlate(licensePlate)
+      
+      if (duplicateCheck.exists && duplicateCheck.existingBooking) {
+        const existing = duplicateCheck.existingBooking
+        const existingPeriod = `${format(new Date(existing.startDate), "d MMM yyyy", { locale: ro })} - ${format(new Date(existing.endDate), "d MMM yyyy", { locale: ro })}`
+        
+        console.log('⚠️ REZERVARE DUPLICAT GĂSITĂ - Blochează continuarea:', {
+          existingId: existing.id,
+          existingPeriod,
+          existingStatus: existing.status,
+          existingBookingNumber: existing.apiBookingNumber
+        })
+
+        // Setează mesajul de eroare persistent pe formular
+        const errorMessage = `Există deja o rezervare activă pentru ${licensePlate.toUpperCase()} în perioada ${existingPeriod}${existing.apiBookingNumber ? ` (Rezervare #${existing.apiBookingNumber})` : ''}`
+        setDuplicateError(errorMessage)
+
+        toast({
+          title: "Rezervare Existentă",
+          description: "Nu puteți face o nouă rezervare pentru același număr de înmatriculare.",
+          variant: "destructive",
+          duration: 5000,
+        })
+        
+        setIsSubmitting(false)
+        return
+      } else {
+        console.log('✅ NU EXISTĂ REZERVARE DUPLICAT - Poate continua')
+        // Golește mesajul de eroare dacă nu există duplicat
+        setDuplicateError(null)
+      }
+      
+    } catch (error) {
+      console.error("❌ EROARE la verificarea duplicatului:", error)
+      // În caz de eroare, afișăm un warning dar permitem continuarea
+      toast({
+        title: "Avertisment",
+        description: "Nu s-a putut verifica dacă există rezervări existente. Dacă aveți deja o rezervare activă, vă rugăm să nu continuați.",
+        duration: 5000,
+      })
+    }
 
     // Verificări noi pentru statusul sistemului și limita de rezervări
     if (isLoadingSystemStatus) {
@@ -597,7 +651,11 @@ export default function ReservationForm() {
             id="licensePlate"
             type="text"
             value={licensePlate}
-            onChange={e => setLicensePlate(e.target.value.toUpperCase())}
+            onChange={e => {
+              setLicensePlate(e.target.value.toUpperCase())
+              // Golește eroarea de duplicat când utilizatorul schimbă numărul
+              setDuplicateError(null)
+            }}
             className="rounded-lg border-gray-200 text-base px-3 py-2 hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 focus:outline-none h-10"
             placeholder="B 00 ABC"
             required
@@ -682,6 +740,7 @@ export default function ReservationForm() {
       )}
 
       {dateError && <div className="text-red-500 text-sm font-semibold mt-1 flex items-center"><XCircle className="mr-1 h-5 w-5" />{dateError}</div>}
+      {duplicateError && <div className="text-red-500 text-sm font-semibold mt-1 flex items-center"><XCircle className="mr-1 h-5 w-5" />{duplicateError}</div>}
     </form>
   )
 }
