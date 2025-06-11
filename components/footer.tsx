@@ -30,6 +30,24 @@ export default function Footer() {
             <p className="text-gray-300 text-sm">
               Experiență fără stres, siguranță maximă și servicii profesionale pentru mașina ta.
             </p>
+            
+            {/* ANPC Images */}
+            <div className="flex items-center gap-4 pt-2">
+              <Image
+                src="/anpc-sol.webp"
+                alt="ANPC - Solutionarea Online a Litigiilor"
+                width={140}
+                height={80}
+                className="hover:opacity-80 transition-opacity"
+              />
+              <Image
+                src="/anpc-sal.webp"
+                alt="ANPC - Solutionarea Alternativa a Litigiilor"
+                width={150}
+                height={80}
+                className="hover:opacity-80 transition-opacity"
+              />
+            </div>
           </div>
 
           {/* Middle Section - Utile (Site Pages) - Compact to bring Contact closer */}
