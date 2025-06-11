@@ -15,6 +15,7 @@ import { TimePickerDemo } from "@/components/time-picker"
 import { Label } from "@/components/ui/label"
 import { collection, getDocs, query, orderBy, doc, getDoc, getCountFromServer, where, onSnapshot } from "firebase/firestore" // Importuri Firestore necesare
 import { db } from "@/lib/firebase"
+import { checkAvailability } from "@/lib/booking-utils" // Import pentru verificarea disponibilității
 
 interface PriceTier {
   id: string
@@ -226,11 +227,11 @@ export default function ReservationForm() {
       activeBookingsCount >= reservationSettings.maxTotalReservations
     ) {
       toast({
-        title: "Limită Atinsă",
+        title: "Limită Atinsă Global",
         description: (
           <div className="flex items-center">
             <AlertTriangle className="mr-2 h-5 w-5 text-orange-400" />
-            Ne pare rău, s-a atins numărul maxim de rezervări disponibile. Vă rugăm încercați mai târziu.
+            Ne pare rău, s-a atins numărul maxim global de rezervări disponibile. Vă rugăm încercați mai târziu.
           </div>
         ),
         variant: "destructive",
@@ -238,6 +239,68 @@ export default function ReservationForm() {
       })
       setIsSubmitting(false)
       return
+    }
+
+    // VERIFICARE NOUĂ: Disponibilitate pentru perioada specifică selectată
+    if (reservationSettings?.maxTotalReservations && reservationSettings.maxTotalReservations > 0) {
+      try {
+        const availabilityCheck = await checkAvailability(
+          format(startDate, "yyyy-MM-dd"),
+          startTime,
+          format(endDate, "yyyy-MM-dd"),
+          endTime
+        )
+
+        console.log('🔍 Verificare disponibilitate pentru perioada:', {
+          startDate: format(startDate, "yyyy-MM-dd"),
+          startTime,
+          endDate: format(endDate, "yyyy-MM-dd"),
+          endTime,
+          conflictingBookings: availabilityCheck.conflictingBookings,
+          totalSpots: availabilityCheck.totalSpots,
+          available: availabilityCheck.available
+        })
+
+        // Verifică dacă adăugarea acestei rezervări ar depăși limita pentru perioada selectată
+        const wouldExceedLimit = (availabilityCheck.conflictingBookings + 1) > reservationSettings.maxTotalReservations
+
+        if (wouldExceedLimit) {
+          const availableSpots = reservationSettings.maxTotalReservations - availabilityCheck.conflictingBookings
+          toast({
+            title: "Perioada Indisponibilă",
+            description: (
+              <div className="flex items-center">
+                <AlertTriangle className="mr-2 h-5 w-5 text-orange-400" />
+                Pentru perioada selectată ({format(startDate, "d MMM", { locale: ro })} - {format(endDate, "d MMM", { locale: ro })}) sunt disponibile doar {availableSpots} locuri. Vă rugăm să alegeți o altă perioadă.
+              </div>
+            ),
+            variant: "destructive",
+            duration: 8000,
+          })
+          setIsSubmitting(false)
+          return
+        }
+
+        // Informare utilizator despre disponibilitate
+        if (availabilityCheck.conflictingBookings > 0) {
+          const remainingSpots = reservationSettings.maxTotalReservations - availabilityCheck.conflictingBookings - 1
+          toast({
+            title: "Loc Disponibil",
+            description: `Rezervarea este posibilă. În perioada selectată mai sunt ${remainingSpots} locuri libere.`,
+            duration: 3000,
+          })
+        }
+
+      } catch (error) {
+        console.error("Eroare la verificarea disponibilității:", error)
+        toast({
+          title: "Eroare Verificare",
+          description: "Nu s-a putut verifica disponibilitatea pentru perioada selectată. Vă rugăm încercați din nou.",
+          variant: "destructive",
+        })
+        setIsSubmitting(false)
+        return
+      }
     }
     // Sfârșit verificări noi
 

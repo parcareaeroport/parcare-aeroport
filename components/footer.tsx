@@ -138,7 +138,7 @@ export default function Footer() {
 
         {/* Copyright and Legal */}
         <div className="flex flex-col md:flex-row justify-between items-center border-t border-[#1a2285] pt-6 md:pt-8 mt-6 md:mt-8 text-xs sm:text-sm text-gray-400">
-          <div className="mb-4 md:mb-0">© Copyright Site Parcări {new Date().getFullYear()}</div>
+          <div className="mb-4 md:mb-0">© Copyright parcare-aeroport.ro {new Date().getFullYear()}</div>
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
             <Link href="/politica-anulare" className="hover:text-white transition-colors">
               Politica de anulare
@@ -152,11 +152,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Company Info */}
-        <div className="text-[10px] sm:text-xs text-gray-500 mt-6 md:mt-8 text-center md:text-left">
-          Site Parcări este numele comercial al Site Parcări SRL Înregistrat în România cu nr. J40/12345/2023.
-          Strada Parcărilor, Nr. 10, București, România
-        </div>
+
 
         {/* Scroll to top button */}
         <button
