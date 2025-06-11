@@ -272,7 +272,7 @@ export default function ApiTestPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Ora Intrare*</Label>
+                    <Label>Oră intrare*</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" className="w-full justify-start text-left font-normal" type="button">
@@ -282,7 +282,7 @@ export default function ApiTestPage() {
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-4" align="start">
                         <div className="space-y-2">
-                          <Label>Ora Intrare</Label>
+                          <Label>Oră intrare</Label>
                           <TimePickerDemo value={startTime} onChange={setStartTime} />
                         </div>
                       </PopoverContent>
@@ -572,7 +572,7 @@ export default function ApiTestPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Ora Intrare*</Label>
+                    <Label>Oră intrare*</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" className="w-full justify-start text-left font-normal" type="button">
@@ -582,7 +582,7 @@ export default function ApiTestPage() {
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-4" align="start">
                         <div className="space-y-2">
-                          <Label>Ora Intrare</Label>
+                          <Label>Oră intrare</Label>
                           <TimePickerDemo value={updateStartTime} onChange={setUpdateStartTime} />
                         </div>
                       </PopoverContent>

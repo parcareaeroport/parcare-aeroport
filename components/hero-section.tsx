@@ -9,7 +9,7 @@ const SLIDES = [
   {
     headline: "Parcare aeroport Otopeni",
     subheadline:
-      "Parcarea ta inteligentă și sigură, la doar 500 metri de aeroportul Otopeni. Confort garantat, transfer rapid și zero stres, la un preț avantajos. Pentru călătoria ta perfectă!",
+      "Parcarea ta inteligentă și sigură, la doar 500 metrietri de aeroportul Otopeni. Confort garantat, transfer rapid și zero stres, la un preț avantajos. Pentru călătoria ta perfectă!",
     image: "/parcare_aeroport_otopeni_slider.jpg",
     alt: "Parcare Otopeni lângă Aeroportul Henri Coandă - vedere panoramică a parcării asfaltate"
   },

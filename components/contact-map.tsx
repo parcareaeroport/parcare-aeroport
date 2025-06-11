@@ -24,7 +24,7 @@ export default function ContactMap() {
               <strong>Str. Calea Bucureştilor, Nr.303A1, Otopeni, Ilfov</strong>
             </p>
             <p className="text-sm text-gray-500">
-              La doar 500 m de Aeroportul Henri Coandă București
+              La doar 500 metri de Aeroportul Henri Coandă București
             </p>
             <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
               <a

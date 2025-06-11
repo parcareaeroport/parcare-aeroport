@@ -13,7 +13,7 @@ export default function SeoTextSection() {
             </p>
 
             <p className="text-gray-700 mb-4">
-              <strong>Parcare privată în Otopeni</strong>, la doar <strong>500 m distanță</strong> față de aeroport, apropierea optimă care garantează un transfer ultra-rapid.
+              <strong>Parcare privată în Otopeni</strong>, la doar <strong>500 metri distanță</strong> față de aeroport, apropierea optimă care garantează un transfer ultra-rapid.
             </p>
 
             <p className="text-gray-700 mb-4">

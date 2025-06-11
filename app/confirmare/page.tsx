@@ -299,13 +299,13 @@ function ConfirmationContent() {
           )}
           {status === "success" && (
             <>
-              <CheckCircle className="h-16 w-16 text-green-500 mb-6" />
+              <CheckCircle className="h-16 w-16 text-green-500 metrib-6" />
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Confirmare Rezervare</h1>
             </>
           )}
           {status === "error" && (
             <>
-              <XCircle className="h-16 w-16 text-red-500 mb-6" />
+              <XCircle className="h-16 w-16 text-red-500 metrib-6" />
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Eroare Tranzacție</h1>
             </>
           )}
@@ -367,7 +367,7 @@ function ConfirmationContent() {
                 <p className="text-sm text-green-700 mb-3">
                   <strong>Str. Calea Bucureştilor, Nr.303A1, Otopeni, Ilfov</strong>
                   <br />
-                  La doar 500 m de Aeroportul Henri Coandă București
+                  La doar 500 metri de Aeroportul Henri Coandă București
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <a

@@ -164,7 +164,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
                 <h4>📍 Locație</h4>
                 <p>Str. Calea Bucureştilor, Nr.303A1</p>
                 <p>Otopeni, Ilfov</p>
-                <p><small>La 500 m de Aeroportul Henri Coandă</small></p>
+                <p><small>La 500 metri de Aeroportul Henri Coandă</small></p>
               </div>
             </div>
           </div>

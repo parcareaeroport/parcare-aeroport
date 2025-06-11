@@ -843,7 +843,7 @@ export default function OrderPlacementForm() {
                     <span className="font-bold text-lg">Total:</span>
                     <span className="font-bold text-xl">{calculateTotal().toFixed(2)} RON</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 metrit-1">
                     (include TVA 19% - {(calculateTotal() - (calculateTotal() / 1.19)).toFixed(2)} RON)
                   </p>
                 </div>
@@ -856,7 +856,7 @@ export default function OrderPlacementForm() {
                   </span>
                 </div>
 
-                <p className="text-xs text-gray-500 mt-3">
+                <p className="text-xs text-gray-500 metrit-3">
                   {isTestMode 
                     ? "În modul test, rezervarea se face direct prin API fără plată."
                     : "Plățile sunt procesate în mod securizat. Datele cardului tău nu sunt stocate pe serverele noastre."

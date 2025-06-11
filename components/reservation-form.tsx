@@ -470,7 +470,7 @@ export default function ReservationForm() {
         </div>
             {/* Start Time */}
             <div className="flex flex-col flex-1 min-w-[100px]">
-          <label className="text-xs font-semibold text-gray-700 mb-1">Ora intrare</label>
+          <label className="text-xs font-semibold text-gray-700 mb-1">Oră intrare</label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -484,7 +484,7 @@ export default function ReservationForm() {
             </PopoverTrigger>
             <PopoverContent className="w-auto p-4" align="start">
               <div className="space-y-2">
-                <Label>Ora Intrare</Label>
+                <Label>Oră intrare</Label>
                 <TimePickerDemo value={startTime} onChange={setStartTime} />
               </div>
             </PopoverContent>
@@ -518,7 +518,7 @@ export default function ReservationForm() {
         </div>
           {/* End Time */}
           <div className="flex flex-col flex-1 min-w-[100px]">
-          <label className="text-xs font-semibold text-gray-700 mb-1">Ora ieșire</label>
+          <label className="text-xs font-semibold text-gray-700 mb-1">Oră ieșire</label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -532,7 +532,7 @@ export default function ReservationForm() {
             </PopoverTrigger>
             <PopoverContent className="w-auto p-4" align="start">
               <div className="space-y-2">
-                <Label>Ora Ieșire</Label>
+                <Label>Oră ieșire</Label>
                 <TimePickerDemo value={endTime} onChange={setEndTime} />
               </div>
             </PopoverContent>
