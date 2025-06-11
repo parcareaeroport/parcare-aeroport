@@ -487,7 +487,7 @@ export default function OrderPlacementForm() {
         </h1>
 
         {/* Test Mode Toggle */}
-        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        {/* <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <div className="flex items-center space-x-2">
             <Checkbox
               id="testMode"
@@ -503,7 +503,7 @@ export default function OrderPlacementForm() {
               În modul test, se va apela direct API-ul de rezervare fără procesarea plății prin Stripe.
             </p>
           )}
-        </div>
+        </div> */}
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left column - Customer details form or Payment form */}
