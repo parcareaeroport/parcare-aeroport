@@ -13,6 +13,73 @@ import { collection, addDoc, serverTimestamp, query, where, getDocs, doc, update
 import { db } from "@/lib/firebase"
 import { useToast } from "@/components/ui/use-toast"
 
+// Declare gtag globally for TypeScript
+declare global {
+  interface Window {
+    gtag?: (command: string, ...args: any[]) => void;
+    dataLayer?: any[];
+  }
+}
+
+// Function to track successful purchase with GA4 ecommerce
+const trackPurchase = (reservationData: ReservationData, bookingNumber?: string) => {
+  try {
+    // Ensure data layer exists
+    if (typeof window !== 'undefined') {
+      window.dataLayer = window.dataLayer || [];
+      
+      // Push ecommerce purchase event to data layer
+      window.dataLayer.push({
+        event: 'purchase',
+        ecommerce: {
+          value: reservationData.price,
+          currency: 'RON',
+          transaction_id: bookingNumber || `booking_${Date.now()}`,
+          items: [{
+            item_id: `parking_${reservationData.days}d`,
+            item_name: `Parcare Aeroport ${reservationData.days} ${reservationData.days === 1 ? 'zi' : 'zile'}`,
+            category: 'Parcare',
+            quantity: 1,
+            price: reservationData.price
+          }]
+        },
+        // Additional booking details
+        booking_details: {
+          license_plate: reservationData.licensePlate,
+          start_date: reservationData.startDate,
+          end_date: reservationData.endDate,
+          duration_days: reservationData.days,
+          location: 'Otopeni Airport'
+        }
+      });
+
+      // Also trigger gtag purchase event if available
+      if (window.gtag) {
+        window.gtag('event', 'purchase', {
+          transaction_id: bookingNumber || `booking_${Date.now()}`,
+          value: reservationData.price,
+          currency: 'lei',
+          items: [{
+            item_id: `parking_${reservationData.days}d`,
+            item_name: `Parcare Aeroport ${reservationData.days} ${reservationData.days === 1 ? 'zi' : 'zile'}`,
+            category: 'Parcare',
+            quantity: 1,
+            price: reservationData.price
+          }]
+        });
+      }
+
+      console.log('GA4 Purchase tracking sent:', {
+        transaction_id: bookingNumber || `booking_${Date.now()}`,
+        value: reservationData.price,
+        currency: 'lei'
+      });
+    }
+  } catch (error) {
+    console.error('Error tracking purchase:', error);
+  }
+};
+
 interface ReservationData {
   licensePlate: string
   startDate: string
@@ -140,6 +207,9 @@ function ConfirmationContent() {
           if (existingBooking.apiBookingNumber && tempReservationData) {
             tempReservationData.apiBookingNumber = existingBooking.apiBookingNumber
             setReservationDetails(tempReservationData)
+            
+            // Track successful purchase with GA4 ecommerce
+            trackPurchase(tempReservationData, existingBooking.apiBookingNumber);
           }
           
           toast({ title: "Rezervare confirmată", description: "Rezervarea a fost procesată cu succes de sistemul de plăți." })
@@ -179,6 +249,10 @@ function ConfirmationContent() {
           `Rezervarea de test (nr. ${testBookingNumber}) a fost înregistrată cu succes! Veți primi un email de confirmare.`,
         )
         setBookingNumber(testBookingNumber) // Setează numărul de rezervare pentru afișare
+        
+        // Track successful test purchase with GA4 ecommerce
+        trackPurchase(tempReservationData, testBookingNumber);
+        
         return
       }
 
@@ -214,54 +288,61 @@ function ConfirmationContent() {
             )
             setStatus("success")
 
-            // Pentru plățile prin Stripe, webhook-ul ar trebui să se fi ocupat deja de salvarea rezervării
-            // Totuși, verificăm și salvăm local dacă este necesar pentru urmărire
-            if (tempReservationData) {
-              try {
-                // Verifică dacă există deja o rezervare cu acest paymentIntentId
-                const bookingsCollectionRef = collection(db, "bookings")
-                const q = query(bookingsCollectionRef, where("paymentIntentId", "==", paymentIntentId))
-                const querySnapshot = await getDocs(q)
+                      // Track successful purchase with GA4 ecommerce
+          if (tempReservationData) {
+            trackPurchase(tempReservationData, bookingNumber || undefined);
+          }
 
-                if (querySnapshot.empty) {
-                  // Doar dacă nu există deja (webhook-ul ar fi trebuit să o salveze)
-                  console.log("Webhook nu a salvat rezervarea, salvez din pagina de confirmare...")
-                  await addDoc(bookingsCollectionRef, {
-                    ...tempReservationData,
-                    paymentIntentId: paymentIntentId,
-                    paymentStatus: "paid",
-                    status: "confirmed_paid",
-                    createdAt: serverTimestamp(),
-                    source: "confirmation_page" // Indicăm sursa pentru debug
-                  })
-                  // OPTIMIZARE: Incrementez contorul de rezervări active
-                  const statsDocRef = doc(db, "config", "reservationStats")
-                  await updateDoc(statsDocRef, { activeBookingsCount: increment(1) })
-                  toast({ title: "Rezervare salvată", description: "Detaliile rezervării au fost salvate în sistem." })
-                } else {
-                  // Rezervarea există deja (salvată de webhook)
-                  const existingBooking = querySnapshot.docs[0].data()
-                  if (existingBooking.apiBookingNumber) {
-                    setBookingNumber(existingBooking.apiBookingNumber)
-                  }
-                  toast({ title: "Rezervare confirmată", description: "Rezervarea a fost procesată cu succes." })
-                }
-                
-                // Șterge datele din sessionStorage după procesare
-                sessionStorage.removeItem("reservationDataForConfirmation")
-                sessionStorage.removeItem("completeOrderData")
-                sessionStorage.removeItem("bookingResult")
-                sessionStorage.removeItem("apiBookingNumber")
-              } catch (firestoreError) {
-                console.error("Error saving booking to Firestore from confirmation page:", firestoreError)
-                // Pentru plățile Stripe, nu afișăm eroare critică dacă webhook-ul a funcționat
-                toast({
-                  title: "Plată confirmată",
-                  description: "Plata a fost procesată cu succes. Rezervarea a fost înregistrată.",
-                  variant: "default",
+          // Pentru plățile prin Stripe, webhook-ul ar trebui să se fi ocupat deja de salvarea rezervării
+          // Totuși, verificăm și salvăm local dacă este necesar pentru urmărire
+          if (tempReservationData) {
+            try {
+              // Verifică dacă există deja o rezervare cu acest paymentIntentId
+              const bookingsCollectionRef = collection(db, "bookings")
+              const q = query(bookingsCollectionRef, where("paymentIntentId", "==", paymentIntentId))
+              const querySnapshot = await getDocs(q)
+
+              if (querySnapshot.empty) {
+                // Doar dacă nu există deja (webhook-ul ar fi trebuit să o salveze)
+                console.log("Webhook nu a salvat rezervarea, salvez din pagina de confirmare...")
+                await addDoc(bookingsCollectionRef, {
+                  ...tempReservationData,
+                  paymentIntentId: paymentIntentId,
+                  paymentStatus: "paid",
+                  status: "confirmed_paid",
+                  createdAt: serverTimestamp(),
+                  source: "confirmation_page" // Indicăm sursa pentru debug
                 })
+                // OPTIMIZARE: Incrementez contorul de rezervări active
+                const statsDocRef = doc(db, "config", "reservationStats")
+                await updateDoc(statsDocRef, { activeBookingsCount: increment(1) })
+                toast({ title: "Rezervare salvată", description: "Detaliile rezervării au fost salvate în sistem." })
+              } else {
+                // Rezervarea există deja (salvată de webhook)
+                const existingBooking = querySnapshot.docs[0].data()
+                if (existingBooking.apiBookingNumber) {
+                  setBookingNumber(existingBooking.apiBookingNumber)
+                  // Track purchase with booking number from webhook
+                  trackPurchase(tempReservationData, existingBooking.apiBookingNumber);
+                }
+                toast({ title: "Rezervare confirmată", description: "Rezervarea a fost procesată cu succes." })
               }
+              
+              // Șterge datele din sessionStorage după procesare
+              sessionStorage.removeItem("reservationDataForConfirmation")
+              sessionStorage.removeItem("completeOrderData")
+              sessionStorage.removeItem("bookingResult")
+              sessionStorage.removeItem("apiBookingNumber")
+            } catch (firestoreError) {
+              console.error("Error saving booking to Firestore from confirmation page:", firestoreError)
+              // Pentru plățile Stripe, nu afișăm eroare critică dacă webhook-ul a funcționat
+              toast({
+                title: "Plată confirmată",
+                description: "Plata a fost procesată cu succes. Rezervarea a fost înregistrată.",
+                variant: "default",
+              })
             }
+          }
             break
           case "processing":
             setMessage("Plata este în curs de procesare. Vă vom notifica când se finalizează.")
