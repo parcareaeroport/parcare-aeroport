@@ -1,16 +1,17 @@
 "use client"
-import { useEffect, type ReactNode } from "react"
+import { useEffect, type ReactNode, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { AuthProvider, useAuth } from "@/context/auth-context"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, ListTree, LogOut, Tag, Car, Loader2, RefreshCw } from "lucide-react"
+import { LayoutDashboard, ListTree, LogOut, Tag, Car, Loader2, RefreshCw, Menu } from "lucide-react"
 
 function AdminLayoutContent({ children }: { children: ReactNode }) {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   console.log("[AdminLayoutContent] Rendering. Pathname:", pathname, "Loading:", loading, "User:", user)
 
@@ -60,43 +61,70 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
       { href: "/admin/dashboard/prices", label: "Prețuri", icon: Tag },
       { href: "/admin/dashboard/api-test", label: "Test API", icon: ListTree },
     ]
+
+    const SidebarContent = () => (
+      <div className="w-64 bg-white p-6 border-r border-gray-200 flex flex-col h-full">
+        <div className="mb-8">
+          <Link href="/admin/dashboard" className="flex items-center">
+            <Image
+              src="/sigla-transparenta.png"
+              alt="Parcare-Aeroport Logo"
+              width={140}
+              height={50}
+              className="h-10 w-auto"
+            />
+          </Link>
+        </div>
+        <nav className="flex-grow">
+          <ul className="space-y-2">
+            {adminNavItems.map((item) => (
+              <li key={item.label}>
+                <Link
+                  href={item.href}
+                  className="flex items-center p-2 text-gray-700 rounded-md hover:bg-gray-100 hover:text-primary transition-colors"
+                  onClick={() => setMobileNavOpen(false)}
+                >
+                  <item.icon className="w-5 h-5 mr-3" />
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div className="pt-4 border-t mt-auto">
+          <Button variant="outline" onClick={signOut} className="w-full flex items-center justify-center">
+            <LogOut className="w-5 h-5 mr-2" />
+            Deconectare
+          </Button>
+        </div>
+      </div>
+    )
+
     return (
       <div className="flex min-h-screen bg-gray-100">
-        <aside className="w-64 bg-white p-6 border-r border-gray-200 flex flex-col">
-          <div className="mb-8">
-            <Link href="/admin/dashboard" className="flex items-center">
-              <Image
-                src="/sigla-transparenta.png"
-                alt="Parcare-Aeroport Logo"
-                width={140}
-                height={50}
-                className="h-10 w-auto"
-              />
-            </Link>
-          </div>
-          <nav className="flex-grow">
-            <ul className="space-y-2">
-              {adminNavItems.map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="flex items-center p-2 text-gray-700 rounded-md hover:bg-gray-100 hover:text-primary transition-colors"
-                  >
-                    <item.icon className="w-5 h-5 mr-3" />
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div>
-            <Button variant="outline" onClick={signOut} className="w-full flex items-center justify-center">
-              <LogOut className="w-5 h-5 mr-2" />
-              Deconectare
-            </Button>
-          </div>
+        {/* Desktop Sidebar */}
+        <aside className="hidden md:flex">
+          <SidebarContent />
         </aside>
-        <main className="flex-1 p-6 overflow-auto">{children}</main>
+
+        {/* Mobile Nav Drawer */}
+        {mobileNavOpen && (
+          <div className="fixed inset-0 z-50 flex">
+            <SidebarContent />
+            <div className="flex-1 bg-black/50" onClick={() => setMobileNavOpen(false)} />
+          </div>
+        )}
+
+        <main className="flex-1 p-6 overflow-auto">
+          {/* Mobile top bar */}
+          <div className="md:hidden flex items-center mb-4">
+            <Button variant="ghost" size="icon" onClick={() => setMobileNavOpen(true)}>
+              <Menu className="h-6 w-6" />
+            </Button>
+            <h1 className="ml-2 text-xl font-semibold">Admin</h1>
+          </div>
+          {children}
+        </main>
       </div>
     )
   }
