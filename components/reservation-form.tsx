@@ -170,6 +170,20 @@ export default function ReservationForm() {
     setDuplicateError(null)
   }
 
+  // Funcție pentru formatarea numărului de înmatriculare
+  const formatLicensePlate = (input: string) => {
+    // Elimină spațiile și liniuțele și convertește la uppercase
+    return input.replace(/[\s-]/g, '').toUpperCase()
+  }
+
+  // Handler pentru schimbarea numărului de înmatriculare
+  const handleLicensePlateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatLicensePlate(e.target.value)
+    setLicensePlate(formatted)
+    // Golește eroarea de duplicat când utilizatorul schimbă numărul
+    setDuplicateError(null)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -646,29 +660,33 @@ export default function ReservationForm() {
       
         {/* License Plate */}
         <div className="flex flex-col flex-1 min-w-[120px]">
-          <label htmlFor="licensePlate" className="text-xs font-semibold text-gray-700 mb-1">Număr înmatriculare</label>
-          <Input
-            id="licensePlate"
-            type="text"
-            value={licensePlate}
-            onChange={e => {
-              setLicensePlate(e.target.value.toUpperCase())
-              // Golește eroarea de duplicat când utilizatorul schimbă numărul
-              setDuplicateError(null)
-            }}
-            className="rounded-lg border-gray-200 text-base px-3 py-2 hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 focus:outline-none h-10"
-            placeholder="B 00 ABC"
-            required
-          />
-      </div>
-      {/* Submit Button */}
+          <div className="grid gap-2">
+            <Label htmlFor="licensePlate">Număr înmatriculare</Label>
+            <Input
+              id="licensePlate"
+              type="text"
+              value={licensePlate}
+              onChange={handleLicensePlateChange}
+              className={`rounded-lg border-gray-200 text-base px-3 py-2 hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 focus:outline-none h-10 ${duplicateError ? "border-red-500" : ""}`}
+              placeholder="Ex: DB99SDF"
+              required
+            />
+            {duplicateError && (
+              <div className="text-red-500 text-sm font-semibold mt-1 flex items-center">
+                <XCircle className="mr-1 h-5 w-5" />
+                {duplicateError}
+              </div>
+            )}
+          </div>
+        </div>
+        {/* Submit Button */}
         <div className="flex flex-col justify-end min-w-[120px]">
           <label className="text-xs font-semibold text-gray-700 mb-1 opacity-0">Acțiune</label>
-        <Button
-          type="submit"
+          <Button
+            type="submit"
             className="h-10 w-full px-6 rounded-md bg-[#ff0066] hover:bg-[#e6005c] text-white font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all duration-200"
-          disabled={isSubmitting || !!dateError || isLoadingPrices || isLoadingSystemStatus}
-        >
+            disabled={isSubmitting || !!dateError || isLoadingPrices || isLoadingSystemStatus}
+          >
             {isSubmitting || isLoadingSystemStatus ? (
               <><Loader2 className="mr-1 h-4 w-4 animate-spin" />{isLoadingSystemStatus ? "Verifică..." : "Procesează..."}</>
             ) : (
@@ -677,7 +695,7 @@ export default function ReservationForm() {
                 Continuă
               </>
             )}
-        </Button>
+          </Button>
         </div>
       </div>
       
@@ -740,7 +758,6 @@ export default function ReservationForm() {
       )}
 
       {dateError && <div className="text-red-500 text-sm font-semibold mt-1 flex items-center"><XCircle className="mr-1 h-5 w-5" />{dateError}</div>}
-      {duplicateError && <div className="text-red-500 text-sm font-semibold mt-1 flex items-center"><XCircle className="mr-1 h-5 w-5" />{duplicateError}</div>}
     </form>
   )
 }

@@ -149,7 +149,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
                 <p>+40 734 292 818</p>
               </div>
               <div class="contact-item">
-                <h4>📧 Email</h4>
+                <h4>📧 Email suport</h4>
                 <p>contact@parcare-aeroport.ro</p>
               </div>
               <div class="contact-item">
