@@ -379,7 +379,7 @@ function ConfirmationContent() {
                     📍 Google Maps
                   </a>
                   <a
-                    href="https://waze.com/ul/hsv8tkpnqe"
+                    href="https://waze.com/ul?ll=44.575660,26.069918&navigate=yes"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-[#0099ff] hover:bg-[#007acc] text-white px-4 py-2 rounded-md transition-all duration-200 font-medium text-sm"

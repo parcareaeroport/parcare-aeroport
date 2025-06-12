@@ -7,7 +7,7 @@ export default function ContactMap() {
           
           <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 overflow-hidden">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1420.8087662951636!2d26.095414858473892!3d44.510396671099734!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b1ff4770baaaab%3A0x9ea83cf7f69c5ac7!2sCalea%20Bucure%C8%99tilor%20303A1%2C%20Otopeni%20075100!5e0!3m2!1sro!2sro!4v1703087123456!5m2!1sro!2sro"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2848.1234567890123!2d26.0677308!3d44.575660!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b1ff4770baaaab%3A0x9ea83cf7f69c5ac7!2sCalea%20Bucure%C8%99tilor%20303A1%2C%20Otopeni%20075100!5e0!3m2!1sro!2sro!4v1703087123456!5m2!1sro!2sro"
               width="100%"
               height="400"
               style={{ border: 0 }}
@@ -33,10 +33,10 @@ export default function ContactMap() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-[#ff0066] hover:bg-[#e6005c] text-white px-6 py-3 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg"
               >
-                📍 Deschide în Google Maps
+                📍 Google Maps
               </a>
               <a
-                href="https://waze.com/ul/hsv8tkpnqe"
+                href="https://waze.com/ul?ll=44.575660,26.069918&navigate=yes"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-[#0099ff] hover:bg-[#007acc] text-white px-6 py-3 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg"

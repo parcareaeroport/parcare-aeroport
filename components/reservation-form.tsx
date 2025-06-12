@@ -716,7 +716,7 @@ export default function ReservationForm() {
                   Maps
                 </a>
                 <a
-                  href="https://waze.com/ul/hsv8tkpnqe"
+                  href="https://waze.com/ul?ll=44.575660,26.069918&navigate=yes"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-2 py-1 rounded text-xs font-medium transition-all duration-200"
