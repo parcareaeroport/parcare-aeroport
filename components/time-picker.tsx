@@ -64,7 +64,7 @@ export function TimePickerDemo({ value, onChange }: TimePickerDemoProps) {
         <Input
           id="hours"
             className="w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-          value={hours}
+          value={hours.toString().padStart(2, "0")}
           onChange={handleHoursChange}
           type="number"
           min={0}
@@ -97,7 +97,7 @@ export function TimePickerDemo({ value, onChange }: TimePickerDemoProps) {
         <Input
           id="minutes"
             className="w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-          value={minutes}
+          value={minutes.toString().padStart(2, "0")}
           onChange={handleMinutesChange}
           type="number"
           min={0}

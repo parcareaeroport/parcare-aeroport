@@ -45,7 +45,7 @@ export default function Footer() {
                 alt="ANPC - Solutionarea Alternativa a Litigiilor"
                 width={160}
                 height={80}
-                className="hover:opacity-80 transition-opacity"
+               className="hover:opacity-80 transition-opacity"
               />
             </div>
           </div>
