@@ -36,15 +36,15 @@ export default function Footer() {
               <Image
                 src="/anpc-sol.webp"
                 alt="ANPC - Solutionarea Online a Litigiilor"
-                width={80}
-                height={40}
+                width={160}
+                height={80}
                 className="hover:opacity-80 transition-opacity"
               />
               <Image
                 src="/anpc-sal.webp"
                 alt="ANPC - Solutionarea Alternativa a Litigiilor"
-                width={80}
-                height={40}
+                width={160}
+                height={80}
                 className="hover:opacity-80 transition-opacity"
               />
             </div>

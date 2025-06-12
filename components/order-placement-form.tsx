@@ -153,7 +153,10 @@ export default function OrderPlacementForm() {
   // Add useEffect to handle scroll when payment form is shown
   useEffect(() => {
     if (showPaymentForm) {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      // Try all possible ways to scroll to top for best cross-browser support
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
     }
   }, [showPaymentForm])
 
@@ -491,7 +494,11 @@ export default function OrderPlacementForm() {
             {/* Left column - Customer details form or Payment form */}
             <div className="flex-1">
               {showPaymentForm && clientSecret && !isTestMode ? (
-                <div className="bg-white p-6 rounded-xl border border-gray-200">
+                <div
+                  className="w-full bg-white p-0 border-0 rounded-none md:p-6 md:rounded-xl md:border border-gray-200"
+                  style={{ maxWidth: '100%' }}
+                  data-payment-mobile-container
+                >
                   <h2 className="text-lg font-bold mb-4">Plată securizată</h2>
                   <Elements 
                     stripe={stripePromise} 
@@ -869,7 +876,11 @@ export default function OrderPlacementForm() {
           {/* Left column - Customer details form or Payment form */}
           <div className="flex-1">
             {showPaymentForm && clientSecret && !isTestMode ? (
-              <div className="bg-white p-6 rounded-xl border border-gray-200">
+              <div
+                className="w-full bg-white p-0 border-0 rounded-none md:p-6 md:rounded-xl md:border border-gray-200"
+                style={{ maxWidth: '100%' }}
+                data-payment-mobile-container
+              >
                 <h2 className="text-lg font-bold mb-4">Plată securizată</h2>
                 <Elements 
                   stripe={stripePromise} 

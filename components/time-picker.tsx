@@ -61,14 +61,14 @@ export function TimePickerDemo({ value, onChange }: TimePickerDemoProps) {
           >
             <ChevronUp className="h-4 w-4" />
           </Button>
-          <Input
-            id="hours"
+        <Input
+          id="hours"
             className="w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            value={hours}
-            onChange={handleHoursChange}
-            type="number"
-            min={0}
-            max={23}
+          value={hours}
+          onChange={handleHoursChange}
+          type="number"
+          min={0}
+          max={23}
             inputMode="numeric"
           />
           <Button
@@ -94,15 +94,15 @@ export function TimePickerDemo({ value, onChange }: TimePickerDemoProps) {
           >
             <ChevronUp className="h-4 w-4" />
           </Button>
-          <Input
-            id="minutes"
+        <Input
+          id="minutes"
             className="w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            value={minutes}
-            onChange={handleMinutesChange}
-            type="number"
-            min={0}
-            max={59}
-            step={5}
+          value={minutes}
+          onChange={handleMinutesChange}
+          type="number"
+          min={0}
+          max={59}
+          step={5}
             inputMode="numeric"
           />
           <Button
