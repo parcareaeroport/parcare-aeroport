@@ -153,13 +153,23 @@ export default function OrderPlacementForm() {
   // Add useEffect to handle scroll when payment form is shown
   useEffect(() => {
     if (showPaymentForm) {
-      // Try all possible ways to scroll to top for best cross-browser support
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
+      const scrollTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo(0, 0); // instant fallback
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+      }
+      scrollTop();
+      // Extra attempts in case content height changes after initial render (iOS quirk)
+      const t1 = setTimeout(scrollTop, 150);
+      const t2 = setTimeout(scrollTop, 400);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
     }
   }, [showPaymentForm])
-
+ 
   // Detalii client
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
