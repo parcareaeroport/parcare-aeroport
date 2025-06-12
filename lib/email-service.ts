@@ -82,7 +82,6 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
     <body>
       <div class="container">
         <div class="header">
-          <img src="cid:logo" alt="Parcare-Aeroport Otopeni" class="logo" />
           <h1>🅿️ Confirmare Rezervare Parcare</h1>
           <p>Rezervarea dumneavoastră a fost confirmată cu succes!</p>
         </div>
@@ -146,25 +145,32 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
             <h3 style="text-align: center; color: #ff0066; margin-bottom: 20px;">📞 Contactați-ne</h3>
             <div class="contact-grid">
               <div class="contact-item">
-                <h4>📞 Telefon</h4>
-                <p><strong>Rezervări:</strong><br>+40 123 456 789</p>
-                <p><strong>Urgențe:</strong><br>+40 123 456 790</p>
+                <h4>📞 Telefon suport</h4>
+                <p>+40 734 292 818</p>
               </div>
               <div class="contact-item">
                 <h4>📧 Email</h4>
-                <p><strong>Rezervări:</strong><br>rezervari@parcare-aeroport.ro</p>
-                <p><strong>Support:</strong><br>contact@parcare-aeroport.ro</p>
+                <p>contact@parcare-aeroport.ro</p>
               </div>
               <div class="contact-item">
                 <h4>🕒 Program</h4>
-                <p><strong>L-V:</strong> 06:00 - 22:00</p>
-                <p><strong>S-D:</strong> 08:00 - 20:00</p>
+                <p><strong>Non-Stop</strong></p>
               </div>
               <div class="contact-item">
                 <h4>📍 Locație</h4>
                 <p>Str. Calea Bucureştilor, Nr.303A1</p>
                 <p>Otopeni, Ilfov</p>
                 <p><small>La 500 metri de Aeroportul Henri Coandă</small></p>
+                <div style="margin-top: 10px; display: flex; gap: 8px; justify-content: center;">
+                  <a href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw" 
+                     style="display: inline-block; background: #ff0066; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px;">
+                    📍 Google Maps
+                  </a>
+                  <a href="https://waze.com/ul?ll=44.575660,26.069918&navigate=yes" 
+                     style="display: inline-block; background: #0099ff; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px;">
+                    🚗 Waze
+                  </a>
+                </div>
               </div>
             </div>
           </div>
