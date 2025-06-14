@@ -44,9 +44,16 @@ export default function LoginPage() {
     }
 
     try {
-      await signInWithEmailAndPassword(auth, email, password)
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
       console.log("[LoginPage] Firebase signInWithEmailAndPassword successful.")
-      router.push("/admin/dashboard")
+      
+      // Redirect based on admin status
+      const isAdmin = userCredential.user.email === "contact.parcareaeroport@gmail.com"
+      if (isAdmin) {
+        router.push("/admin/dashboard")
+      } else {
+        router.push("/admin/dashboard/bookings")
+      }
     } catch (err: any) {
       console.error("[LoginPage] Firebase login error:", err)
       if (

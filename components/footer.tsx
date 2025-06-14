@@ -111,7 +111,7 @@ export default function Footer() {
                 <div className="flex items-center space-x-3">
                   <MapPin size={16} className="text-[#FF0066] flex-shrink-0" />
                   <a 
-                    href="https://maps.google.com/?q=Site+Parcari+Otopeni,+DN1,+Otopeni,+Romania" 
+                    href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-gray-300 hover:text-white transition-colors text-sm"
@@ -124,7 +124,7 @@ export default function Footer() {
                 <div className="flex items-center space-x-3">
                   <Navigation size={16} className="text-[#FF0066] flex-shrink-0" />
                   <a 
-                    href="https://waze.com/ul?q=Site%20Parcari%20Otopeni&navigate=yes" 
+                    href="https://waze.com/ul?ll=44.575660,26.069918&navigate=yes" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-gray-300 hover:text-white transition-colors text-sm"

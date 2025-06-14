@@ -96,7 +96,7 @@ interface Booking {
 
 function BookingsPageContent() {
   const { toast } = useToast()
-  const { user, loading: authLoading } = useAuth()
+  const { user, loading: authLoading, isAdmin } = useAuth()
   const [bookings, setBookings] = useState<Booking[]>([])
   const [filteredBookings, setFilteredBookings] = useState<Booking[]>([])
   const [searchTerm, setSearchTerm] = useState("")
@@ -356,7 +356,7 @@ function BookingsPageContent() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Gestionare Rezervări</h1>
         <div className="flex gap-2">
-          <Button 
+          {/* <Button 
             onClick={handleCleanupExpired}
             disabled={isCleaningUp}
             variant="outline"
@@ -368,7 +368,7 @@ function BookingsPageContent() {
               <RefreshCw className="h-4 w-4 mr-2" />
             )}
             Curăță Expirate
-          </Button>
+          </Button> */}
           <Button onClick={fetchBookings} disabled={isLoading} size="sm">
             {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
             Reîncarcă
@@ -506,7 +506,8 @@ function BookingsPageContent() {
                               </>
                             )}
                             
-                            {booking.status !== "cancelled_by_admin" &&
+                            {isAdmin &&
+                              booking.status !== "cancelled_by_admin" &&
                               booking.status !== "cancelled_by_api" &&
                               booking.apiBookingNumber && (
                                 <>
@@ -652,7 +653,8 @@ function BookingsPageContent() {
             </div>
           )}
           <DialogFooter>
-            {selectedBooking &&
+            {isAdmin &&
+              selectedBooking &&
               selectedBooking.status !== "cancelled_by_admin" &&
               selectedBooking.status !== "cancelled_by_api" &&
               selectedBooking.apiBookingNumber && (

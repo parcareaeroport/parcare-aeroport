@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 interface AuthContextType {
   user: User | null
   loading: boolean
-  // isAdmin: boolean // Comentat deoarece nu era folosit corect
+  isAdmin: boolean
   signOut: () => Promise<void>
 }
 
@@ -18,7 +18,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  console.log("[AuthProvider] Initializing. Current state - loading:", loading, "user:", user)
+  // Check if user is admin based on email
+  const isAdmin = user?.email === "contact.parcareaeroport@gmail.com"
+
+  console.log("[AuthProvider] Initializing. Current state - loading:", loading, "user:", user, "isAdmin:", isAdmin)
 
   useEffect(() => {
     console.log("[AuthProvider] useEffect triggered. Subscribing to onAuthStateChanged.")
@@ -66,14 +69,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  console.log("[AuthProvider] Rendering. Current state - loading:", loading, "user:", user)
-  return <AuthContext.Provider value={{ user, loading, signOut }}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ user, loading, isAdmin, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
-export const useAuth = (): AuthContextType => {
+export const useAuth = () => {
   const context = useContext(AuthContext)
   if (context === undefined) {
-    console.error("[useAuth] hook used outside of AuthProvider.")
     throw new Error("useAuth must be used within an AuthProvider")
   }
   return context

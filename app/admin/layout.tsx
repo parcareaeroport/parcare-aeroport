@@ -8,15 +8,15 @@ import { Button } from "@/components/ui/button"
 import { LayoutDashboard, ListTree, LogOut, Tag, Car, Loader2, RefreshCw, Menu } from "lucide-react"
 
 function AdminLayoutContent({ children }: { children: ReactNode }) {
-  const { user, loading, signOut } = useAuth()
+  const { user, loading, isAdmin, signOut } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
-  console.log("[AdminLayoutContent] Rendering. Pathname:", pathname, "Loading:", loading, "User:", user)
+  console.log("[AdminLayoutContent] Rendering. Pathname:", pathname, "Loading:", loading, "User:", user, "IsAdmin:", isAdmin)
 
   useEffect(() => {
-    console.log("[AdminLayoutContent] useEffect triggered. Pathname:", pathname, "Loading:", loading, "User:", user)
+    console.log("[AdminLayoutContent] useEffect triggered. Pathname:", pathname, "Loading:", loading, "User:", user, "IsAdmin:", isAdmin)
     if (loading || pathname === "/admin/login") {
       console.log("[AdminLayoutContent] useEffect: Exiting early (loading or on login page).")
       return
@@ -24,8 +24,15 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
     if (!user) {
       console.log("[AdminLayoutContent] useEffect: No user and not on login page, redirecting to /admin/login.")
       router.push("/admin/login")
+      return
     }
-  }, [user, loading, router, pathname])
+    
+    // Redirect non-admin users trying to access admin-only pages
+    if (user && !isAdmin && pathname !== "/admin/dashboard/bookings") {
+      console.log("[AdminLayoutContent] useEffect: Non-admin user trying to access admin page, redirecting to bookings.")
+      router.push("/admin/dashboard/bookings")
+    }
+  }, [user, loading, isAdmin, router, pathname])
 
   if (loading && pathname !== "/admin/login") {
     console.log("[AdminLayoutContent] Displaying global loader for admin area.")
@@ -54,46 +61,64 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
   // Navigație pentru admin (doar dacă user-ul este logat și nu suntem pe pagina de login)
   if (user) {
     console.log("[AdminLayoutContent] User is authenticated, rendering admin dashboard layout.")
-    const adminNavItems = [
+    
+    // Define navigation items based on admin status
+    const adminNavItems = isAdmin ? [
       { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { href: "/admin/dashboard/bookings", label: "Rezervări", icon: Car },
       { href: "/admin/dashboard/recovery", label: "Recovery", icon: RefreshCw },
       { href: "/admin/dashboard/prices", label: "Prețuri", icon: Tag },
       { href: "/admin/dashboard/api-test", label: "Test API", icon: ListTree },
+    ] : [
+      { href: "/admin/dashboard/bookings", label: "Rezervări", icon: Car },
     ]
 
     const SidebarContent = () => (
-      <div className="w-64 bg-white p-6 border-r border-gray-200 flex flex-col h-full">
-        <div className="mb-8">
-          <Link href="/admin/dashboard" className="flex items-center">
-            <Image
-              src="/sigla-transparenta.png"
-              alt="Parcare-Aeroport Logo"
-              width={140}
-              height={50}
-              className="h-10 w-auto"
-            />
-          </Link>
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-center p-6 border-b">
+          <Image
+            src="/sigla-transparenta.png"
+            alt="Parcare-Aeroport Logo"
+            width={120}
+            height={48}
+            className="h-8 w-auto"
+          />
         </div>
-        <nav className="flex-grow">
-          <ul className="space-y-2">
-            {adminNavItems.map((item) => (
-              <li key={item.label}>
-                <Link
-                  href={item.href}
-                  className="flex items-center p-2 text-gray-700 rounded-md hover:bg-gray-100 hover:text-primary transition-colors"
-                  onClick={() => setMobileNavOpen(false)}
-                >
-                  <item.icon className="w-5 h-5 mr-3" />
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+        <nav className="flex-1 px-4 py-6 space-y-2">
+          {adminNavItems.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname === item.href
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                }`}
+                onClick={() => setMobileNavOpen(false)}
+              >
+                <Icon className="mr-3 h-5 w-5" />
+                {item.label}
+              </Link>
+            )
+          })}
         </nav>
-        <div className="pt-4 border-t mt-auto">
-          <Button variant="outline" onClick={signOut} className="w-full flex items-center justify-center">
-            <LogOut className="w-5 h-5 mr-2" />
+        <div className="p-4 border-t">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-sm">
+              <p className="font-medium text-gray-900">{user.email}</p>
+              <p className="text-gray-500">{isAdmin ? "Administrator" : "Utilizator"}</p>
+            </div>
+          </div>
+          <Button
+            onClick={signOut}
+            variant="outline"
+            size="sm"
+            className="w-full justify-start"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
             Deconectare
           </Button>
         </div>
@@ -101,37 +126,54 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
     )
 
     return (
-      <div className="flex min-h-screen bg-gray-100">
+      <div className="flex h-screen bg-gray-100">
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex">
-          <SidebarContent />
-        </aside>
-
-        {/* Mobile Nav Drawer */}
-        {mobileNavOpen && (
-          <div className="fixed inset-0 z-50 flex">
+        <div className="hidden md:flex md:w-64 md:flex-col">
+          <div className="flex flex-col flex-grow bg-white shadow-sm">
             <SidebarContent />
-            <div className="flex-1 bg-black/50" onClick={() => setMobileNavOpen(false)} />
+          </div>
+        </div>
+
+        {/* Mobile Sidebar */}
+        {mobileNavOpen && (
+          <div className="fixed inset-0 z-50 md:hidden">
+            <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setMobileNavOpen(false)} />
+            <div className="fixed left-0 top-0 bottom-0 w-64 bg-white shadow-lg">
+              <SidebarContent />
+            </div>
           </div>
         )}
 
-        <main className="flex-1 p-6 overflow-auto">
-          {/* Mobile top bar */}
-          <div className="md:hidden flex items-center mb-4">
-            <Button variant="ghost" size="icon" onClick={() => setMobileNavOpen(true)}>
-              <Menu className="h-6 w-6" />
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Mobile Header */}
+          <div className="md:hidden bg-white shadow-sm border-b px-4 py-3 flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMobileNavOpen(true)}
+            >
+              <Menu className="h-5 w-5" />
             </Button>
-            <h1 className="ml-2 text-xl font-semibold">Admin</h1>
+            <Image
+              src="/sigla-transparenta.png"
+              alt="Parcare-Aeroport Logo"
+              width={100}
+              height={40}
+              className="h-6 w-auto"
+            />
+            <div className="w-8" /> {/* Spacer */}
           </div>
-          {children}
-        </main>
+
+          {/* Page Content */}
+          <main className="flex-1 overflow-auto bg-gray-50 p-6">
+            {children}
+          </main>
+        </div>
       </div>
     )
   }
 
-  // Fallback în cazul în care niciuna dintre condițiile de mai sus nu este îndeplinită
-  // (de ex., user este null, dar suntem pe o pagină protejată - useEffect ar trebui să fi redirecționat)
-  console.log("[AdminLayoutContent] Fallback: No user, returning null. Pathname:", pathname)
   return null
 }
 

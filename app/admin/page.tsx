@@ -6,17 +6,22 @@ import { useAuth } from "@/context/auth-context"
 
 export default function AdminRedirect() {
   const router = useRouter()
-  const { user, loading } = useAuth()
+  const { user, loading, isAdmin } = useAuth()
 
   useEffect(() => {
     if (loading) return // Așteaptă până când autentificarea este verificată
     
     if (user) {
-      router.push("/admin/dashboard")
+      // Redirect based on admin status
+      if (isAdmin) {
+        router.push("/admin/dashboard")
+      } else {
+        router.push("/admin/dashboard/bookings")
+      }
     } else {
       router.push("/admin/login")
     }
-  }, [user, loading, router])
+  }, [user, loading, isAdmin, router])
 
   if (loading) {
     return <div>Se verifică autentificarea...</div>
