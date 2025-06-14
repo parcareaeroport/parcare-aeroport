@@ -702,8 +702,8 @@ export default function ReservationForm() {
 
         {/* Submit Button Section */}
         <div className="flex flex-col flex-1 mb-2 md:mb-0">
-          {/* Header invizibil pentru aliniament cu inputurile */}
-          <div className="flex w-full px-3 py-2 rounded-md mb-2 justify-center opacity-0 pointer-events-none">
+          {/* Header invizibil pentru aliniament cu inputurile - doar pe desktop */}
+          <div className="hidden md:flex w-full px-3 py-2 rounded-md mb-2 justify-center opacity-0 pointer-events-none">
             <span className="text-sm font-semibold">Placeholder</span>
           </div>
           
