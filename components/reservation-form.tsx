@@ -202,10 +202,10 @@ export default function ReservationForm() {
     const endDateTime = getCombinedDateTime(endDate, endTime)
 
     if (endDateTime <= startDateTime) {
-      setDateError("Data și ora de ieșire trebuie să fie după data și ora de intrare.")
+      setDateError("Dată și oră de ieșire trebuie să fie după Dată și oră de intrare.")
       toast({
         title: "Eroare de validare",
-        description: "Data și ora de ieșire trebuie să fie după data și ora de intrare.",
+        description: "Dată și oră de ieșire trebuie să fie după Dată și oră de intrare.",
         variant: "destructive",
       })
       setIsSubmitting(false)
@@ -510,7 +510,7 @@ export default function ReservationForm() {
       const start = getCombinedDateTime(startDate, startTime)
       const end = getCombinedDateTime(endDate, endTime)
       if (end <= start) {
-        setDateError("Data și ora de ieșire trebuie să fie după data și ora de intrare.")
+        setDateError("Dată și oră de ieșire trebuie să fie după Dată și oră de intrare.")
         return false
       } else {
         setDateError(null)
@@ -560,11 +560,11 @@ export default function ReservationForm() {
     <form onSubmit={handleSubmit} className="w-full bg-white rounded-2xl flex flex-col gap-3 px-4 py-4 max-w-full mx-auto" style={{maxWidth: '1200px'}}>
       {/* Câmpuri formular */}
       <div className="flex flex-col md:flex-row gap-3 w-full">
-        {/* Entry Section - Data și Ora Intrare */}
+        {/* Entry Section - Dată și oră Intrare */}
         <div className="flex flex-col flex-1 mb-2 md:mb-0">
-          {/* Header pentru Data și Ora Intrare */}
+          {/* Header pentru Dată și oră Intrare */}
           <div className="flex w-full bg-waze-blue text-white px-3 py-2 rounded-md border border-waze-blue mb-2 justify-center">
-            <span className="text-sm font-semibold">Data și Ora Intrare</span>
+            <span className="text-sm font-semibold">Dată și oră Intrare</span>
           </div>
           
           {/* Container pentru inputurile de intrare */}
@@ -617,11 +617,11 @@ export default function ReservationForm() {
           </div>
         </div>
 
-        {/* Exit Section - Data și Ora Ieșire */}
+        {/* Exit Section - Dată și oră Ieșire */}
         <div className="flex flex-col flex-1 mb-2 md:mb-0">
-          {/* Header pentru Data și Ora Ieșire */}
+          {/* Header pentru Dată și oră Ieșire */}
           <div className="flex w-full bg-waze-blue text-white px-3 py-2 rounded-md border border-waze-blue mb-2 justify-center">
-            <span className="text-sm font-semibold">Data și Ora Ieșire</span>
+            <span className="text-sm font-semibold">Dată și oră Ieșire</span>
           </div>
           
           {/* Container pentru inputurile de ieșire */}
