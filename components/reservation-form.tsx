@@ -709,15 +709,14 @@ export default function ReservationForm() {
           
           <Button
             type="submit"
-            className="h-10 w-full px-6 rounded-md bg-waze-blue hover:bg-[#050375] text-white font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all duration-200"
+            className="h-10 w-full px-6 rounded-md bg-[#ff0066] hover:bg-[#e6005c] text-white font-bold text-base shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all duration-200"
             disabled={isSubmitting || !!dateError || isLoadingPrices || isLoadingSystemStatus}
           >
             {isSubmitting || isLoadingSystemStatus ? (
               <><Loader2 className="mr-1 h-4 w-4 animate-spin" />{isLoadingSystemStatus ? "Verifică..." : "Procesează..."}</>
             ) : (
               <>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                Continuă
+                Rezervă
               </>
             )}
           </Button>
@@ -752,20 +751,20 @@ export default function ReservationForm() {
                   href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#ff0066] hover:bg-[#e6005c] text-white px-2 py-1 rounded text-xs font-medium transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#ff0066] hover:bg-[#e6005c] text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200"
                   title="Deschide în Google Maps"
                 >
-                  <MapPin className="w-3 h-3" />
+                  <MapPin className="w-4 h-4" />
                   Maps
                 </a>
                 <a
                   href="https://waze.com/ul?ll=44.575660,26.069918&navigate=yes"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-2 py-1 rounded text-xs font-medium transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200"
                   title="Deschide în Waze"
                 >
-                  <Navigation className="w-3 h-3" />
+                  <Navigation className="w-4 h-4" />
                   Waze
                 </a>
               </div>
