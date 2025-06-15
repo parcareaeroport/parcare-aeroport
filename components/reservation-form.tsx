@@ -751,20 +751,20 @@ export default function ReservationForm() {
                   href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#ff0066] hover:bg-[#e6005c] text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#ff0066] hover:bg-[#e6005c] text-white px-2 py-2 md:px-4 md:py-3 rounded-md text-xs md:text-sm font-medium transition-all duration-200"
                   title="Deschide în Google Maps"
                 >
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="w-3 h-3 md:w-4 md:h-4" />
                   Maps
                 </a>
                 <a
                   href="https://waze.com/ul?ll=44.575660,26.069918&navigate=yes"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-2 py-2 md:px-4 md:py-3 rounded-md text-xs md:text-sm font-medium transition-all duration-200"
                   title="Deschide în Waze"
                 >
-                  <Navigation className="w-4 h-4" />
+                  <Navigation className="w-3 h-3 md:w-4 md:h-4" />
                   Waze
                 </a>
               </div>
