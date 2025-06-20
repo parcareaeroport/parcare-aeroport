@@ -122,7 +122,11 @@ function CheckoutForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <PaymentElement />
+      <PaymentElement 
+        options={{
+          paymentMethodOrder: ['card']
+        }}
+      />
 
       <Button
         type="submit"
@@ -553,6 +557,21 @@ export default function OrderPlacementForm() {
                           '.Tab--selected': {
                             border: '1px solid #E6005C',
                             backgroundColor: '#fef7f0',
+                          },
+                          '.p-Link': {
+                            display: 'none !important',
+                          },
+                          '.p-LinkModal': {
+                            display: 'none !important',
+                          },
+                          '[data-testid="link-authentication-element"]': {
+                            display: 'none !important',
+                          },
+                          '.Link': {
+                            display: 'none !important',
+                          },
+                          '[class*="Link"]': {
+                            display: 'none !important',
                           }
                         }
                       }
@@ -935,6 +954,21 @@ export default function OrderPlacementForm() {
                         '.Tab--selected': {
                           border: '1px solid #E6005C',
                           backgroundColor: '#fef7f0',
+                        },
+                        '.p-Link': {
+                          display: 'none !important',
+                        },
+                        '.p-LinkModal': {
+                          display: 'none !important',
+                        },
+                        '[data-testid="link-authentication-element"]': {
+                          display: 'none !important',
+                        },
+                        '.Link': {
+                          display: 'none !important',
+                        },
+                        '[class*="Link"]': {
+                          display: 'none !important',
                         }
                       }
                     }

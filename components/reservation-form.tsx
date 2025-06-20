@@ -36,10 +36,11 @@ export default function ReservationForm() {
 
   const [startDate, setStartDate] = useState<Date | undefined>(new Date())
   const [endDate, setEndDate] = useState<Date | undefined>(addDays(new Date(), 1))
-  const [startTime, setStartTime] = useState("08:30")
-  const [endTime, setEndTime] = useState("08:30")
+  const [startTime, setStartTime] = useState("00:00")
+  const [endTime, setEndTime] = useState("00:00")
   const [licensePlate, setLicensePlate] = useState("")
   const [dateError, setDateError] = useState<string | null>(null)
+  const [timeError, setTimeError] = useState<string | null>(null)
   const [duplicateError, setDuplicateError] = useState<string | null>(null)
   const [openCalendar, setOpenCalendar] = useState<"start" | "end" | null>(null)
   const [priceTiers, setPriceTiers] = useState<PriceTier[]>([])
@@ -161,6 +162,7 @@ export default function ReservationForm() {
     setTimeout(() => setOpenCalendar(null), 100)
     // Golește erorile când utilizatorul schimbă datele
     setDuplicateError(null)
+    setTimeError(null)
   }
 
   const handleEndDateChange = (date: Date | undefined) => {
@@ -168,6 +170,17 @@ export default function ReservationForm() {
     setTimeout(() => setOpenCalendar(null), 100)
     // Golește erorile când utilizatorul schimbă datele
     setDuplicateError(null)
+    setTimeError(null)
+  }
+
+  const handleStartTimeChange = (time: string) => {
+    setStartTime(time)
+    setTimeError(null)
+  }
+
+  const handleEndTimeChange = (time: string) => {
+    setEndTime(time)
+    setTimeError(null)
   }
 
   // Funcție pentru formatarea numărului de înmatriculare
@@ -180,8 +193,9 @@ export default function ReservationForm() {
   const handleLicensePlateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatLicensePlate(e.target.value)
     setLicensePlate(formatted)
-    // Golește eroarea de duplicat când utilizatorul schimbă numărul
+    // Golește erorile când utilizatorul schimbă numărul
     setDuplicateError(null)
+    setTimeError(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -197,6 +211,19 @@ export default function ReservationForm() {
       setIsSubmitting(false)
       return
     }
+
+    // Validare pentru ore - nu permite 00:00
+    if (startTime === "00:00" || endTime === "00:00") {
+      setTimeError("VĂ RUGĂM SĂ INDICAȚI ORA DE SOSIRE / PLECARE!")
+      toast({
+        title: "Eroare de validare",
+        description: "Vă rugăm să indicați ora de sosire și plecare.",
+        variant: "destructive",
+      })
+      setIsSubmitting(false)
+      return
+    }
+    setTimeError(null)
 
     const startDateTime = getCombinedDateTime(startDate, startTime)
     const endDateTime = getCombinedDateTime(endDate, endTime)
@@ -599,7 +626,11 @@ export default function ReservationForm() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start text-left font-normal h-10 border border-gray-200 bg-transparent hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 hover:bg-transparent focus:bg-transparent text-gray-900 hover:text-gray-900"
+                    className={`w-full justify-start text-left font-normal h-10 border bg-transparent hover:bg-transparent focus:bg-transparent text-gray-900 hover:text-gray-900 ${
+                      timeError 
+                        ? "border-red-500 hover:border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20" 
+                        : "border-gray-200 hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20"
+                    }`}
                     type="button"
                   >
                     <Clock className="mr-2 h-4 w-4 text-gray-500" />
@@ -609,7 +640,7 @@ export default function ReservationForm() {
                 <PopoverContent className="w-auto p-4" align="start">
                   <div className="space-y-2">
                     <Label>Oră intrare</Label>
-                    <TimePickerDemo value={startTime} onChange={setStartTime} />
+                    <TimePickerDemo value={startTime} onChange={handleStartTimeChange} />
                   </div>
                 </PopoverContent>
               </Popover>
@@ -656,7 +687,11 @@ export default function ReservationForm() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start text-left font-normal h-10 border border-gray-200 bg-transparent hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 hover:bg-transparent focus:bg-transparent text-gray-900 hover:text-gray-900"
+                    className={`w-full justify-start text-left font-normal h-10 border bg-transparent hover:bg-transparent focus:bg-transparent text-gray-900 hover:text-gray-900 ${
+                      timeError 
+                        ? "border-red-500 hover:border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20" 
+                        : "border-gray-200 hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20"
+                    }`}
                     type="button"
                   >
                     <Clock className="mr-2 h-4 w-4 text-gray-500" />
@@ -666,7 +701,7 @@ export default function ReservationForm() {
                 <PopoverContent className="w-auto p-4" align="start">
                   <div className="space-y-2">
                     <Label>Oră ieșire</Label>
-                    <TimePickerDemo value={endTime} onChange={setEndTime} />
+                    <TimePickerDemo value={endTime} onChange={handleEndTimeChange} />
                   </div>
                 </PopoverContent>
               </Popover>
@@ -746,12 +781,12 @@ export default function ReservationForm() {
                 <AlertTriangle className="w-3 h-3" />
                 Acces cu max 2h înainte
               </div>
-              <div className="flex gap-2 w-full">
+              <div className="flex gap-6 w-full">
                 <a
                   href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#ff0066] hover:bg-[#e6005c] text-white px-2 py-2 md:px-4 md:py-3 rounded-md text-xs md:text-sm font-medium transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#ff0066] hover:bg-[#e6005c] text-white px-4 py-2 md:px-6 md:py-3 rounded-md text-xs md:text-sm font-medium transition-all duration-200"
                   title="Deschide în Google Maps"
                 >
                   <MapPin className="w-3 h-3 md:w-4 md:h-4" />
@@ -761,7 +796,7 @@ export default function ReservationForm() {
                   href="https://waze.com/ul?ll=44.575660,26.069918&navigate=yes"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-2 py-2 md:px-4 md:py-3 rounded-md text-xs md:text-sm font-medium transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-4 py-2 md:px-6 md:py-3 rounded-md text-xs md:text-sm font-medium transition-all duration-200"
                   title="Deschide în Waze"
                 >
                   <Navigation className="w-3 h-3 md:w-4 md:h-4" />
@@ -781,6 +816,7 @@ export default function ReservationForm() {
         </div>
       )}
 
+      {timeError && <div className="text-red-500 text-sm font-semibold mt-1 flex items-center"><XCircle className="mr-1 h-5 w-5" />{timeError}</div>}
       {dateError && <div className="text-red-500 text-sm font-semibold mt-1 flex items-center"><XCircle className="mr-1 h-5 w-5" />{dateError}</div>}
     </form>
   )

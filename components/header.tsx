@@ -48,12 +48,23 @@ export default function Header() {
       <div className="container mx-auto flex items-center justify-between py-1.5">
         {/* Logo în stânga */}
           <Link href="/" className="flex items-center" title="Parcare-Aeroport Otopeni" aria-label="Acasă">
+            {/* Mobile logo */}
             <Image
-              src="/sigla-transparenta.png"
+              src="/sigla-mobile.png"
               alt="Parcare-Aeroport Logo"
-            width={170}
-            height={55}
-            className="h-12 md:h-14 w-auto"
+              width={170}
+              height={55}
+              className="h-12 w-auto md:hidden"
+              priority
+            />
+            {/* Desktop logo */}
+            <Image
+              src="/sigla-desktop.png"
+              alt="Parcare-Aeroport Logo"
+              width={280}
+              height={80}
+              className="hidden md:block w-auto -my-2"
+              style={{ maxHeight: '72px' }}
               priority
             />
           </Link>
@@ -141,7 +152,7 @@ export default function Header() {
                 title="Parcare-Aeroport Otopeni"
               >
                 <Image
-                  src="/sigla-transparenta.png"
+                  src="/sigla-mobile.png"
                   alt="Parcare-Aeroport Logo"
                   width={100}
                   height={35}

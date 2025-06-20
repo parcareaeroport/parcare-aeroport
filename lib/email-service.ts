@@ -56,7 +56,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .header { background: linear-gradient(135deg, #ff0066, #e6005c); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
-        .logo { max-width: 200px; height: auto; margin: 0 auto 15px; display: block; }
+
         .header h1 { color: #ffffff; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin: 10px 0; }
         .header p { color: #f0f8ff; font-size: 16px; margin: 5px 0; }
         .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
@@ -201,20 +201,7 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     // Generează QR code-ul ca buffer pentru atașament
     const qrBuffer = await generateMultiparkQRBuffer(bookingData.bookingNumber)
     
-    // Citește sigla companiei
-    const fs = require('fs')
-    const path = require('path')
-    const logoPath = path.join(process.cwd(), 'public', 'sigla-transparenta.png')
-    let logoBuffer: Buffer
-    
-    try {
-      logoBuffer = fs.readFileSync(logoPath)
-      console.log(`📷 Logo loaded successfully from: ${logoPath}`)
-    } catch (logoError) {
-      console.warn(`⚠️ Could not load logo from ${logoPath}, continuing without logo`)
-      // Creează un buffer gol dacă sigla nu poate fi încărcată
-      logoBuffer = Buffer.alloc(0)
-    }
+    // Logo eliminat din email-uri
     
     // Creează transporterul email
     const transporter = createEmailTransporter()
@@ -233,12 +220,7 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
           filename: `qr-code-${bookingData.bookingNumber.padStart(6, '0')}.png`,
           content: qrBuffer,
           cid: 'qrcode', // Content ID pentru a fi referenciat în HTML
-        },
-        ...(logoBuffer.length > 0 ? [{
-          filename: 'sigla-parcare-aeroport.png',
-          content: logoBuffer,
-          cid: 'logo', // Content ID pentru sigla în header
-        }] : [])
+        }
       ]
     }
     

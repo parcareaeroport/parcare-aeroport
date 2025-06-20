@@ -76,12 +76,21 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
     const SidebarContent = () => (
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-center p-6 border-b">
+          {/* Mobile logo for sidebar */}
           <Image
-            src="/sigla-transparenta.png"
+            src="/sigla-mobile.png"
             alt="Parcare-Aeroport Logo"
             width={120}
             height={48}
-            className="h-8 w-auto"
+            className="h-8 w-auto md:hidden"
+          />
+          {/* Desktop logo for sidebar */}
+          <Image
+            src="/sigla-desktop.png"
+            alt="Parcare-Aeroport Logo"
+            width={120}
+            height={48}
+            className="hidden md:block h-8 w-auto"
           />
         </div>
         <nav className="flex-1 px-4 py-6 space-y-2">
@@ -156,7 +165,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
               <Menu className="h-5 w-5" />
             </Button>
             <Image
-              src="/sigla-transparenta.png"
+              src="/sigla-mobile.png"
               alt="Parcare-Aeroport Logo"
               width={100}
               height={40}

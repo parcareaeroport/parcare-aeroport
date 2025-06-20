@@ -82,12 +82,21 @@ export default function LoginPage() {
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg">
         <div className="text-center">
           <div className="flex justify-center mb-4">
+            {/* Mobile logo */}
             <Image
-              src="/sigla-transparenta.png"
+              src="/sigla-mobile.png"
               alt="Parcare-Aeroport Logo"
               width={150}
               height={60}
-              className="h-12 w-auto"
+              className="h-12 w-auto md:hidden"
+            />
+            {/* Desktop logo */}
+            <Image
+              src="/sigla-desktop.png"
+              alt="Parcare-Aeroport Logo"
+              width={150}
+              height={60}
+              className="hidden md:block h-12 w-auto"
             />
           </div>
           <p className="mt-2 text-gray-600">Panou de administrare</p>

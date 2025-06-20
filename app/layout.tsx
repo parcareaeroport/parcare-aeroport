@@ -163,6 +163,17 @@ export default function RootLayout({
             `,
           }}
         />
+
+        {/* Cookie Extension Script */}
+        <Script
+          id="cookie-extension"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+            function _tg_generateUUID(){return"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,function(t){var e=16*Math.random()|0;return("x"==t?e:3&e|8).toString(16)})}function _tg_getMainDomain(){var t=window.location.hostname.split(".");return 2<t.length?"."+t.slice(-2).join("."):window.location.hostname}function _tg_setCookie(t,e,i){var n=new Date,i=(n.setDate(n.getDate()+i),_tg_getMainDomain());document.cookie=t+"="+e+";expires="+n.toUTCString()+";path=/;domain="+i}function _tg_getCookie(e){var i=document.cookie.split(";");for(let t=0;t<i.length;t++){var n=i[t].trim();if(n.startsWith(e+"="))return n.substring(e.length+1)}return null}function _tg_isSafari(){var t=navigator.userAgent.toLowerCase();return t.includes("safari")&&!t.includes("chrome")}function _tg_setVisitorId(){var t="_tg_visitor_id";let e=localStorage.getItem(t);return e||(e=_tg_generateUUID(),localStorage.setItem(t,e)),_tg_isSafari()&&_tg_setCookie("_tg_visitor_id",e,365),e}_tg_setVisitorId();
+            `,
+          }}
+        />
       </head>
       <body className={inter.className}>
         {/* Google Tag Manager (noscript) */}
