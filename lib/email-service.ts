@@ -161,7 +161,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
               </div>
               <div class="contact-item">
                 <h4>📧 Email suport</h4>
-                <p>contact@parcare-aeroport.ro</p>
+                <p>contact.parcareaeroport@gmail.com</p>
               </div>
               <div class="contact-item">
                 <h4>🕒 Program</h4>
@@ -193,7 +193,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
           <p style="margin-top: 10px;">
             <strong>Parcare-Aeroport SRL</strong> | 
                           Str. Calea Bucureştilor, Nr.303A1, Otopeni, Ilfov | 
-            contact@parcare-aeroport.ro
+            contact.parcareaeroport@gmail.com
           </p>
         </div>
       </div>

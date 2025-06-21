@@ -146,7 +146,7 @@ Cod QR: MPK_RES=015981
 
 📞 Telefon                    📧 Email
 Rezervări: +40 123 456 789    Rezervări: rezervari@parcare-aeroport.ro
-Urgențe: +40 123 456 790      Support: contact@parcare-aeroport.ro
+Urgențe: +40 123 456 790      Support: contact.parcareaeroport@gmail.com
 
 🕒 Program                    📍 Locație
 L-V: 06:00 - 22:00           Șoseaua București-Ploiești 42A
@@ -154,7 +154,7 @@ S-D: 08:00 - 20:00           Otopeni, Ilfov
                              La 500 metri de Aeroportul Henri Coandă
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Parcare-Aeroport SRL | contact@parcare-aeroport.ro
+Parcare-Aeroport SRL | contact.parcareaeroport@gmail.com
 Rezervarea a fost creată la: 15.01.2024, 10:30:45
 ```
 
