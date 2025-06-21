@@ -141,6 +141,17 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
             • Pentru suport, contactați-ne folosind datele de mai jos
           </div>
           
+          <!-- Buton Anulare Rezervare -->
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://parcare-aeroport.ro/returnare" 
+               style="display: inline-block; background: #dc3545; color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-size: 16px; font-weight: bold; box-shadow: 0 4px 6px rgba(220, 53, 69, 0.3);">
+              🚫 Anulează rezervarea
+            </a>
+            <p style="color: #666; font-size: 13px; margin-top: 10px;">
+              Anularea se poate face cu minimum 24 ore înainte de sosire
+            </p>
+          </div>
+
           <div class="contact-section">
             <h3 style="text-align: center; color: #ff0066; margin-bottom: 20px;">📞 Contactați-ne</h3>
             <div class="contact-grid">
