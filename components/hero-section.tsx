@@ -9,7 +9,7 @@ const SLIDES = [
   {
     headline: "Parcare premium la doar 500 de metri de aeroportul Otopeni",
     subheadline:
-      "Parcarea ta inteligentă și sigură, situată fix lângă Aeroportul Internațional Henri Coandă. Confort garantat, afaltată. transfer rapid și zero stres, la un preț avantajos. Pentru călătoria ta perfectă!",
+      "Parcarea ta inteligentă și sigură, situată fix lângă Aeroportul Internațional Henri Coandă. Confort garantat, asfaltată. transfer rapid și zero stres, la un preț avantajos. Pentru călătoria ta perfectă!",
     image: "/parcare_aeroport_otopeni_slider.jpg",
     alt: "Parcare Otopeni lângă Aeroportul Henri Coandă - vedere panoramică a parcării asfaltate"
   },
@@ -37,7 +37,7 @@ export default function HeroSection() {
   }, [current])
 
   return (
-    <section id="rezerva-formular" className="relative w-full bg-gradient-to-br from-[#e6007a] to-[#0a1172] py-10 md:py-16 overflow-hidden min-h-[600px] md:min-h-[700px] flex flex-col justify-end">
+    <section id="rezerva-formular" className="relative w-full bg-gradient-to-br from-[#e6007a] to-[#0a1172] py-10 md:py-16 overflow-hidden h-screen flex flex-col justify-end">
       {/* Imagine de fundal cu fade pentru fiecare slide, toate în DOM pentru SEO */}
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
         {SLIDES.map((slide, idx) => (
@@ -58,9 +58,9 @@ export default function HeroSection() {
         />
       </div>
       {/* Conținutul sliderului */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-2 md:px-6 flex flex-col gap-8 md:gap-12">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-2 md:px-6 flex flex-col gap-4 md:gap-6">
         {/* Formularul sus, centrat */}
-        <div className="w-full flex justify-center mb-4 md:mb-8">
+        <div className="w-full flex justify-center mb-2 md:mb-4">
           <div className="w-full max-w-6xl">
             <div className="bg-white rounded-2xl shadow-2xl p-4 md:p-6 flex flex-col gap-4 border border-gray-100">
               <ReservationForm />
@@ -68,7 +68,7 @@ export default function HeroSection() {
           </div>
         </div>
         {/* Slide-uri headline/subheadline, toate în DOM pentru SEO, doar unul vizibil */}
-        <div className="w-full flex flex-col items-center md:items-start text-white z-10 relative min-h-[220px] md:min-h-[260px]">
+        <div className="w-full flex flex-col items-center md:items-start text-white z-10 relative min-h-[160px] md:min-h-[180px]">
           {SLIDES.map((slide, idx) => (
             <div
               key={idx}
@@ -76,17 +76,17 @@ export default function HeroSection() {
               className={`transition-all duration-700 ease-in-out w-full md:max-w-2xl ${current === idx ? 'opacity-100 translate-x-0 pointer-events-auto' : 'opacity-0 -translate-x-8 pointer-events-none'} absolute md:relative top-0 left-0`}
               style={{ position: current === idx ? 'relative' : 'absolute' }}
             >
-              <h1 className="text-4xl md:text-6xl font-extrabold text-center md:text-left mb-4 leading-tight drop-shadow-lg uppercase tracking-tight w-full">
+              <h1 className="text-2xl md:text-4xl font-extrabold text-center md:text-left mb-3 leading-tight drop-shadow-lg uppercase tracking-tight w-full">
                 {slide.headline}
               </h1>
-              <p className="text-lg md:text-2xl text-center md:text-left mb-6 drop-shadow-md font-medium w-full">
+              <p className="text-sm md:text-lg text-center md:text-left mb-4 drop-shadow-md font-medium w-full">
                 {slide.subheadline}
               </p>
             </div>
           ))}
         </div>
         {/* Bara de navigare cu linii drepte */}
-        <nav className="w-full flex justify-center mt-8">
+        <nav className="w-full flex justify-center mt-4">
           <div className="flex gap-4 px-4 py-2 rounded-xl bg-black/30 backdrop-blur-sm" style={{minWidth:'220px'}}>
             {SLIDES.map((_, idx) => (
               <button

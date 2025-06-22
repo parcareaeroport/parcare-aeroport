@@ -764,24 +764,26 @@ export default function ReservationForm() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             {/* Perioada și interval */}
             <div className="flex flex-col">
-              <span className="text-sm font-medium text-gray-600">
+        
+              <span className="text-lg font-medium text-gray-600">
                 Perioada: {calculatedDays} {calculatedDays === 1 ? 'zi' : 'zile'}
               </span>
-              <span className="text-xs text-gray-500">
+              <span className="text-lg text-gray-500">
                 {startDate && endDate ? 
                   `${format(startDate, "d MMM", { locale: ro })} - ${format(endDate, "d MMM", { locale: ro })}` 
                   : ''
                 }
               </span>
+              <div className="flex items-center gap-1 text-sm text-orange-600 font-medium">
+                <AlertTriangle className="w-3 h-3" />
+                Acces cu max 2h înainte
+              </div>
             </div>
             
             {/* Acces și butoane locație */}
             <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-1 text-xs text-orange-600 font-medium">
-                <AlertTriangle className="w-3 h-3" />
-                Acces cu max 2h înainte
-              </div>
-              <div className="flex gap-6 w-full">
+          
+              <div className="flex gap-10 w-full">
                 <a
                   href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw"
                   target="_blank"
@@ -810,7 +812,7 @@ export default function ReservationForm() {
               <div className="text-xl font-bold text-primary">
                 {calculatePrice().toFixed(2)} LEI
               </div>
-              <div className="text-xs text-gray-500">Preț total</div>
+              <div className="text-sm text-gray-500">Preț total</div>
             </div>
           </div>
         </div>

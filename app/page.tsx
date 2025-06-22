@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Header from "@/components/header"
 import HeroSection from "@/components/hero-section"
+import MapSection from "@/components/map-section"
 import HowItWorksSection from "@/components/how-it-works-section"
 import WhyChooseSection from "@/components/why-choose-section"
 import PricingTableSection from "@/components/pricing-table-section"
@@ -59,6 +60,7 @@ export default function Home() {
     <main className="min-h-screen">
       <Header />
       <HeroSection />
+      <MapSection />
       <PricingTableSection />
       <HowItWorksSection />
       <WhyChooseSection />

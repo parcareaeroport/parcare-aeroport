@@ -63,7 +63,7 @@ export default function Header() {
               alt="Parcare-Aeroport Logo"
               width={280}
               height={80}
-              className="hidden md:block w-auto -my-2"
+              className="hidden md:block w-auto -my-2 p-2"
               style={{ maxHeight: '72px' }}
               priority
             />

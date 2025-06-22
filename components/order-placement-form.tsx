@@ -582,59 +582,7 @@ export default function OrderPlacementForm() {
                 </div>
               ) : (
                 <>
-                  <div className="bg-primary/5 rounded-xl p-4 mb-6">
-                    <h2 className="text-lg font-bold mb-2 flex items-center">
-                      <Info className="h-5 w-5 mr-2 text-primary" />
-                      PARCARE AUTOTURISM
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <ul className="space-y-2 text-sm">
-                        <li className="flex items-start">
-                          <span className="text-primary mr-2">•</span>
-                          <span>ASFALTATĂ</span>
-                        </li>
-                        <li className="flex items-start">
-                          <span className="text-primary mr-2">•</span>
-                          <span>Spațiu de parcare suficient și bine organizat</span>
-                        </li>
-                        <li className="flex items-start">
-                          <span className="text-primary mr-2">•</span>
-                          <span>Supraveghere video 24/7</span>
-                        </li>
-                        <li className="flex items-start">
-                          <span className="text-primary mr-2">•</span>
-                          <span>Transfer gratuit la aeroport</span>
-                        </li>
-                      </ul>
-                      <ul className="space-y-2 text-sm">
-                        <li className="flex items-start">
-                          <span className="text-primary mr-2">•</span>
-                          <span>Infrastructură de înaltă calitate</span>
-                        </li>
-                        <li className="flex items-start">
-                          <span className="text-primary mr-2">•</span>
-                          <span>Acces direct din DN1</span>
-                        </li>
-                        <li className="flex items-start">
-                          <span className="text-primary mr-2">•</span>
-                          <span>Parcare împrejmuită cu gard</span>
-                        </li>
-                        <li className="flex items-start">
-                          <span className="text-primary mr-2">•</span>
-                          <span>Iluminat STÂLPI DE ILUMINARE ELECTRICĂ</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start">
-                      <AlertCircle className="h-5 w-5 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
-                      <p className="text-xs text-yellow-800">
-                        Anularea rezervărilor de parcare făcute cu minim 24 de ore înainte de data și ora intrării în
-                        parcare!
-                      </p>
-                    </div>
-                  </div>
-
+             
                   <form onSubmit={handleSubmit}>
                     <div className="space-y-6">
                       <div>
@@ -848,6 +796,59 @@ export default function OrderPlacementForm() {
                       </Button>
                     </div>
                   </form>
+                  <div className="bg-primary/5 rounded-xl p-4 mb-6">
+                    <h2 className="text-lg font-bold mb-2 flex items-center">
+                      <Info className="h-5 w-5 mr-2 text-primary" />
+                      PARCARE AUTOTURISM
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start">
+                          <span className="text-primary mr-2">•</span>
+                          <span>ASFALTATĂ</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-primary mr-2">•</span>
+                          <span>Spațiu de parcare suficient și bine organizat</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-primary mr-2">•</span>
+                          <span>Supraveghere video 24/7</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-primary mr-2">•</span>
+                          <span>Transfer gratuit la aeroport</span>
+                        </li>
+                      </ul>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start">
+                          <span className="text-primary mr-2">•</span>
+                          <span>Infrastructură de înaltă calitate</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-primary mr-2">•</span>
+                          <span>Acces direct din DN1</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-primary mr-2">•</span>
+                          <span>Parcare împrejmuită cu gard</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-primary mr-2">•</span>
+                          <span>Iluminat STÂLPI DE ILUMINARE ELECTRICĂ</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start">
+                      <AlertCircle className="h-5 w-5 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
+                      <p className="text-xs text-yellow-800">
+                        Anularea rezervărilor de parcare făcute cu minim 24 de ore înainte de data și ora intrării în
+                        parcare!
+                      </p>
+                    </div>
+                  </div>
+
                 </>
               )}
             </div>
@@ -979,58 +980,7 @@ export default function OrderPlacementForm() {
               </div>
             ) : (
               <>
-                <div className="bg-primary/5 rounded-xl p-4 mb-6">
-                  <h2 className="text-lg font-bold mb-2 flex items-center">
-                    <Info className="h-5 w-5 mr-2 text-primary" />
-                    PARCARE AUTOTURISM
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <ul className="space-y-2 text-sm">
-                      <li className="flex items-start">
-                        <span className="text-primary mr-2">•</span>
-                        <span>ASFALTATĂ</span>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="text-primary mr-2">•</span>
-                        <span>Spațiu de parcare suficient și bine organizat</span>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="text-primary mr-2">•</span>
-                        <span>Supraveghere video 24/7</span>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="text-primary mr-2">•</span>
-                        <span>Transfer gratuit la aeroport</span>
-                      </li>
-                    </ul>
-                    <ul className="space-y-2 text-sm">
-                      <li className="flex items-start">
-                        <span className="text-primary mr-2">•</span>
-                        <span>Infrastructură de înaltă calitate</span>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="text-primary mr-2">•</span>
-                        <span>Acces direct din DN1</span>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="text-primary mr-2">•</span>
-                        <span>Parcare împrejmuită cu gard</span>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="text-primary mr-2">•</span>
-                        <span>Iluminat STÂLPI DE ILUMINARE ELECTRICĂ</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start">
-                    <AlertCircle className="h-5 w-5 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-yellow-800">
-                      Anularea rezervărilor de parcare făcute cu minim 24 de ore înainte de data și ora intrării în
-                      parcare!
-                    </p>
-                  </div>
-                </div>
+             
 
                 <form onSubmit={handleSubmit}>
                   <div className="space-y-6">
@@ -1245,6 +1195,58 @@ export default function OrderPlacementForm() {
                     </Button>
                   </div>
                 </form>
+                <div className="bg-primary/5 rounded-xl p-4 mt-6">
+                  <h2 className="text-lg font-bold mb-2 flex items-center">
+                    <Info className="h-5 w-5 mr-2 text-primary" />
+                    PARCARE AUTOTURISM
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>ASFALTATĂ</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>Spațiu de parcare suficient și bine organizat</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>Supraveghere video 24/7</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>Transfer gratuit la aeroport</span>
+                      </li>
+                    </ul>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>Infrastructură de înaltă calitate</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>Acces direct din DN1</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>Parcare împrejmuită cu gard</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>Iluminat STÂLPI DE ILUMINARE ELECTRICĂ</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start">
+                    <AlertCircle className="h-5 w-5 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-yellow-800">
+                      Anularea rezervărilor de parcare făcute cu minim 24 de ore înainte de data și ora intrării în
+                      parcare!
+                    </p>
+                  </div>
+                </div>
               </>
             )}
           </div>
