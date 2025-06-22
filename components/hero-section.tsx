@@ -37,7 +37,7 @@ export default function HeroSection() {
   }, [current])
 
   return (
-    <section id="rezerva-formular" className="relative w-full bg-gradient-to-br from-[#e6007a] to-[#0a1172] py-10 md:py-16 overflow-hidden h-screen flex flex-col justify-end">
+    <section id="rezerva-formular" className="relative w-full bg-gradient-to-br from-[#e6007a] to-[#0a1172] py-10 md:py-16 overflow-hidden h-[110vh] md:h-[95vh] flex flex-col justify-end">
       {/* Imagine de fundal cu fade pentru fiecare slide, toate în DOM pentru SEO */}
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
         {SLIDES.map((slide, idx) => (
