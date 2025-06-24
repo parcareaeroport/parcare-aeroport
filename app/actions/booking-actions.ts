@@ -60,6 +60,7 @@ interface CompleteBookingData {
   city?: string
   county?: string
   postalCode?: string
+  country?: string
   
   // Date plată
   paymentIntentId?: string
@@ -480,6 +481,7 @@ export async function createBookingWithFirestore(
     city?: string
     county?: string
     postalCode?: string
+    country?: string
     orderNotes?: string
   }
 ) {
@@ -563,6 +565,7 @@ export async function createBookingWithFirestore(
       completeBookingData.city = additionalData.city
       completeBookingData.county = additionalData.county
       completeBookingData.postalCode = additionalData.postalCode
+      completeBookingData.country = additionalData.country
     }
     
     if (apiResult.success) {
@@ -623,6 +626,11 @@ export async function createBookingWithFirestore(
             companyVAT: additionalData.companyVAT,
             companyReg: additionalData.companyReg,
             companyAddress: additionalData.companyAddress,
+            // Date adresă client individual pentru ANAF
+            clientAddress: additionalData.address,
+            clientCity: additionalData.city,
+            clientCounty: additionalData.county,
+            clientCountry: additionalData.country,
           }
 
           const invoiceResult = await generateOblioInvoice(oblioInvoiceData)

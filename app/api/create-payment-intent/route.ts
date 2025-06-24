@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
     if (customerInfo.city) metadata.city = customerInfo.city
     if (customerInfo.county) metadata.county = customerInfo.county
     if (customerInfo.postalCode) metadata.postalCode = customerInfo.postalCode
+    if (customerInfo.country) metadata.country = customerInfo.country
     if (customerInfo.company) metadata.company = customerInfo.company
     if (customerInfo.companyVAT) metadata.companyVAT = customerInfo.companyVAT
     if (customerInfo.companyReg) metadata.companyReg = customerInfo.companyReg

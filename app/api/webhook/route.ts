@@ -94,6 +94,7 @@ export async function POST(req: Request) {
         city: bookingMetadata.city || undefined,
         county: bookingMetadata.county || undefined,
         postalCode: bookingMetadata.postalCode || undefined,
+        country: bookingMetadata.country || undefined,
         orderNotes: bookingMetadata.orderNotes || undefined
       })
 

@@ -183,6 +183,7 @@ export default function OrderPlacementForm() {
   const [city, setCity] = useState("")
   const [county, setCounty] = useState("")
   const [postalCode, setPostalCode] = useState("")
+  const [country, setCountry] = useState("România")
   const [company, setCompany] = useState("")
   const [companyVAT, setCompanyVAT] = useState("")
   const [companyReg, setCompanyReg] = useState("")
@@ -406,6 +407,7 @@ export default function OrderPlacementForm() {
           city,
           county,
           postalCode,
+          country,
           company: needInvoice ? company : "",
           companyVAT: needInvoice ? companyVAT : "",
           companyReg: needInvoice ? companyReg : "",
@@ -443,6 +445,7 @@ export default function OrderPlacementForm() {
             city,
             county,
             postalCode,
+            country,
             company: needInvoice ? company : undefined,
             companyVAT: needInvoice ? companyVAT : undefined,
             companyReg: needInvoice ? companyReg : undefined,
@@ -667,15 +670,16 @@ export default function OrderPlacementForm() {
                                 onChange={(e) => setCounty(e.target.value)}
                               />
                             </div>
-                            {/* <div>
-                              <Label htmlFor="postalCode">Cod poștal</Label>
+                            <div>
+                              <Label htmlFor="country">Țara</Label>
                               <Input
-                                id="postalCode"
-                                placeholder="Codul poștal"
-                                value={postalCode}
-                                onChange={(e) => setPostalCode(e.target.value)}
+                                id="country"
+                                placeholder="Țara"
+                                required
+                                value={country}
+                                onChange={(e) => setCountry(e.target.value)}
                               />
-                            </div> */}
+                            </div>
                           </div>
 
                           <div className="pt-4 border-t border-gray-200">
@@ -796,6 +800,41 @@ export default function OrderPlacementForm() {
                       </Button>
                     </div>
                   </form>
+                  {/* Mobile Order Summary - visible only on mobile */}
+                  <div className="lg:hidden bg-gray-50 rounded-xl p-6 mb-6">
+                    <h2 className="text-lg font-bold mb-4">Sumar comandă</h2>
+                    {reservationData && (
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Număr înmatriculare:</span>
+                          <span className="font-medium">{reservationData.licensePlate}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Data intrare:</span>
+                          <span className="font-medium">
+                            {new Date(reservationData.startDate).toLocaleDateString("ro-RO")} {reservationData.startTime}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Data ieșire:</span>
+                          <span className="font-medium">
+                            {new Date(reservationData.endDate).toLocaleDateString("ro-RO")} {reservationData.endTime}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Durată:</span>
+                          <span className="font-medium">{reservationData.duration}</span>
+                        </div>
+                        <div className="pt-4 border-t border-gray-200">
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-600">Preț:</span>
+                            <span className="font-medium">{reservationData.price} RON</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="bg-primary/5 rounded-xl p-4 mb-6">
                     <h2 className="text-lg font-bold mb-2 flex items-center">
                       <Info className="h-5 w-5 mr-2 text-primary" />
@@ -1061,20 +1100,21 @@ export default function OrderPlacementForm() {
                             <Label htmlFor="county">Județ</Label>
                             <Input
                               id="county"
-                              placeholder="Județul dvs."
+                              placeholder="Județului dvs."
                               value={county}
                               onChange={(e) => setCounty(e.target.value)}
                             />
                           </div>
-                          {/* <div>
-                            <Label htmlFor="postalCode">Cod poștal</Label>
+                          <div>
+                            <Label htmlFor="country">Țara</Label>
                             <Input
-                              id="postalCode"
-                              placeholder="Codul poștal"
-                              value={postalCode}
-                              onChange={(e) => setPostalCode(e.target.value)}
+                              id="country"
+                              placeholder="Țara"
+                              required
+                              value={country}
+                              onChange={(e) => setCountry(e.target.value)}
                             />
-                          </div> */}
+                          </div>
                         </div>
 
                         <div className="pt-4 border-t border-gray-200">
@@ -1195,6 +1235,41 @@ export default function OrderPlacementForm() {
                     </Button>
                   </div>
                 </form>
+                {/* Mobile Order Summary - visible only on mobile */}
+                <div className="lg:hidden bg-gray-50 rounded-xl p-6 mt-6 mb-6">
+                  <h2 className="text-lg font-bold mb-4">Sumar comandă</h2>
+                  {reservationData && (
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Număr înmatriculare:</span>
+                        <span className="font-medium">{reservationData.licensePlate}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Data intrare:</span>
+                        <span className="font-medium">
+                          {new Date(reservationData.startDate).toLocaleDateString("ro-RO")} {reservationData.startTime}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Data ieșire:</span>
+                        <span className="font-medium">
+                          {new Date(reservationData.endDate).toLocaleDateString("ro-RO")} {reservationData.endTime}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Durată:</span>
+                        <span className="font-medium">{reservationData.duration}</span>
+                      </div>
+                      <div className="pt-4 border-t border-gray-200">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Preț:</span>
+                          <span className="font-medium">{reservationData.price} RON</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div className="bg-primary/5 rounded-xl p-4 mt-6">
                   <h2 className="text-lg font-bold mb-2 flex items-center">
                     <Info className="h-5 w-5 mr-2 text-primary" />
@@ -1252,7 +1327,7 @@ export default function OrderPlacementForm() {
           </div>
 
           {/* Right column - Order summary */}
-          <div className="lg:w-[400px]">
+          <div className="hidden lg:block lg:w-[400px]">
             <div className="bg-gray-50 rounded-xl p-6 sticky top-6">
               <h2 className="text-lg font-bold mb-4">Sumar comandă</h2>
               {reservationData && (

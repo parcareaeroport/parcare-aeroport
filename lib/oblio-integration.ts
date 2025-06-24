@@ -14,6 +14,11 @@ interface OblioInvoiceData {
   companyVAT?: string;
   companyReg?: string;
   companyAddress?: string;
+  // Date adresă client individual
+  clientAddress?: string;
+  clientCity?: string;
+  clientCounty?: string;
+  clientCountry?: string;
 }
 
 interface OblioConfig {
@@ -184,9 +189,17 @@ class OblioInvoiceService {
         save: 1, // Salvează clientul în baza de date Oblio
       };
     } else {
-      // Client individual
+      // Client individual - construim adresa completă pentru ANAF
+      const fullAddress = [
+        invoiceData.clientAddress,
+        invoiceData.clientCity,
+        invoiceData.clientCounty,
+        invoiceData.clientCountry
+      ].filter(Boolean).join(', ');
+
       return {
         name: invoiceData.clientName,
+        address: fullAddress || '', // Adresa completă necesară pentru ANAF
         email: invoiceData.clientEmail,
         phone: invoiceData.clientPhone || '',
         vatPayer: false,
