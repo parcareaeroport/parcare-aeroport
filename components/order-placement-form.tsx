@@ -190,6 +190,7 @@ export default function OrderPlacementForm() {
   const [companyAddress, setCompanyAddress] = useState("")
   const [orderNotes, setOrderNotes] = useState("")
   const [needInvoice, setNeedInvoice] = useState(false)
+  const [numberOfPersons, setNumberOfPersons] = useState("1")
 
   // Reservation data state
   const [reservationData, setReservationData] = useState<any>(null)
@@ -285,6 +286,7 @@ export default function OrderPlacementForm() {
       const result = await createBookingWithFirestore(formData, {
         clientEmail: email,
         clientPhone: phone,
+        numberOfPersons: parseInt(numberOfPersons) || 1,
         paymentStatus: "n/a", // Mod test - fără plată
         amount: calculateTotal(),
         days: reservationData.days,
@@ -403,6 +405,7 @@ export default function OrderPlacementForm() {
           lastName,
           email,
           phone,
+          numberOfPersons: parseInt(numberOfPersons) || 1,
           address,
           city,
           county,
@@ -441,6 +444,7 @@ export default function OrderPlacementForm() {
             lastName,
             email,
             phone,
+            numberOfPersons: parseInt(numberOfPersons) || 1,
             address,
             city,
             county,
@@ -635,6 +639,20 @@ export default function OrderPlacementForm() {
                           required
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="numberOfPersons">Număr persoane</Label>
+                        <Input
+                          id="numberOfPersons"
+                          type="number"
+                          min="1"
+                          max="10"
+                          placeholder="1"
+                          required
+                          value={numberOfPersons}
+                          onChange={(e) => setNumberOfPersons(e.target.value)}
                         />
                       </div>
 

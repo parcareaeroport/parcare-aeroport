@@ -240,33 +240,42 @@ export default function ReservationForm() {
     }
     setDateError(null)
 
-    // VERIFICARE NOUĂ: Verifică dacă există deja o rezervare activă cu același număr de înmatriculare
+    // VERIFICARE NOUĂ: Verifică dacă există suprapunere cu rezervări existente pentru același număr de înmatriculare
     try {
-      console.log('🔍 VERIFICARE DUPLICAT NUMĂR ÎNMATRICULARE - Înainte de continuare', {
+      console.log('🔍 VERIFICARE SUPRAPUNERE PERIOADA - Înainte de continuare', {
         licensePlate: licensePlate.toUpperCase(),
+        newPeriod: `${format(startDate, "yyyy-MM-dd")} ${startTime} - ${format(endDate, "yyyy-MM-dd")} ${endTime}`,
         timestamp: new Date().toISOString()
       })
 
-      const duplicateCheck = await checkExistingReservationByLicensePlate(licensePlate)
+      const duplicateCheck = await checkExistingReservationByLicensePlate(
+        licensePlate,
+        format(startDate, "yyyy-MM-dd"),
+        format(endDate, "yyyy-MM-dd"),
+        startTime,
+        endTime
+      )
       
       if (duplicateCheck.exists && duplicateCheck.existingBooking) {
         const existing = duplicateCheck.existingBooking
         const existingPeriod = `${format(new Date(existing.startDate), "d MMM yyyy", { locale: ro })} - ${format(new Date(existing.endDate), "d MMM yyyy", { locale: ro })}`
+        const newPeriod = `${format(startDate, "d MMM yyyy", { locale: ro })} - ${format(endDate, "d MMM yyyy", { locale: ro })}`
         
-        console.log('⚠️ REZERVARE DUPLICAT GĂSITĂ - Blochează continuarea:', {
+        console.log('⚠️ SUPRAPUNERE PERIOADA GĂSITĂ - Blochează continuarea:', {
           existingId: existing.id,
-          existingPeriod,
+          existingPeriod: `${existing.startDate} ${existing.startTime} - ${existing.endDate} ${existing.endTime}`,
+          newPeriod: `${format(startDate, "yyyy-MM-dd")} ${startTime} - ${format(endDate, "yyyy-MM-dd")} ${endTime}`,
           existingStatus: existing.status,
           existingBookingNumber: existing.apiBookingNumber
         })
 
         // Setează mesajul de eroare persistent pe formular
-        const errorMessage = `Există deja o rezervare activă pentru ${licensePlate.toUpperCase()} în perioada ${existingPeriod}${existing.apiBookingNumber ? ` (Rezervare #${existing.apiBookingNumber})` : ''}`
+        const errorMessage = `Perioada ${newPeriod} se suprapune cu rezervarea existentă pentru ${licensePlate.toUpperCase()} din ${existingPeriod}${existing.apiBookingNumber ? ` (Rezervare #${existing.apiBookingNumber})` : ''}`
         setDuplicateError(errorMessage)
 
         toast({
-          title: "Rezervare Existentă",
-          description: "Nu puteți face o nouă rezervare pentru același număr de înmatriculare.",
+          title: "Perioadă Suprapusă",
+          description: "Perioada selectată se suprapune cu o rezervare existentă pentru acest număr de înmatriculare.",
           variant: "destructive",
           duration: 5000,
         })
@@ -274,17 +283,17 @@ export default function ReservationForm() {
         setIsSubmitting(false)
         return
       } else {
-        console.log('✅ NU EXISTĂ REZERVARE DUPLICAT - Poate continua')
-        // Golește mesajul de eroare dacă nu există duplicat
+        console.log('✅ NU EXISTĂ SUPRAPUNERE - Poate continua')
+        // Golește mesajul de eroare dacă nu există suprapunere
         setDuplicateError(null)
       }
       
     } catch (error) {
-      console.error("❌ EROARE la verificarea duplicatului:", error)
+      console.error("❌ EROARE la verificarea suprapunerii:", error)
       // În caz de eroare, afișăm un warning dar permitem continuarea
       toast({
         title: "Avertisment",
-        description: "Nu s-a putut verifica dacă există rezervări existente. Dacă aveți deja o rezervare activă, vă rugăm să nu continuați.",
+        description: "Nu s-a putut verifica dacă există suprapuneri cu rezervări existente. Dacă aveți deja o rezervare în această perioadă, vă rugăm să nu continuați.",
         duration: 5000,
       })
     }

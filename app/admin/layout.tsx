@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { AuthProvider, useAuth } from "@/context/auth-context"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, ListTree, LogOut, Tag, Car, Loader2, RefreshCw, Menu } from "lucide-react"
+import { LayoutDashboard, ListTree, LogOut, Tag, Car, Loader2, RefreshCw, Menu, ArrowLeftRight } from "lucide-react"
 
 function AdminLayoutContent({ children }: { children: ReactNode }) {
   const { user, loading, isAdmin, signOut } = useAuth()
@@ -28,7 +28,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
     }
     
     // Redirect non-admin users trying to access admin-only pages
-    if (user && !isAdmin && pathname !== "/admin/dashboard/bookings") {
+    if (user && !isAdmin && pathname !== "/admin/dashboard/bookings" && pathname !== "/admin/dashboard/entries-exits") {
       console.log("[AdminLayoutContent] useEffect: Non-admin user trying to access admin page, redirecting to bookings.")
       router.push("/admin/dashboard/bookings")
     }
@@ -66,11 +66,13 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
     const adminNavItems = isAdmin ? [
       { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { href: "/admin/dashboard/bookings", label: "Rezervări", icon: Car },
+      { href: "/admin/dashboard/entries-exits", label: "Intrări/Ieșiri", icon: ArrowLeftRight },
       { href: "/admin/dashboard/recovery", label: "Recovery", icon: RefreshCw },
       { href: "/admin/dashboard/prices", label: "Prețuri", icon: Tag },
       { href: "/admin/dashboard/api-test", label: "Test API", icon: ListTree },
     ] : [
       { href: "/admin/dashboard/bookings", label: "Rezervări", icon: Car },
+      { href: "/admin/dashboard/entries-exits", label: "Intrări/Ieșiri", icon: ArrowLeftRight },
     ]
 
     const SidebarContent = () => (

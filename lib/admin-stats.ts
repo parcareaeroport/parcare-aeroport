@@ -27,6 +27,14 @@ export interface RecentBooking {
   amount: number
 }
 
+export interface DailyEntryExit {
+  id: string
+  time: string
+  licensePlate: string
+  phone: string
+  numberOfPersons: number | string // Poate fi număr sau "N/A" pentru rezervări mai vechi
+}
+
 export interface DashboardStats {
   totalRevenue: number
   totalBookings: number
@@ -481,6 +489,80 @@ export async function getRecentBookings(): Promise<RecentBooking[]> {
 
   } catch (error) {
     console.error('Error fetching recent bookings:', error)
+    return []
+  }
+}
+
+/**
+ * Obține intrările (rezervările care încep) pentru o dată specifică
+ */
+export async function getDailyEntries(selectedDate: string): Promise<DailyEntryExit[]> {
+  try {
+    const bookingsRef = collection(db, 'bookings')
+    
+    // Query pentru rezervările care încep în data selectată
+    const q = query(
+      bookingsRef,
+      where('startDate', '==', selectedDate),
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']),
+      orderBy('startTime', 'asc')
+    )
+
+    const snapshot = await getDocs(q)
+    const entries: DailyEntryExit[] = []
+
+    snapshot.forEach(doc => {
+      const booking = doc.data()
+      entries.push({
+        id: doc.id,
+        time: booking.startTime || 'N/A',
+        licensePlate: booking.licensePlate || 'N/A',
+        phone: booking.clientPhone || 'N/A',
+        numberOfPersons: booking.numberOfPersons ? booking.numberOfPersons : 'N/A'
+      })
+    })
+
+    return entries
+
+  } catch (error) {
+    console.error('Error fetching daily entries:', error)
+    return []
+  }
+}
+
+/**
+ * Obține ieșirile (rezervările care se termină) pentru o dată specifică
+ */
+export async function getDailyExits(selectedDate: string): Promise<DailyEntryExit[]> {
+  try {
+    const bookingsRef = collection(db, 'bookings')
+    
+    // Query pentru rezervările care se termină în data selectată
+    const q = query(
+      bookingsRef,
+      where('endDate', '==', selectedDate),
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']),
+      orderBy('endTime', 'asc')
+    )
+
+    const snapshot = await getDocs(q)
+    const exits: DailyEntryExit[] = []
+
+    snapshot.forEach(doc => {
+      const booking = doc.data()
+      exits.push({
+        id: doc.id,
+        time: booking.endTime || 'N/A',
+        licensePlate: booking.licensePlate || 'N/A',
+        phone: booking.clientPhone || 'N/A',
+        numberOfPersons: booking.numberOfPersons ? booking.numberOfPersons : 'N/A'
+      })
+    })
+
+    return exits
+
+  } catch (error) {
+    console.error('Error fetching daily exits:', error)
     return []
   }
 } 

@@ -35,12 +35,15 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Calendar } from "@/components/ui/calendar" // Shadcn Calendar
 import { format as formatDateFn, parseISO } from "date-fns" // Renamed to avoid conflict
 import { ro } from "date-fns/locale"
-import { CalendarIcon, MoreHorizontal, Search, Eye, Loader2, AlertCircle, RefreshCw } from "lucide-react"
+import { CalendarIcon, MoreHorizontal, Search, Eye, Loader2, AlertCircle, RefreshCw, Mail } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/context/auth-context"
-import { cancelBooking as cancelParkingApiBooking, cleanupExpiredBookings } from "@/app/actions/booking-actions" // Acțiunea server pentru API parcare
+import { cancelBooking as cancelParkingApiBooking, cleanupExpiredBookings, createManualBooking, sendManualBookingEmail } from "@/app/actions/booking-actions" // Acțiunea server pentru API parcare
 import { recoverSpecificBooking } from "@/app/actions/booking-recovery" // Recovery pentru rezervări eșuate
+import { TimePickerDemo } from "@/components/time-picker"
+import { checkExistingReservationByLicensePlate } from "@/lib/booking-utils"
+import { Clock, XCircle } from "lucide-react"
 
 interface Booking {
   id: string // Firestore document ID
@@ -92,6 +95,13 @@ interface Booking {
   createdAt: Timestamp // Firestore Timestamp
   lastUpdated?: Timestamp
   expiredAt?: Timestamp // Când a fost marcată ca expirată
+  
+  // Status email
+  emailStatus?: "sent" | "failed"
+  emailSentAt?: Timestamp
+  lastManualEmailSent?: Timestamp
+  manualEmailCount?: number
+  lastEmailError?: string
 }
 
 function BookingsPageContent() {
@@ -108,6 +118,22 @@ function BookingsPageContent() {
   const [isCancelling, setIsCancelling] = useState(false)
   const [isRecovering, setIsRecovering] = useState(false)
   const [isCleaningUp, setIsCleaningUp] = useState(false)
+  const [isSendingEmail, setIsSendingEmail] = useState(false)
+  const [sendingEmailBookingId, setSendingEmailBookingId] = useState<string | null>(null)
+  
+  // State pentru adăugarea manuală de rezervări
+  const [isManualDialogOpen, setIsManualDialogOpen] = useState(false)
+  const [isCreatingManual, setIsCreatingManual] = useState(false)
+  const [manualLicensePlate, setManualLicensePlate] = useState("")
+  const [manualStartDate, setManualStartDate] = useState<Date | undefined>(new Date())
+  const [manualStartTime, setManualStartTime] = useState("08:30")
+  const [manualEndDate, setManualEndDate] = useState<Date | undefined>(new Date())
+  const [manualEndTime, setManualEndTime] = useState("18:30")
+  const [manualClientName, setManualClientName] = useState("")
+  const [manualClientPhone, setManualClientPhone] = useState("")
+  const [manualClientEmail, setManualClientEmail] = useState("")
+  const [manualNumberOfPersons, setManualNumberOfPersons] = useState("1")
+  const [manualDuplicateError, setManualDuplicateError] = useState<string | null>(null)
 
   const fetchBookings = async () => {
     setIsLoading(true)
@@ -295,6 +321,184 @@ function BookingsPageContent() {
     }
   }
 
+  const handleCreateManualBooking = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user) {
+      toast({
+        title: "Acces Neautorizat",
+        description: "Trebuie să fiți autentificat pentru a adăuga rezervări.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsCreatingManual(true)
+
+    // VERIFICARE SUPRAPUNERE PERIOADA pentru același număr de înmatriculare
+    try {
+      console.log('🔍 VERIFICARE SUPRAPUNERE MANUALĂ - Date trimise:', {
+        licensePlate: manualLicensePlate.toUpperCase(),
+        newPeriod: `${manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : ''} ${manualStartTime} - ${manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : ''} ${manualEndTime}`,
+        timestamp: new Date().toISOString()
+      })
+
+      const duplicateCheck = await checkExistingReservationByLicensePlate(
+        manualLicensePlate,
+        manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : '',
+        manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : '',
+        manualStartTime,
+        manualEndTime
+      )
+      
+      if (duplicateCheck.exists && duplicateCheck.existingBooking) {
+        const existing = duplicateCheck.existingBooking
+        const existingPeriod = `${formatDateFn(new Date(existing.startDate), "d MMM yyyy", { locale: ro })} - ${formatDateFn(new Date(existing.endDate), "d MMM yyyy", { locale: ro })}`
+        const newPeriod = `${manualStartDate ? formatDateFn(manualStartDate, "d MMM yyyy", { locale: ro }) : ''} - ${manualEndDate ? formatDateFn(manualEndDate, "d MMM yyyy", { locale: ro }) : ''}`
+        
+        console.log('⚠️ SUPRAPUNERE PERIOADA GĂSITĂ în rezervare manuală:', {
+          existingId: existing.id,
+          existingPeriod: `${existing.startDate} ${existing.startTime} - ${existing.endDate} ${existing.endTime}`,
+          newPeriod: `${manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : ''} ${manualStartTime} - ${manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : ''} ${manualEndTime}`,
+          existingStatus: existing.status,
+          existingBookingNumber: existing.apiBookingNumber
+        })
+
+        // Setează mesajul de eroare persistent pe formular
+        const errorMessage = `Perioada ${newPeriod} se suprapune cu rezervarea existentă pentru ${manualLicensePlate.toUpperCase()} din ${existingPeriod}${existing.apiBookingNumber ? ` (Rezervare #${existing.apiBookingNumber})` : ''}`
+        setManualDuplicateError(errorMessage)
+
+        toast({
+          title: "Perioadă Suprapusă",
+          description: "Perioada selectată se suprapune cu o rezervare existentă pentru acest număr de înmatriculare.",
+          variant: "destructive",
+          duration: 5000,
+        })
+        
+        setIsCreatingManual(false)
+        return
+      } else {
+        console.log('✅ NU EXISTĂ SUPRAPUNERE pentru rezervarea manuală - Poate continua')
+        // Golește mesajul de eroare dacă nu există suprapunere
+        setManualDuplicateError(null)
+      }
+      
+    } catch (error) {
+      console.error("❌ EROARE la verificarea suprapunerii în rezervarea manuală:", error)
+      // În caz de eroare, afișăm un warning dar permitem continuarea
+      toast({
+        title: "Avertisment",
+        description: "Nu s-a putut verifica dacă există suprapuneri cu rezervări existente. Dacă aveți deja o rezervare în această perioadă, vă rugăm să nu continuați.",
+        duration: 5000,
+      })
+    }
+
+    try {
+      const formData = new FormData()
+      formData.append('licensePlate', manualLicensePlate)
+      formData.append('startDate', manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : '')
+      formData.append('startTime', manualStartTime)
+      formData.append('endDate', manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : '')
+      formData.append('endTime', manualEndTime)
+      formData.append('clientName', manualClientName)
+      formData.append('clientPhone', manualClientPhone)
+      formData.append('clientEmail', manualClientEmail)
+      formData.append('numberOfPersons', manualNumberOfPersons)
+
+      const result = await createManualBooking(formData)
+
+      if (result.success) {
+        toast({
+          title: "Rezervare Adăugată",
+          description: result.message,
+        })
+
+        // Resetează formularul
+        setManualLicensePlate("")
+        setManualStartDate(new Date())
+        setManualStartTime("08:30")
+        setManualEndDate(new Date())
+        setManualEndTime("18:30")
+        setManualClientName("")
+        setManualClientPhone("")
+        setManualClientEmail("")
+        setManualNumberOfPersons("1")
+        setManualDuplicateError(null)
+        setIsManualDialogOpen(false)
+
+        // Reîncarcă lista
+        fetchBookings()
+      } else {
+        toast({
+          title: "Eroare",
+          description: result.message,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error creating manual booking:", error)
+      toast({
+        title: "Eroare",
+        description: "A apărut o eroare la crearea rezervării.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsCreatingManual(false)
+    }
+  }
+
+  const handleSendEmail = async (booking: Booking) => {
+    if (!booking.clientEmail) {
+      toast({
+        title: "Eroare",
+        description: "Această rezervare nu are email-ul clientului.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!booking.apiBookingNumber) {
+      toast({
+        title: "Eroare", 
+        description: "Această rezervare nu are număr de la API-ul de parcare și nu se poate genera QR code.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsSendingEmail(true)
+    setSendingEmailBookingId(booking.id)
+    
+    try {
+      const result = await sendManualBookingEmail(booking.id)
+      
+      if (result.success) {
+        toast({
+          title: "Email trimis",
+          description: result.message,
+          variant: "default",
+        })
+        // Refresh lista pentru a vedea statusul email-ului actualizat
+        await fetchBookings()
+      } else {
+        toast({
+          title: "Eroare la trimiterea email-ului",
+          description: result.message,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Send email error:", error)
+      toast({ 
+        title: "Eroare", 
+        description: "Eroare la trimiterea email-ului. Încercați din nou.", 
+        variant: "destructive" 
+      })
+    } finally {
+      setIsSendingEmail(false)
+      setSendingEmailBookingId(null)
+    }
+  }
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed_paid":
@@ -356,24 +560,19 @@ function BookingsPageContent() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Gestionare Rezervări</h1>
         <div className="flex gap-2">
-          {/* <Button 
-            onClick={handleCleanupExpired}
-            disabled={isCleaningUp}
-            variant="outline"
-            size="sm"
-          >
-            {isCleaningUp ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : (
-              <RefreshCw className="h-4 w-4 mr-2" />
-            )}
-            Curăță Expirate
-          </Button> */}
+          {user && (
+            <Button 
+              onClick={() => setIsManualDialogOpen(true)}
+              variant="default"
+              size="sm"
+            >
+              + Adaugă Manual
+            </Button>
+          )}
           <Button onClick={fetchBookings} disabled={isLoading} size="sm">
             {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
             Reîncarcă
           </Button>
-          {/* <Button variant="outline"><Download className="mr-2 h-4 w-4" /> Export</Button> */}
         </div>
       </div>
 
@@ -416,7 +615,7 @@ function BookingsPageContent() {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
-                <Calendar mode="single" selected={dateFilter} onSelect={setDateFilter} initialFocus />
+                <Calendar mode="single" selected={dateFilter} onSelect={setDateFilter} />
               </PopoverContent>
             </Popover>
             {(searchTerm || statusFilter !== "all" || dateFilter) && (
@@ -487,15 +686,34 @@ function BookingsPageContent() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleViewBooking(booking)}>
+                            <DropdownMenuItem 
+                              onClick={() => handleViewBooking(booking)}
+                              className="hover:text-white focus:text-white"
+                            >
                               <Eye className="mr-2 h-4 w-4" /> Vizualizează
                             </DropdownMenuItem>
+                            
+                            {/* Buton pentru trimiterea email-ului cu QR code */}
+                            {booking.clientEmail && booking.apiBookingNumber && (
+                              <DropdownMenuItem
+                                onClick={() => handleSendEmail(booking)}
+                                disabled={isSendingEmail}
+                                className="text-blue-600 focus:text-white focus:bg-blue-600 hover:text-white hover:bg-blue-600"
+                              >
+                                {isSendingEmail && sendingEmailBookingId === booking.id ? (
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Mail className="mr-2 h-4 w-4" />
+                                )}
+                                Trimite Email cu QR
+                              </DropdownMenuItem>
+                            )}
                             {booking.status === "api_error" && booking.paymentStatus === "paid" && (
                               <>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                   onClick={() => handleRecoverBooking(booking)}
-                                  className="text-blue-600 focus:text-blue-600"
+                                  className="text-blue-600 focus:text-white focus:bg-blue-600 hover:text-white hover:bg-blue-600"
                                   disabled={isRecovering}
                                 >
                                   {isRecovering && selectedBooking?.id === booking.id ? (
@@ -515,6 +733,7 @@ function BookingsPageContent() {
                                   <DropdownMenuItem
                                     onClick={() => handleCancelBooking(booking)}
                                     disabled={isCancelling}
+                                    className="text-red-600 hover:text-white hover:bg-red-600 focus:text-white focus:bg-red-600"
                                   >
                                     {isCancelling && selectedBooking?.id === booking.id ? (
                                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -649,10 +868,69 @@ function BookingsPageContent() {
                     </p>
                   )}
                 </div>
+                
+                <h3 className="text-lg font-medium mt-4 mb-2 text-gray-800">Status Email & QR</h3>
+                <div className="space-y-1 text-sm">
+                  <p>
+                    <strong>Email Client:</strong> {selectedBooking.clientEmail || "N/A"}
+                  </p>
+                  <p>
+                    <strong>QR Code Disponibil:</strong> {selectedBooking.apiBookingNumber ? "✅ Da" : "❌ Nu (lipsește nr. rezervare API)"}
+                  </p>
+                  {selectedBooking.apiBookingNumber && (
+                    <p>
+                      <strong>QR Code:</strong> MPK_RES={selectedBooking.apiBookingNumber.padStart(6, '0')}
+                    </p>
+                  )}
+                  <p>
+                    <strong>Status Email:</strong> {selectedBooking.emailStatus ? 
+                      (selectedBooking.emailStatus === "sent" ? 
+                        <span className="text-green-600">✅ Trimis</span> : 
+                        <span className="text-red-600">❌ Eșuat</span>
+                      ) : 
+                      <span className="text-gray-500">-</span>
+                    }
+                  </p>
+                  {selectedBooking.emailSentAt && (
+                    <p>
+                      <strong>Email trimis la:</strong> {formatDateFn(selectedBooking.emailSentAt.toDate(), "dd MMM yyyy, HH:mm", { locale: ro })}
+                    </p>
+                  )}
+                  {selectedBooking.manualEmailCount && selectedBooking.manualEmailCount > 0 && (
+                    <p>
+                      <strong>Email-uri manuale trimise:</strong> {selectedBooking.manualEmailCount}
+                    </p>
+                  )}
+                  {selectedBooking.lastEmailError && (
+                    <p>
+                      <strong>Ultima eroare email:</strong> <span className="text-red-600 text-xs">{selectedBooking.lastEmailError}</span>
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           )}
           <DialogFooter>
+            {/* Buton pentru trimiterea email-ului din dialog */}
+            {selectedBooking && selectedBooking.clientEmail && selectedBooking.apiBookingNumber && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsViewDialogOpen(false)
+                  handleSendEmail(selectedBooking)
+                }}
+                disabled={isSendingEmail}
+                className="text-blue-600 border-blue-600 hover:bg-blue-50"
+              >
+                {isSendingEmail && sendingEmailBookingId === selectedBooking.id ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Mail className="mr-2 h-4 w-4" />
+                )}
+                Trimite Email cu QR
+              </Button>
+            )}
+            
             {isAdmin &&
               selectedBooking &&
               selectedBooking.status !== "cancelled_by_admin" &&
@@ -671,6 +949,158 @@ function BookingsPageContent() {
               Închide
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal pentru adăugarea manuală de rezervări */}
+      <Dialog open={isManualDialogOpen} onOpenChange={setIsManualDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Adaugă Rezervare Manual</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCreateManualBooking} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Număr Înmatriculare *</label>
+                <Input
+                  value={manualLicensePlate}
+                  onChange={(e) => {
+                    setManualLicensePlate(e.target.value.toUpperCase())
+                    // Golește eroarea când utilizatorul schimbă numărul
+                    setManualDuplicateError(null)
+                  }}
+                  placeholder="Ex: DB99SDF"
+                  className={manualDuplicateError ? "border-red-500" : ""}
+                  required
+                />
+                {manualDuplicateError && (
+                  <div className="text-red-500 text-sm font-semibold mt-1 flex items-center">
+                    <XCircle className="mr-1 h-4 w-4" />
+                    {manualDuplicateError}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Număr Persoane</label>
+                <Input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={manualNumberOfPersons}
+                  onChange={(e) => setManualNumberOfPersons(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Data Intrare *</label>
+                <Input
+                  type="date"
+                  value={manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : ''}
+                  onChange={(e) => setManualStartDate(e.target.value ? new Date(e.target.value) : undefined)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Ora Intrare *</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start text-left font-normal h-10 border border-gray-200 bg-transparent hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 hover:bg-transparent focus:bg-transparent text-gray-900 hover:text-gray-900" 
+                      type="button"
+                    >
+                      <Clock className="mr-2 h-4 w-4 text-gray-500" />
+                      {manualStartTime}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-4" align="start">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Oră intrare</label>
+                      <TimePickerDemo value={manualStartTime} onChange={setManualStartTime} />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Data Ieșire *</label>
+                <Input
+                  type="date"
+                  value={manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : ''}
+                  onChange={(e) => setManualEndDate(e.target.value ? new Date(e.target.value) : undefined)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Ora Ieșire *</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start text-left font-normal h-10 border border-gray-200 bg-transparent hover:border-[#ff0066] focus:border-[#ff0066] focus:ring-2 focus:ring-[#ff0066]/20 hover:bg-transparent focus:bg-transparent text-gray-900 hover:text-gray-900" 
+                      type="button"
+                    >
+                      <Clock className="mr-2 h-4 w-4 text-gray-500" />
+                      {manualEndTime}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-4" align="start">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Oră ieșire</label>
+                      <TimePickerDemo value={manualEndTime} onChange={setManualEndTime} />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Nume Client</label>
+                <Input
+                  value={manualClientName}
+                  onChange={(e) => setManualClientName(e.target.value)}
+                  placeholder="Ex: Ion Popescu"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Telefon Client</label>
+                <Input
+                  value={manualClientPhone}
+                  onChange={(e) => setManualClientPhone(e.target.value)}
+                  placeholder="Ex: 0721123456"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-medium">Email Client</label>
+                <Input
+                  type="email"
+                  value={manualClientEmail}
+                  onChange={(e) => setManualClientEmail(e.target.value)}
+                  placeholder="Ex: client@email.com"
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsManualDialogOpen(false)}>
+                Anulează
+              </Button>
+              <Button type="submit" disabled={isCreatingManual}>
+                {isCreatingManual ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Se procesează...
+                  </>
+                ) : (
+                  'Creează Rezervarea'
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

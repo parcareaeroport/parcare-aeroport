@@ -40,6 +40,7 @@ interface CompleteBookingData {
   clientName?: string
   clientEmail?: string
   clientPhone?: string
+  numberOfPersons?: number
   clientTitle?: string
   
   // Date calculate
@@ -466,6 +467,7 @@ export async function createBookingWithFirestore(
   additionalData?: {
     clientEmail?: string
     clientPhone?: string
+    numberOfPersons?: number
     paymentIntentId?: string
     paymentStatus?: "paid" | "n/a"
     amount?: number
@@ -521,6 +523,7 @@ export async function createBookingWithFirestore(
       // Date suplimentare
       clientEmail: additionalData?.clientEmail,
       clientPhone: additionalData?.clientPhone,
+      numberOfPersons: additionalData?.numberOfPersons,
       
       // Date calculate
       durationMinutes: Math.round(
@@ -863,5 +866,334 @@ export async function cleanupExpiredBookings(): Promise<{ cleanedCount: number, 
     errors.push(errorMessage)
     console.error('❌ Critical error during cleanup:', errorMessage)
     return { cleanedCount: 0, errors }
+  }
+}
+
+/**
+ * Adaugă o rezervare manual de către admin (fără plată)
+ * Această funcție va crea rezervarea în Firestore și o va trimite la API-ul de parcare
+ */
+export async function createManualBooking(formData: FormData) {
+  try {
+    // Extrage datele din FormData
+    const licensePlate = formData.get('licensePlate') as string
+    const startDate = formData.get('startDate') as string
+    const startTime = formData.get('startTime') as string
+    const endDate = formData.get('endDate') as string
+    const endTime = formData.get('endTime') as string
+    const clientName = formData.get('clientName') as string || ''
+    const clientPhone = formData.get('clientPhone') as string || ''
+    const clientEmail = formData.get('clientEmail') as string || ''
+    const numberOfPersons = parseInt(formData.get('numberOfPersons') as string) || 1
+
+    console.log('🔧 ADĂUGARE MANUALĂ REZERVARE - Date primite:', {
+      licensePlate,
+      period: `${startDate} ${startTime} - ${endDate} ${endTime}`,
+      client: { name: clientName, phone: clientPhone, email: clientEmail },
+      numberOfPersons
+    })
+
+    // Validări de bază
+    if (!licensePlate || !startDate || !startTime || !endDate || !endTime) {
+      return {
+        success: false,
+        message: 'Toate câmpurile obligatorii trebuie completate'
+      }
+    }
+
+    // Calculează durata în minute
+    const startDateTime = new Date(`${startDate}T${startTime}:00`)
+    const endDateTime = new Date(`${endDate}T${endTime}:00`)
+    const durationMinutes = Math.round((endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60))
+
+    if (durationMinutes <= 0) {
+      return {
+        success: false,
+        message: 'Data și ora de ieșire trebuie să fie după data și ora de intrare'
+      }
+    }
+
+    // Calculează numărul de zile
+    const days = Math.ceil(durationMinutes / (24 * 60))
+
+    // Generare număr de rezervare aleatoriu
+    const bookingNumber = Math.floor(100000 + Math.random() * 900000).toString()
+
+    // 1. CREEAZĂ REZERVAREA ÎN FIRESTORE MAI ÎNTÂI
+    const bookingData = {
+      licensePlate: licensePlate.toUpperCase(),
+      clientName,
+      clientEmail,
+      clientPhone,
+      startDate,
+      startTime,
+      endDate,
+      endTime,
+      durationMinutes,
+      days,
+      amount: 0, // Fără cost - adăugată manual de operator
+      status: 'confirmed_paid', // Status pentru rezervări reale manuale
+      paymentStatus: 'paid', // Considerată plătită (adăugată de operator)
+      source: 'manual',
+      numberOfPersons,
+      apiSuccess: false, // Se va actualiza după apelul API
+      createdAt: serverTimestamp(),
+      lastUpdated: serverTimestamp()
+      // Câmpurile API se vor adăuga după apelul API
+    }
+
+    // Salvează în Firestore
+    const bookingsRef = collection(db, 'bookings')
+    const bookingDocRef = await addDoc(bookingsRef, bookingData)
+
+    console.log('✅ Rezervare salvată în Firestore:', bookingDocRef.id)
+
+    // 2. TRIMITE LA API-UL DE PARCARE
+    try {
+      // Formatare dată pentru API: YYYY/MM/DD HH:mm:SS
+      const formattedStartDate = startDateTime
+        .toISOString()
+        .replace(/T/, " ")
+        .replace(/-/g, "/")
+        .replace(/\.\d+Z$/, "")
+
+      // Creare payload XML pentru API
+      const xmlPayload = `
+        <WSRequestBookingSubmitV1>
+          <MultiparkId>${process.env.PARKING_MULTIPARK_ID || "001#001"}</MultiparkId>
+          <OperationType>N</OperationType>
+          <BookingNumber>${bookingNumber}</BookingNumber>
+          <LicensePlate>${licensePlate.toUpperCase()}</LicensePlate>
+          <StartDate>${formattedStartDate}</StartDate>
+          <Duration>${durationMinutes}</Duration>
+          ${clientName ? `<ClientName>${clientName}</ClientName>` : ""}
+          <AccessMode>0</AccessMode>
+        </WSRequestBookingSubmitV1>
+      `.trim()
+
+      // Creare header Basic Auth
+      const authHeader = `Basic ${Buffer.from(`${process.env.PARKING_API_USERNAME || "MWBooking"}:${process.env.PARKING_API_PASSWORD || "AUTOPENI2025"}`).toString("base64")}`
+
+      console.log('📡 Trimitere la API parcare:', {
+        url: process.env.PARKING_API_URL,
+        bookingNumber,
+        licensePlate: licensePlate.toUpperCase(),
+        payload: xmlPayload
+      })
+
+      // Apel API cu timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 30000)
+
+      const response = await fetch(process.env.PARKING_API_URL || "http://89.45.23.61:7001/MultiparkWeb_eServices/booking_submit", {
+        method: "POST",
+        headers: {
+          Authorization: authHeader,
+          "Content-Type": "text/xml",
+        },
+        body: xmlPayload,
+        signal: controller.signal,
+      })
+
+      clearTimeout(timeoutId)
+      const responseText = await response.text()
+
+      console.log('📡 Răspuns de la API parcare:', {
+        status: response.status,
+        body: responseText
+      })
+
+      // Parsare răspuns XML
+      const errorCodeMatch = responseText.match(/<ErrorCode>(\d+)<\/ErrorCode>/)
+      const messageMatch = responseText.match(/<Message>(.+?)<\/Message>/)
+
+      const errorCode = errorCodeMatch ? errorCodeMatch[1] : null
+      const apiMessage = messageMatch ? messageMatch[1] : "Răspuns necunoscut de la server"
+      const apiSuccess = errorCode === "1"
+
+             // 3. ACTUALIZEAZĂ REZERVAREA CU REZULTATUL API
+       const updateData: any = {
+         apiSuccess,
+         apiErrorCode: errorCode,
+         apiMessage,
+         apiRequestPayload: xmlPayload,
+         apiResponseRaw: responseText,
+         apiRequestTimestamp: serverTimestamp(),
+         lastUpdated: serverTimestamp(),
+         status: apiSuccess ? 'confirmed_paid' : 'api_error'
+       }
+
+       // Adaugă apiBookingNumber doar dacă API-ul a fost succes
+       if (apiSuccess) {
+         updateData.apiBookingNumber = bookingNumber
+       }
+
+       await updateDoc(bookingDocRef, updateData)
+
+      if (apiSuccess) {
+        // 4. ACTUALIZEAZĂ STATISTICILE
+        const statsDocRef = doc(db, "config", "reservationStats")
+        await updateDoc(statsDocRef, {
+          activeBookingsCount: increment(1),
+          lastUpdated: serverTimestamp()
+        })
+
+        console.log('🎉 REZERVARE MANUALĂ COMPLETĂ:', {
+          firestoreId: bookingDocRef.id,
+          apiBookingNumber: bookingNumber,
+          status: 'confirmed_paid'
+        })
+
+        return {
+          success: true,
+          message: `Rezervarea a fost creată cu succes! Număr rezervare: ${bookingNumber}`,
+          bookingId: bookingDocRef.id,
+          apiBookingNumber: bookingNumber
+        }
+      } else {
+        console.log('⚠️ API EȘUAT dar rezervarea este salvată în Firestore:', {
+          firestoreId: bookingDocRef.id,
+          apiError: apiMessage
+        })
+
+        return {
+          success: true,
+          message: `Rezervarea a fost salvată local dar API-ul a eșuat: ${apiMessage}. ID: ${bookingDocRef.id}`,
+          bookingId: bookingDocRef.id,
+          apiError: apiMessage
+        }
+      }
+
+    } catch (apiError) {
+      console.error('❌ EROARE API:', apiError)
+
+             // Actualizează rezervarea cu eroarea API
+       await updateDoc(bookingDocRef, {
+         apiSuccess: false,
+         apiMessage: apiError instanceof Error ? apiError.message : 'Eroare necunoscută API',
+         lastUpdated: serverTimestamp(),
+         status: 'api_error'
+       })
+
+      return {
+        success: true,
+        message: `Rezervarea a fost salvată local dar a eșuat trimiterea la API. ID: ${bookingDocRef.id}`,
+        bookingId: bookingDocRef.id,
+        apiError: apiError instanceof Error ? apiError.message : 'Eroare necunoscută API'
+      }
+    }
+
+  } catch (error) {
+    console.error('❌ EROARE CRITICĂ la adăugarea manuală:', error)
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Eroare necunoscută la procesarea rezervării'
+    }
+  }
+}
+
+/**
+ * Trimite manual email cu QR code pentru o rezervare existentă
+ */
+export async function sendManualBookingEmail(bookingId: string): Promise<{ success: boolean, message: string, error?: string }> {
+  try {
+    console.log(`📧 Manual email request for booking ID: ${bookingId}`)
+    
+    // Găsește rezervarea în Firestore
+    const bookingDoc = await getDoc(doc(db, "bookings", bookingId))
+    
+    if (!bookingDoc.exists()) {
+      return {
+        success: false,
+        message: "Rezervarea nu a fost găsită",
+        error: "Booking not found"
+      }
+    }
+    
+    const bookingData = bookingDoc.data() as CompleteBookingData
+    
+    // Verifică dacă rezervarea are toate datele necesare pentru email
+    if (!bookingData.clientEmail) {
+      return {
+        success: false,
+        message: "Email-ul clientului lipsește din rezervare",
+        error: "Client email missing"
+      }
+    }
+    
+    if (!bookingData.apiBookingNumber) {
+      return {
+        success: false,
+        message: "Numărul de rezervare API lipsește - nu se poate genera QR code",
+        error: "API booking number missing"
+      }
+    }
+    
+    // Pregătește datele pentru email
+    const emailData = {
+      clientName: bookingData.clientName || 'Client',
+      clientEmail: bookingData.clientEmail,
+      clientPhone: bookingData.clientPhone,
+      licensePlate: bookingData.licensePlate,
+      startDate: bookingData.startDate,
+      startTime: bookingData.startTime,
+      endDate: bookingData.endDate,
+      endTime: bookingData.endTime,
+      days: bookingData.days || 1,
+      amount: bookingData.amount || 0,
+      bookingNumber: bookingData.apiBookingNumber,
+      status: bookingData.status,
+      source: bookingData.source || 'manual',
+      createdAt: bookingData.createdAt?.toDate() || new Date()
+    }
+    
+    console.log(`📧 Sending manual email to ${emailData.clientEmail} for booking ${emailData.bookingNumber}`)
+    
+    // Trimite email-ul
+    const emailResult = await sendBookingConfirmationEmail(emailData)
+    
+    if (emailResult.success) {
+      // Actualizează statusul în Firestore cu informații despre email-ul manual
+      await updateDoc(doc(db, "bookings", bookingId), {
+        emailSentAt: serverTimestamp(),
+        emailStatus: "sent",
+        lastManualEmailSent: serverTimestamp(),
+        manualEmailCount: increment(1),
+        lastUpdated: serverTimestamp()
+      })
+      
+      console.log(`✅ Manual email sent successfully to ${emailData.clientEmail} for booking ${emailData.bookingNumber}`)
+      
+      return {
+        success: true,
+        message: `Email trimis cu succes către ${emailData.clientEmail}`
+      }
+    } else {
+      // Marchează eșecul în Firestore
+      await updateDoc(doc(db, "bookings", bookingId), {
+        emailStatus: "failed",
+        lastEmailError: emailResult.error,
+        lastManualEmailAttempt: serverTimestamp(),
+        lastUpdated: serverTimestamp()
+      })
+      
+      console.error(`❌ Manual email failed for booking ${emailData.bookingNumber}:`, emailResult.error)
+      
+      return {
+        success: false,
+        message: `Eroare la trimiterea email-ului: ${emailResult.error}`,
+        error: emailResult.error
+      }
+    }
+    
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error(`❌ Manual email function error for booking ${bookingId}:`, errorMessage)
+    
+    return {
+      success: false,
+      message: `Eroare la procesarea cererii: ${errorMessage}`,
+      error: errorMessage
+    }
   }
 }

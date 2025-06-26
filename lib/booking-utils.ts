@@ -421,10 +421,14 @@ export async function softCleanupExpiredBookings(): Promise<number> {
 }
 
 /**
- * Verifică dacă există o rezervare activă cu același număr de înmatriculare
+ * Verifică dacă există o rezervare activă cu același număr de înmatriculare care se suprapune cu perioada nouă
  */
 export async function checkExistingReservationByLicensePlate(
-  licensePlate: string
+  licensePlate: string,
+  newStartDate: string,
+  newEndDate: string,
+  newStartTime: string,
+  newEndTime: string
 ): Promise<{
   exists: boolean
   existingBooking?: {
@@ -448,8 +452,15 @@ export async function checkExistingReservationByLicensePlate(
       where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid'])
     )
     
-    console.log('🔍 VERIFICARE DUPLICAT NUMĂR ÎNMATRICULARE:', {
+    // Converteste noua rezervare la timestamps pentru comparare
+    const newStartDateTime = new Date(`${newStartDate}T${newStartTime}:00`)
+    const newEndDateTime = new Date(`${newEndDate}T${newEndTime}:00`)
+    
+    console.log('🔍 VERIFICARE SUPRAPUNERE PERIOADA NUMĂR ÎNMATRICULARE:', {
       licensePlate: licensePlate.toUpperCase(),
+      newPeriod: `${newStartDate} ${newStartTime} - ${newEndDate} ${newEndTime}`,
+      newStartDateTime: newStartDateTime.toISOString(),
+      newEndDateTime: newEndDateTime.toISOString(),
       activeStatuses: ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']
     })
     
@@ -460,10 +471,9 @@ export async function checkExistingReservationByLicensePlate(
       return { exists: false }
     }
     
-    // Verifică dacă rezervările găsite nu sunt expirate
-    const now = new Date()
-    let activeBookingFound = false
-    let existingBookingData = null
+    // Verifică dacă există suprapunere cu vreo rezervare activă
+    let overlappingBookingFound = false
+    let overlappingBookingData = null
     
     for (const docSnapshot of snapshot.docs) {
       const booking = docSnapshot.data()
@@ -474,41 +484,74 @@ export async function checkExistingReservationByLicensePlate(
         endTime: booking.endTime,
         status: booking.status
       })) {
-        activeBookingFound = true
-        existingBookingData = {
-          id: docSnapshot.id,
-          licensePlate: booking.licensePlate,
-          startDate: booking.startDate,
-          endDate: booking.endDate,
-          startTime: booking.startTime,
-          endTime: booking.endTime,
-          status: booking.status,
-          apiBookingNumber: booking.apiBookingNumber
-        }
         
-        console.log('⚠️ REZERVARE ACTIVĂ GĂSITĂ cu același număr de înmatriculare:', {
-          id: docSnapshot.id,
-          licensePlate: booking.licensePlate,
-          period: `${booking.startDate} ${booking.startTime} - ${booking.endDate} ${booking.endTime}`,
-          status: booking.status,
-          bookingNumber: booking.apiBookingNumber
+        // Converteste rezervarea existentă la timestamps
+        const existingStartDateTime = new Date(`${booking.startDate}T${booking.startTime}:00`)
+        const existingEndDateTime = new Date(`${booking.endDate}T${booking.endTime}:00`)
+        
+        // Verifică suprapunerea de perioade
+        // Suprapunere = newStart < existingEnd && newEnd > existingStart
+        const hasOverlap = newStartDateTime < existingEndDateTime && newEndDateTime > existingStartDateTime
+        
+        console.log('🧮 VERIFICARE SUPRAPUNERE:', {
+          existingId: docSnapshot.id,
+          existingPeriod: `${booking.startDate} ${booking.startTime} - ${booking.endDate} ${booking.endTime}`,
+          existingStart: existingStartDateTime.toISOString(),
+          existingEnd: existingEndDateTime.toISOString(),
+          newStart: newStartDateTime.toISOString(),
+          newEnd: newEndDateTime.toISOString(),
+          calculation: {
+            newStartBeforeExistingEnd: `${newStartDateTime.toISOString()} < ${existingEndDateTime.toISOString()} = ${newStartDateTime < existingEndDateTime}`,
+            newEndAfterExistingStart: `${newEndDateTime.toISOString()} > ${existingStartDateTime.toISOString()} = ${newEndDateTime > existingStartDateTime}`,
+            hasOverlap: hasOverlap
+          },
+          result: hasOverlap ? '❌ SE SUPRAPUNE' : '✅ NU SE SUPRAPUNE'
         })
-        break
+        
+        if (hasOverlap) {
+          overlappingBookingFound = true
+          overlappingBookingData = {
+            id: docSnapshot.id,
+            licensePlate: booking.licensePlate,
+            startDate: booking.startDate,
+            endDate: booking.endDate,
+            startTime: booking.startTime,
+            endTime: booking.endTime,
+            status: booking.status,
+            apiBookingNumber: booking.apiBookingNumber
+          }
+          
+          console.log('⚠️ REZERVARE CU SUPRAPUNERE GĂSITĂ:', {
+            id: docSnapshot.id,
+            licensePlate: booking.licensePlate,
+            existingPeriod: `${booking.startDate} ${booking.startTime} - ${booking.endDate} ${booking.endTime}`,
+            newPeriod: `${newStartDate} ${newStartTime} - ${newEndDate} ${newEndTime}`,
+            status: booking.status,
+            bookingNumber: booking.apiBookingNumber
+          })
+          break
+        } else {
+          console.log('✅ Rezervare găsită dar fără suprapunere:', {
+            id: docSnapshot.id,
+            existingPeriod: `${booking.startDate} ${booking.startTime} - ${booking.endDate} ${booking.endTime}`,
+            newPeriod: `${newStartDate} ${newStartTime} - ${newEndDate} ${newEndTime}`
+          })
+        }
       }
     }
     
-    if (activeBookingFound && existingBookingData) {
+    if (overlappingBookingFound && overlappingBookingData) {
       return {
         exists: true,
-        existingBooking: existingBookingData
+        existingBooking: overlappingBookingData
       }
     } else {
-      console.log('✅ Rezervările găsite sunt expirate - se poate continua')
+      console.log('✅ Nu există suprapuneri - rezervarea poate continua')
       return { exists: false }
     }
     
   } catch (error) {
-    console.error('❌ EROARE la verificarea duplicatului de număr înmatriculare:', error)
+    console.error('❌ EROARE la verificarea suprapunerii de perioade:', error)
     // În caz de eroare, permitem continuarea pentru a nu bloca utilizatorul
     return { exists: false }
   }

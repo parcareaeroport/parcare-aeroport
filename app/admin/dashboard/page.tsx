@@ -104,6 +104,8 @@ export default function DashboardPage() {
     }
   }
 
+
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ro-RO', {
       style: 'currency',
