@@ -27,16 +27,23 @@ interface BookingEmailData {
 }
 
 /**
- * Configurează transporterul Nodemailer pentru Gmail
+ * Configurează transporterul Nodemailer pentru Gmail cu setări robuste
  */
 function createEmailTransporter() {
   return nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true pentru 465, false pentru alte porturi
     auth: {
-      user: process.env.GMAIL_USER, // Adaugă în .env.local
-      pass: process.env.GMAIL_APP_PASSWORD, // App Password generat în Gmail
+      user: process.env.GMAIL_USER!, // Adaugă în .env.local
+      pass: process.env.GMAIL_APP_PASSWORD!, // App Password generat în Gmail
     },
-  })
+    connectionTimeout: 30000, // 30 secunde connection timeout
+    greetingTimeout: 30000,   // 30 secunde greeting timeout  
+    socketTimeout: 30000,     // 30 secunde socket timeout
+    debug: false,             // activează doar pentru debugging SMTP
+    logger: false,            // elimină log-urile SMTP verbose
+  } as any) // bypass TypeScript pentru setări avansate
 }
 
 /**
@@ -274,11 +281,17 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     console.log(`📧 [EMAIL-${emailProcessId}]   Attachments: ${mailOptions.attachments.length} files`)
     console.log(`📧 [EMAIL-${emailProcessId}]   QR Attachment Size: ${qrBuffer.length} bytes`)
     
-    // Trimite email-ul
+    // Trimite email-ul cu timeout
     console.log(`🚀 [EMAIL-${emailProcessId}] Sending email via Gmail SMTP...`)
     const sendStartTime = Date.now()
     
-    const result = await transporter.sendMail(mailOptions)
+    // Timeout de 30 secunde pentru SMTP
+    const emailPromise = transporter.sendMail(mailOptions)
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('SMTP timeout - 30 seconds')), 30000)
+    )
+    
+    const result = await Promise.race([emailPromise, timeoutPromise]) as any
     const sendDuration = Date.now() - sendStartTime
     
     console.log(`✅ [EMAIL-${emailProcessId}] ===== EMAIL SENT SUCCESSFULLY =====`)

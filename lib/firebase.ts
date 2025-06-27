@@ -11,8 +11,10 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-// Log direct pentru a verifica variabila de mediu
-console.log("[lib/firebase.ts] Raw NEXT_PUBLIC_FIREBASE_API_KEY:", process.env.NEXT_PUBLIC_FIREBASE_API_KEY)
+// Log direct pentru a verifica variabila de mediu - doar în development
+if (process.env.NODE_ENV === 'development') {
+  console.log("[lib/firebase.ts] Raw NEXT_PUBLIC_FIREBASE_API_KEY:", process.env.NEXT_PUBLIC_FIREBASE_API_KEY)
+}
 console.log("[lib/firebase.ts] Constructed firebaseConfig:", firebaseConfig)
 
 let app: FirebaseApp

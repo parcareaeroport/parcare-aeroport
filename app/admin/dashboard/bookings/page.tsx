@@ -323,7 +323,15 @@ function BookingsPageContent() {
 
   const handleCreateManualBooking = async (e: React.FormEvent) => {
     e.preventDefault()
+    const uiProcessId = `UI_MANUAL_${Date.now()}`
+    
+    console.log(`🖥️ [${uiProcessId}] ===== MANUAL BOOKING UI PROCESS STARTED =====`)
+    console.log(`🖥️ [${uiProcessId}] Timestamp: ${new Date().toISOString()}`)
+    
     if (!user) {
+      console.error(`❌ [${uiProcessId}] User not authenticated`)
+      console.error(`❌ [${uiProcessId}] User object:`, user)
+      
       toast({
         title: "Acces Neautorizat",
         description: "Trebuie să fiți autentificat pentru a adăuga rezervări.",
@@ -332,15 +340,28 @@ function BookingsPageContent() {
       return
     }
 
+    console.log(`✅ [${uiProcessId}] User authenticated:`)
+    console.log(`✅ [${uiProcessId}]   User ID: ${user.uid}`)
+    console.log(`✅ [${uiProcessId}]   User Email: ${user.email}`)
+    console.log(`✅ [${uiProcessId}]   Is Admin: ${isAdmin}`)
+
     setIsCreatingManual(true)
 
     // VERIFICARE SUPRAPUNERE PERIOADA pentru același număr de înmatriculare
     try {
-      console.log('🔍 VERIFICARE SUPRAPUNERE MANUALĂ - Date trimise:', {
-        licensePlate: manualLicensePlate.toUpperCase(),
-        newPeriod: `${manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : ''} ${manualStartTime} - ${manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : ''} ${manualEndTime}`,
-        timestamp: new Date().toISOString()
-      })
+      console.log(`🔍 [${uiProcessId}] ===== CHECKING PERIOD OVERLAP =====`)
+      console.log(`🔍 [${uiProcessId}] Form data to validate:`)
+      console.log(`🔍 [${uiProcessId}]   License Plate: ${manualLicensePlate.toUpperCase()}`)
+      console.log(`🔍 [${uiProcessId}]   Start Date: ${manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : 'NOT SET'}`)
+      console.log(`🔍 [${uiProcessId}]   Start Time: ${manualStartTime}`)
+      console.log(`🔍 [${uiProcessId}]   End Date: ${manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : 'NOT SET'}`)
+      console.log(`🔍 [${uiProcessId}]   End Time: ${manualEndTime}`)
+      console.log(`🔍 [${uiProcessId}]   Client Name: ${manualClientName || 'N/A'}`)
+      console.log(`🔍 [${uiProcessId}]   Client Email: ${manualClientEmail || 'N/A'}`)
+      console.log(`🔍 [${uiProcessId}]   Client Phone: ${manualClientPhone || 'N/A'}`)
+      console.log(`🔍 [${uiProcessId}]   Number of Persons: ${manualNumberOfPersons}`)
+
+      const overlapCheckStartTime = Date.now()
 
       const duplicateCheck = await checkExistingReservationByLicensePlate(
         manualLicensePlate,
@@ -350,22 +371,29 @@ function BookingsPageContent() {
         manualEndTime
       )
       
+      const overlapCheckDuration = Date.now() - overlapCheckStartTime
+      console.log(`🔍 [${uiProcessId}] Overlap check completed in ${overlapCheckDuration}ms`)
+      console.log(`🔍 [${uiProcessId}] Overlap result: ${duplicateCheck.exists ? 'CONFLICT FOUND' : 'NO CONFLICT'}`)
+      
       if (duplicateCheck.exists && duplicateCheck.existingBooking) {
         const existing = duplicateCheck.existingBooking
         const existingPeriod = `${formatDateFn(new Date(existing.startDate), "d MMM yyyy", { locale: ro })} - ${formatDateFn(new Date(existing.endDate), "d MMM yyyy", { locale: ro })}`
         const newPeriod = `${manualStartDate ? formatDateFn(manualStartDate, "d MMM yyyy", { locale: ro }) : ''} - ${manualEndDate ? formatDateFn(manualEndDate, "d MMM yyyy", { locale: ro }) : ''}`
         
-        console.log('⚠️ SUPRAPUNERE PERIOADA GĂSITĂ în rezervare manuală:', {
-          existingId: existing.id,
-          existingPeriod: `${existing.startDate} ${existing.startTime} - ${existing.endDate} ${existing.endTime}`,
-          newPeriod: `${manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : ''} ${manualStartTime} - ${manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : ''} ${manualEndTime}`,
-          existingStatus: existing.status,
-          existingBookingNumber: existing.apiBookingNumber
-        })
+        console.log(`⚠️ [${uiProcessId}] ===== PERIOD OVERLAP DETECTED =====`)
+        console.log(`⚠️ [${uiProcessId}] Existing booking details:`)
+        console.log(`⚠️ [${uiProcessId}]   ID: ${existing.id}`)
+        console.log(`⚠️ [${uiProcessId}]   Period: ${existing.startDate} ${existing.startTime} - ${existing.endDate} ${existing.endTime}`)
+        console.log(`⚠️ [${uiProcessId}]   Status: ${existing.status}`)
+        console.log(`⚠️ [${uiProcessId}]   Booking Number: ${existing.apiBookingNumber || 'N/A'}`)
+        console.log(`⚠️ [${uiProcessId}] New booking period: ${manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : ''} ${manualStartTime} - ${manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : ''} ${manualEndTime}`)
 
         // Setează mesajul de eroare persistent pe formular
         const errorMessage = `Perioada ${newPeriod} se suprapune cu rezervarea existentă pentru ${manualLicensePlate.toUpperCase()} din ${existingPeriod}${existing.apiBookingNumber ? ` (Rezervare #${existing.apiBookingNumber})` : ''}`
         setManualDuplicateError(errorMessage)
+
+        console.log(`🚨 [${uiProcessId}] Blocking manual booking due to overlap`)
+        console.log(`🚨 [${uiProcessId}] Error message: ${errorMessage}`)
 
         toast({
           title: "Perioadă Suprapusă",
@@ -377,13 +405,17 @@ function BookingsPageContent() {
         setIsCreatingManual(false)
         return
       } else {
-        console.log('✅ NU EXISTĂ SUPRAPUNERE pentru rezervarea manuală - Poate continua')
+        console.log(`✅ [${uiProcessId}] No period overlap found - can proceed`)
         // Golește mesajul de eroare dacă nu există suprapunere
         setManualDuplicateError(null)
       }
       
     } catch (error) {
-      console.error("❌ EROARE la verificarea suprapunerii în rezervarea manuală:", error)
+      console.error(`❌ [${uiProcessId}] ===== OVERLAP CHECK ERROR =====`)
+      console.error(`❌ [${uiProcessId}] Error Type: ${error instanceof Error ? error.constructor.name : typeof error}`)
+      console.error(`❌ [${uiProcessId}] Error Message: ${error instanceof Error ? error.message : String(error)}`)
+      console.error(`❌ [${uiProcessId}] Error Stack:`, error instanceof Error ? error.stack : 'N/A')
+      
       // În caz de eroare, afișăm un warning dar permitem continuarea
       toast({
         title: "Avertisment",
@@ -393,6 +425,8 @@ function BookingsPageContent() {
     }
 
     try {
+      console.log(`🏗️ [${uiProcessId}] ===== PREPARING FORM DATA =====`)
+      
       const formData = new FormData()
       formData.append('licensePlate', manualLicensePlate)
       formData.append('startDate', manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : '')
@@ -404,13 +438,29 @@ function BookingsPageContent() {
       formData.append('clientEmail', manualClientEmail)
       formData.append('numberOfPersons', manualNumberOfPersons)
 
+      console.log(`🏗️ [${uiProcessId}] FormData prepared with all fields`)
+      console.log(`🏗️ [${uiProcessId}] Calling createManualBooking server action...`)
+      
+      const createStartTime = Date.now()
       const result = await createManualBooking(formData)
+      const createDuration = Date.now() - createStartTime
+
+      console.log(`🏗️ [${uiProcessId}] Server action completed in ${createDuration}ms`)
+      console.log(`🏗️ [${uiProcessId}] Result success: ${result.success}`)
+      console.log(`🏗️ [${uiProcessId}] Result message: ${result.message}`)
 
       if (result.success) {
+        console.log(`✅ [${uiProcessId}] ===== MANUAL BOOKING CREATED SUCCESSFULLY =====`)
+        console.log(`✅ [${uiProcessId}] Booking ID: ${(result as any).bookingId || 'N/A'}`)
+        console.log(`✅ [${uiProcessId}] API Booking Number: ${(result as any).apiBookingNumber || 'N/A'}`)
+        console.log(`✅ [${uiProcessId}] Success message: ${result.message}`)
+
         toast({
           title: "Rezervare Adăugată",
           description: result.message,
         })
+
+        console.log(`🧹 [${uiProcessId}] Resetting form fields...`)
 
         // Resetează formularul
         setManualLicensePlate("")
@@ -425,9 +475,18 @@ function BookingsPageContent() {
         setManualDuplicateError(null)
         setIsManualDialogOpen(false)
 
+        console.log(`🔄 [${uiProcessId}] Refreshing bookings list...`)
+
         // Reîncarcă lista
-        fetchBookings()
+        await fetchBookings()
+        
+        console.log(`🎉 [${uiProcessId}] Manual booking process completed successfully`)
+        console.log(`🎉 [${uiProcessId}] Total UI duration: ${Date.now() - (Date.now() - createDuration)}ms`)
       } else {
+        console.error(`❌ [${uiProcessId}] ===== MANUAL BOOKING FAILED =====`)
+        console.error(`❌ [${uiProcessId}] Error message: ${result.message}`)
+        console.error(`❌ [${uiProcessId}] Server duration: ${createDuration}ms`)
+
         toast({
           title: "Eroare",
           description: result.message,
@@ -435,13 +494,27 @@ function BookingsPageContent() {
         })
       }
     } catch (error) {
-      console.error("Error creating manual booking:", error)
+      console.error(`❌ [${uiProcessId}] ===== UI CRITICAL ERROR =====`)
+      console.error(`❌ [${uiProcessId}] Error Type: ${error instanceof Error ? error.constructor.name : typeof error}`)
+      console.error(`❌ [${uiProcessId}] Error Message: ${error instanceof Error ? error.message : String(error)}`)
+      console.error(`❌ [${uiProcessId}] Error Stack:`, error instanceof Error ? error.stack : 'N/A')
+      console.error(`❌ [${uiProcessId}] Form state:`, {
+        licensePlate: manualLicensePlate,
+        startDate: manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : null,
+        startTime: manualStartTime,
+        endDate: manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : null,
+        endTime: manualEndTime,
+        clientName: manualClientName,
+        clientEmail: manualClientEmail
+      })
+      
       toast({
         title: "Eroare",
         description: "A apărut o eroare la crearea rezervării.",
         variant: "destructive",
       })
     } finally {
+      console.log(`🏁 [${uiProcessId}] UI process ended, resetting loading state`)
       setIsCreatingManual(false)
     }
   }
