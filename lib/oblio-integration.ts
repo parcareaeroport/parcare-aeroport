@@ -50,33 +50,53 @@ class OblioInvoiceService {
   // 1. Autentificare și obținere token
   private async authenticate(): Promise<string> {
     if (this.accessToken && Date.now() < this.tokenExpires) {
+      console.log('🔄 Using cached Oblio token');
       return this.accessToken;
     }
 
     try {
+      console.log('🔐 Attempting Oblio authentication...');
+      console.log('🔐 Client ID (email):', this.config.clientId ? 'SET' : 'NOT SET');
+      console.log('🔐 Client Secret:', this.config.clientSecret ? `SET (${this.config.clientSecret.length} chars)` : 'NOT SET');
+      console.log('🔐 Company CIF:', this.config.companyCif ? 'SET' : 'NOT SET');
+      
+      const authPayload = {
+        client_id: this.config.clientId,
+        client_secret: this.config.clientSecret,
+      };
+      
+      console.log('🔐 Auth payload prepared, sending request to Oblio...');
+      
       const response = await fetch('https://www.oblio.eu/api/authorize/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams({
-          client_id: this.config.clientId,
-          client_secret: this.config.clientSecret,
-        }),
+        body: new URLSearchParams(authPayload),
       });
 
+      console.log(`🔐 Oblio auth response status: ${response.status}`);
+      console.log(`🔐 Oblio auth response statusText: ${response.statusText}`);
+
       if (!response.ok) {
-        throw new Error(`Oblio authentication failed: ${response.status}`);
+        const errorText = await response.text();
+        console.error('❌ Oblio auth failed - Response body:', errorText);
+        throw new Error(`Oblio authentication failed: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('✅ Oblio auth successful, token received');
+      console.log('🔐 Token expires in:', data.expires_in, 'seconds');
+      
       this.accessToken = data.access_token;
       this.tokenExpires = Date.now() + (data.expires_in * 1000) - 60000; // -1 min pentru siguranță
 
-      console.log('✅ Oblio authentication successful');
       return this.accessToken!;
     } catch (error) {
       console.error('❌ Oblio authentication error:', error);
+      // Resetează cache-ul în caz de eroare
+      this.accessToken = null;
+      this.tokenExpires = 0;
       throw error;
     }
   }
