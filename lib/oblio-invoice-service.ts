@@ -14,6 +14,11 @@ interface OblioInvoiceData {
   companyVAT?: string;
   companyReg?: string;
   companyAddress?: string;
+  // Date adresă client individual
+  clientAddress?: string;
+  clientCity?: string;
+  clientCounty?: string;
+  clientCountry?: string;
 }
 
 interface OblioConfig {
@@ -69,7 +74,7 @@ class OblioInvoiceService {
       this.tokenExpires = Date.now() + (data.expires_in * 1000) - 60000; // -1 min pentru siguranță
 
       console.log('✅ Oblio authentication successful');
-      return this.accessToken;
+      return this.accessToken!; // Forțăm tipul fiindcă tocmai l-am setat
     } catch (error) {
       console.error('❌ Oblio authentication error:', error);
       throw error;
@@ -184,9 +189,13 @@ class OblioInvoiceService {
         save: 1, // Salvează clientul în baza de date Oblio
       };
     } else {
-      // Client individual
+      // Client individual - trimitem câmpurile separate pentru a fi procesate corect de Oblio
       return {
         name: invoiceData.clientName,
+        address: invoiceData.clientAddress || '', // Adresa principală (strada + numărul)
+        state: invoiceData.clientCounty || '', // Județul
+        city: invoiceData.clientCity || '', // Orașul/Localitatea
+        country: invoiceData.clientCountry || 'Romania', // Țara (default Romania)
         email: invoiceData.clientEmail,
         phone: invoiceData.clientPhone || '',
         vatPayer: false,

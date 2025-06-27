@@ -189,17 +189,13 @@ class OblioInvoiceService {
         save: 1, // Salvează clientul în baza de date Oblio
       };
     } else {
-      // Client individual - construim adresa completă pentru ANAF
-      const fullAddress = [
-        invoiceData.clientAddress,
-        invoiceData.clientCity,
-        invoiceData.clientCounty,
-        invoiceData.clientCountry
-      ].filter(Boolean).join(', ');
-
+      // Client individual - trimitem câmpurile separate pentru a fi procesate corect de Oblio
       return {
         name: invoiceData.clientName,
-        address: fullAddress || '', // Adresa completă necesară pentru ANAF
+        address: invoiceData.clientAddress || '', // Adresa principală (strada + numărul)
+        state: invoiceData.clientCounty || '', // Județul
+        city: invoiceData.clientCity || '', // Orașul/Localitatea
+        country: invoiceData.clientCountry || 'Romania', // Țara (default Romania)
         email: invoiceData.clientEmail,
         phone: invoiceData.clientPhone || '',
         vatPayer: false,

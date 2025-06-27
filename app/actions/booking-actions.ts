@@ -86,7 +86,7 @@ interface CompleteBookingData {
 }
 
 /**
- * Procesează QR code și email în background (non-blocking)
+ * Procesează generarea QR code-ului și trimiterea email-ului în background
  * Funcția rulează asincron fără să blocheze confirmarea rezervării
  */
 async function processQRAndEmailAsync(
@@ -94,15 +94,30 @@ async function processQRAndEmailAsync(
   initialDebugLogs: string[]
 ): Promise<void> {
   const backgroundLogs: string[] = [...initialDebugLogs]
+  const processId = `BGEMAIL_${bookingData.apiBookingNumber}_${Date.now()}`
   
   try {
-    console.log(`🔄 Background processing started for booking ${bookingData.apiBookingNumber}`)
+    console.log(`🔄 [${processId}] ===== BACKGROUND EMAIL PROCESSING STARTED =====`)
+    console.log(`🔄 [${processId}] Booking Number: ${bookingData.apiBookingNumber}`)
+    console.log(`🔄 [${processId}] Client Email: ${bookingData.clientEmail}`)
+    console.log(`🔄 [${processId}] License Plate: ${bookingData.licensePlate}`)
+    console.log(`🔄 [${processId}] Source: ${bookingData.source}`)
+    console.log(`🔄 [${processId}] Status: ${bookingData.status}`)
+    console.log(`🔄 [${processId}] Payment Status: ${bookingData.paymentStatus}`)
+    console.log(`🔄 [${processId}] Amount: ${bookingData.amount} RON`)
+    console.log(`🔄 [${processId}] Start Time: ${new Date().toISOString()}`)
     
     // Generează QR code-ul pentru Multipark
     backgroundLogs.push(`🔲 Generating QR code: MPK_RES=${bookingData.apiBookingNumber?.padStart(6, '0')}`)
+    console.log(`🔲 [${processId}] Generating QR code: MPK_RES=${bookingData.apiBookingNumber?.padStart(6, '0')}`)
+    
+    const qrStartTime = Date.now()
     const qrCodeDataUrl = await generateMultiparkQR(bookingData.apiBookingNumber!)
+    const qrDuration = Date.now() - qrStartTime
+    
     backgroundLogs.push(`✅ QR code generated successfully`)
-    console.log(`✅ QR code generated for booking ${bookingData.apiBookingNumber}`)
+    console.log(`✅ [${processId}] QR code generated successfully in ${qrDuration}ms`)
+    console.log(`✅ [${processId}] QR Data URL length: ${qrCodeDataUrl.length} chars`)
     
     // Pregătește datele pentru email
     const emailData = {
@@ -123,19 +138,41 @@ async function processQRAndEmailAsync(
     }
     
     backgroundLogs.push(`📧 Email data prepared for ${emailData.clientEmail}`)
+    console.log(`📧 [${processId}] Email data prepared:`)
+    console.log(`📧 [${processId}]   Client: ${emailData.clientName}`)
+    console.log(`📧 [${processId}]   Email: ${emailData.clientEmail}`)
+    console.log(`📧 [${processId}]   Phone: ${emailData.clientPhone || 'N/A'}`)
+    console.log(`📧 [${processId}]   Booking: ${emailData.bookingNumber}`)
+    console.log(`📧 [${processId}]   Amount: ${emailData.amount} RON`)
+    console.log(`📧 [${processId}]   Days: ${emailData.days}`)
+    console.log(`📧 [${processId}]   Source: ${emailData.source}`)
+    console.log(`📧 [${processId}]   Status: ${emailData.status}`)
     
     // Trimite email-ul de confirmare
     backgroundLogs.push(`📧 Sending confirmation email to ${bookingData.clientEmail}`)
-    console.log(`📧 Sending email to ${bookingData.clientEmail} for booking ${bookingData.apiBookingNumber}`)
+    console.log(`📧 [${processId}] Starting email send process...`)
+    console.log(`📧 [${processId}] Target email: ${bookingData.clientEmail}`)
+    console.log(`📧 [${processId}] Email send timestamp: ${new Date().toISOString()}`)
     
+    const emailStartTime = Date.now()
     const emailResult = await sendBookingConfirmationEmail(emailData)
+    const emailDuration = Date.now() - emailStartTime
+    
+    console.log(`📧 [${processId}] Email send attempt completed in ${emailDuration}ms`)
+    console.log(`📧 [${processId}] Email result success: ${emailResult.success}`)
     
     if (emailResult.success) {
       backgroundLogs.push(`✅ Confirmation email sent successfully`)
-      console.log(`✅ Email sent successfully to ${bookingData.clientEmail} for booking ${bookingData.apiBookingNumber}`)
+      console.log(`✅ [${processId}] ===== EMAIL SENT SUCCESSFULLY =====`)
+      console.log(`✅ [${processId}] Email delivered to: ${bookingData.clientEmail}`)
+      console.log(`✅ [${processId}] Booking number: ${bookingData.apiBookingNumber}`)
+      console.log(`✅ [${processId}] Total duration: ${emailDuration}ms`)
+      console.log(`✅ [${processId}] Success timestamp: ${new Date().toISOString()}`)
       
       // Opțional: Actualizează statusul în Firestore pentru tracking
       try {
+        console.log(`📊 [${processId}] Updating Firestore with email success status...`)
+        
         // Găsește documentul rezervării și actualizează statusul email-ului
         const bookingsRef = collection(db, "bookings")
         const q = query(bookingsRef, 
@@ -150,21 +187,46 @@ async function processQRAndEmailAsync(
             emailSentAt: serverTimestamp(),
             emailStatus: "sent",
             qrCodeGenerated: true,
+            emailSendDuration: emailDuration,
             lastUpdated: serverTimestamp()
           })
-          console.log(`📊 Updated email status in Firestore for booking ${bookingData.apiBookingNumber}`)
+          console.log(`📊 [${processId}] Firestore updated successfully with email status`)
+          console.log(`📊 [${processId}] Document ID: ${bookingDoc.id}`)
+        } else {
+          console.warn(`⚠️ [${processId}] Booking document not found in Firestore for update`)
+          console.warn(`⚠️ [${processId}] Search criteria: apiBookingNumber=${bookingData.apiBookingNumber}, source=${bookingData.source}`)
         }
       } catch (firestoreError) {
-        console.error(`⚠️ Failed to update email status in Firestore:`, firestoreError)
+        console.error(`⚠️ [${processId}] Failed to update email status in Firestore:`, firestoreError)
+        console.error(`⚠️ [${processId}] Firestore error details:`, {
+          message: firestoreError instanceof Error ? firestoreError.message : String(firestoreError),
+          apiBookingNumber: bookingData.apiBookingNumber,
+          source: bookingData.source
+        })
         // Nu eșuăm procesul de email din cauza erorii Firestore
       }
       
     } else {
       backgroundLogs.push(`⚠️ Email failed: ${emailResult.error}`)
-      console.error(`❌ Email failed for booking ${bookingData.apiBookingNumber}:`, emailResult.error)
+      console.error(`❌ [${processId}] ===== EMAIL SEND FAILED =====`)
+      console.error(`❌ [${processId}] Error message: ${emailResult.error}`)
+      console.error(`❌ [${processId}] Target email: ${bookingData.clientEmail}`)
+      console.error(`❌ [${processId}] Booking number: ${bookingData.apiBookingNumber}`)
+      console.error(`❌ [${processId}] Attempt duration: ${emailDuration}ms`)
+      console.error(`❌ [${processId}] Failed timestamp: ${new Date().toISOString()}`)
+      console.error(`❌ [${processId}] Email data:`, {
+        clientName: emailData.clientName,
+        clientEmail: emailData.clientEmail,
+        bookingNumber: emailData.bookingNumber,
+        amount: emailData.amount,
+        source: emailData.source,
+        status: emailData.status
+      })
       
       // Opțional: Actualizează statusul de eșec în Firestore pentru retry later
       try {
+        console.log(`📊 [${processId}] Updating Firestore with email failure status...`)
+        
         const bookingsRef = collection(db, "bookings")
         const q = query(bookingsRef, 
           where("apiBookingNumber", "==", bookingData.apiBookingNumber),
@@ -177,20 +239,42 @@ async function processQRAndEmailAsync(
           await updateDoc(doc(db, "bookings", bookingDoc.id), {
             emailStatus: "failed",
             emailError: emailResult.error,
+            emailFailedAt: serverTimestamp(),
+            emailSendDuration: emailDuration,
             qrCodeGenerated: true, // QR a reușit
             lastUpdated: serverTimestamp()
           })
-          console.log(`📊 Updated email failure status in Firestore for booking ${bookingData.apiBookingNumber}`)
+          console.log(`📊 [${processId}] Firestore updated with email failure status`)
+          console.log(`📊 [${processId}] Document ID: ${bookingDoc.id}`)
+        } else {
+          console.warn(`⚠️ [${processId}] Booking document not found for failure update`)
         }
       } catch (firestoreError) {
-        console.error(`⚠️ Failed to update email failure status in Firestore:`, firestoreError)
+        console.error(`⚠️ [${processId}] Failed to update email failure status in Firestore:`, firestoreError)
       }
     }
+    
+    const totalDuration = Date.now() - (Date.now() - emailDuration - qrDuration)
+    console.log(`🏁 [${processId}] Background processing completed`)
+    console.log(`🏁 [${processId}] Total process duration: ${totalDuration}ms`)
+    console.log(`🏁 [${processId}] QR generation: ${qrDuration}ms`)
+    console.log(`🏁 [${processId}] Email sending: ${emailDuration}ms`)
+    console.log(`🏁 [${processId}] Final status: ${emailResult.success ? 'SUCCESS' : 'FAILED'}`)
+    console.log(`🏁 [${processId}] End timestamp: ${new Date().toISOString()}`)
     
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     backgroundLogs.push(`❌ QR/Email background error: ${errorMessage}`)
-    console.error(`❌ Background QR/Email processing failed for booking ${bookingData.apiBookingNumber}:`, errorMessage)
+    
+    console.error(`❌ [${processId}] ===== BACKGROUND PROCESSING FAILED =====`)
+    console.error(`❌ [${processId}] Error Type: ${error instanceof Error ? error.constructor.name : typeof error}`)
+    console.error(`❌ [${processId}] Error Message: ${errorMessage}`)
+    console.error(`❌ [${processId}] Error Stack:`, error instanceof Error ? error.stack : 'N/A')
+    console.error(`❌ [${processId}] Booking Number: ${bookingData.apiBookingNumber}`)
+    console.error(`❌ [${processId}] Client Email: ${bookingData.clientEmail}`)
+    console.error(`❌ [${processId}] Source: ${bookingData.source}`)
+    console.error(`❌ [${processId}] Failed timestamp: ${new Date().toISOString()}`)
+    
     throw error // Re-throw pentru catch-ul din funcția principală
   }
 }

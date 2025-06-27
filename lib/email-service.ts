@@ -206,44 +206,106 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
  * Trimite email de confirmare rezervare cu QR code
  */
 export async function sendBookingConfirmationEmail(bookingData: BookingEmailData): Promise<{ success: boolean, error?: string }> {
+  const emailProcessId = `${bookingData.bookingNumber}_${Date.now()}`
+  
   try {
-    console.log(`📧 Sending booking confirmation email to: ${bookingData.clientEmail}`)
+    console.log(`📧 [EMAIL-${emailProcessId}] ===== STARTING EMAIL PROCESS =====`)
+    console.log(`📧 [EMAIL-${emailProcessId}] Recipient: ${bookingData.clientEmail}`)
+    console.log(`📧 [EMAIL-${emailProcessId}] Booking Number: ${bookingData.bookingNumber}`)
+    console.log(`📧 [EMAIL-${emailProcessId}] License Plate: ${bookingData.licensePlate}`)
+    console.log(`📧 [EMAIL-${emailProcessId}] Source: ${bookingData.source}`)
+    console.log(`📧 [EMAIL-${emailProcessId}] Status: ${bookingData.status}`)
+    console.log(`📧 [EMAIL-${emailProcessId}] Amount: ${bookingData.amount} RON`)
+    console.log(`📧 [EMAIL-${emailProcessId}] Days: ${bookingData.days}`)
+    console.log(`📧 [EMAIL-${emailProcessId}] Start: ${bookingData.startDate} ${bookingData.startTime}`)
+    console.log(`📧 [EMAIL-${emailProcessId}] End: ${bookingData.endDate} ${bookingData.endTime}`)
+    console.log(`📧 [EMAIL-${emailProcessId}] Timestamp: ${new Date().toISOString()}`)
+    
+    // Validare configurație email
+    const emailConfig = validateEmailConfig()
+    if (!emailConfig.isValid) {
+      console.error(`❌ [EMAIL-${emailProcessId}] Email configuration invalid!`)
+      console.error(`❌ [EMAIL-${emailProcessId}] Missing variables: ${emailConfig.missingVars.join(', ')}`)
+      return { 
+        success: false, 
+        error: `Email configuration missing: ${emailConfig.missingVars.join(', ')}` 
+      }
+    }
+    console.log(`✅ [EMAIL-${emailProcessId}] Email configuration validated`)
+    console.log(`📧 [EMAIL-${emailProcessId}] Gmail User: ${process.env.GMAIL_USER ? 'SET' : 'NOT SET'}`)
+    console.log(`📧 [EMAIL-${emailProcessId}] Gmail Password: ${process.env.GMAIL_APP_PASSWORD ? 'SET (length=' + process.env.GMAIL_APP_PASSWORD.length + ')' : 'NOT SET'}`)
     
     // Generează QR code-ul ca buffer pentru atașament
+    console.log(`🔲 [EMAIL-${emailProcessId}] Generating QR code buffer...`)
     const qrBuffer = await generateMultiparkQRBuffer(bookingData.bookingNumber)
+    console.log(`✅ [EMAIL-${emailProcessId}] QR code generated, buffer size: ${qrBuffer.length} bytes`)
     
     // Logo eliminat din email-uri
     
     // Creează transporterul email
+    console.log(`🚀 [EMAIL-${emailProcessId}] Creating email transporter...`)
     const transporter = createEmailTransporter()
+    console.log(`✅ [EMAIL-${emailProcessId}] Email transporter created`)
     
     // Configurează email-ul
+    const formattedBookingNumber = bookingData.bookingNumber.padStart(6, '0')
     const mailOptions = {
       from: {
         name: 'Parcare-Aeroport Otopeni',
         address: process.env.GMAIL_USER || 'noreply@parcare-aeroport.ro'
       },
       to: bookingData.clientEmail,
-      subject: `Confirmare Rezervare Parcare - ${bookingData.bookingNumber.padStart(6, '0')}`,
+      subject: `Confirmare Rezervare Parcare - ${formattedBookingNumber}`,
       html: generateBookingEmailHTML(bookingData),
       attachments: [
         {
-          filename: `qr-code-${bookingData.bookingNumber.padStart(6, '0')}.png`,
+          filename: `qr-code-${formattedBookingNumber}.png`,
           content: qrBuffer,
           cid: 'qrcode', // Content ID pentru a fi referenciat în HTML
         }
       ]
     }
     
-    // Trimite email-ul
-    const result = await transporter.sendMail(mailOptions)
+    console.log(`📧 [EMAIL-${emailProcessId}] Email options configured:`)
+    console.log(`📧 [EMAIL-${emailProcessId}]   From: ${mailOptions.from.name} <${mailOptions.from.address}>`)
+    console.log(`📧 [EMAIL-${emailProcessId}]   To: ${mailOptions.to}`)
+    console.log(`📧 [EMAIL-${emailProcessId}]   Subject: ${mailOptions.subject}`)
+    console.log(`📧 [EMAIL-${emailProcessId}]   HTML Length: ${mailOptions.html.length} chars`)
+    console.log(`📧 [EMAIL-${emailProcessId}]   Attachments: ${mailOptions.attachments.length} files`)
+    console.log(`📧 [EMAIL-${emailProcessId}]   QR Attachment Size: ${qrBuffer.length} bytes`)
     
-    console.log(`✅ Email sent successfully to ${bookingData.clientEmail}. Message ID: ${result.messageId}`)
+    // Trimite email-ul
+    console.log(`🚀 [EMAIL-${emailProcessId}] Sending email via Gmail SMTP...`)
+    const sendStartTime = Date.now()
+    
+    const result = await transporter.sendMail(mailOptions)
+    const sendDuration = Date.now() - sendStartTime
+    
+    console.log(`✅ [EMAIL-${emailProcessId}] ===== EMAIL SENT SUCCESSFULLY =====`)
+    console.log(`✅ [EMAIL-${emailProcessId}] Message ID: ${result.messageId}`)
+    console.log(`✅ [EMAIL-${emailProcessId}] Response: ${result.response}`)
+    console.log(`✅ [EMAIL-${emailProcessId}] Send Duration: ${sendDuration}ms`)
+    console.log(`✅ [EMAIL-${emailProcessId}] Final Status: SUCCESS`)
+    console.log(`✅ [EMAIL-${emailProcessId}] Timestamp: ${new Date().toISOString()}`)
+    console.log(`✅ [EMAIL-${emailProcessId}] Recipient Confirmed: ${bookingData.clientEmail}`)
+    console.log(`✅ [EMAIL-${emailProcessId}] Booking Confirmed: ${formattedBookingNumber}`)
     
     return { success: true }
     
   } catch (error) {
-    console.error('❌ Error sending booking confirmation email:', error)
+    console.error(`❌ [EMAIL-${emailProcessId}] ===== EMAIL FAILED =====`)
+    console.error(`❌ [EMAIL-${emailProcessId}] Error Type: ${error instanceof Error ? error.constructor.name : typeof error}`)
+    console.error(`❌ [EMAIL-${emailProcessId}] Error Message: ${error instanceof Error ? error.message : String(error)}`)
+    console.error(`❌ [EMAIL-${emailProcessId}] Error Code: ${(error as any)?.code || 'N/A'}`)
+    console.error(`❌ [EMAIL-${emailProcessId}] Error Errno: ${(error as any)?.errno || 'N/A'}`)
+    console.error(`❌ [EMAIL-${emailProcessId}] Error Syscall: ${(error as any)?.syscall || 'N/A'}`)
+    console.error(`❌ [EMAIL-${emailProcessId}] Error Stack:`, error instanceof Error ? error.stack : 'N/A')
+    console.error(`❌ [EMAIL-${emailProcessId}] Timestamp: ${new Date().toISOString()}`)
+    console.error(`❌ [EMAIL-${emailProcessId}] Target Email: ${bookingData.clientEmail}`)
+    console.error(`❌ [EMAIL-${emailProcessId}] Booking Number: ${bookingData.bookingNumber}`)
+    console.error(`❌ [EMAIL-${emailProcessId}] Gmail User Config: ${process.env.GMAIL_USER ? 'SET' : 'NOT SET'}`)
+    console.error(`❌ [EMAIL-${emailProcessId}] Gmail Pass Config: ${process.env.GMAIL_APP_PASSWORD ? 'SET' : 'NOT SET'}`)
+    
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Unknown email error' 

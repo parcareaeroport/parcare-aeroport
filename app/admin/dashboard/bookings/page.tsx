@@ -609,7 +609,7 @@ function BookingsPageContent() {
           <div className="flex gap-2 w-full sm:w-auto">
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full sm:w-auto">
+                <Button variant="outline" className="w-full sm:w-auto hover:text-white">
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {dateFilter ? formatDateFn(dateFilter, "PPP", { locale: ro }) : "Filtrează după dată"}
                 </Button>
@@ -626,6 +626,7 @@ function BookingsPageContent() {
                   setStatusFilter("all")
                   setDateFilter(undefined)
                 }}
+                className="hover:text-white"
               >
                 Resetează
               </Button>
