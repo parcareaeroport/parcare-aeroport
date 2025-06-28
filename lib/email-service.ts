@@ -135,7 +135,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
           
           <div class="qr-section">
             <h3>Cod QR pentru Acces</h3>
-            <p>Prezentați acest cod QR la bariera de acces:</p>
+            <p>Pentru accesul în parcare puteți folosi codul QR de mai jos!</p>
             <img src="cid:qrcode" alt="QR Code pentru acces" class="qr-code" />
             <p><small>Cod QR: MPK_RES=${formattedBookingNumber}</small></p>
           </div>

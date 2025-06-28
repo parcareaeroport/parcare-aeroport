@@ -105,6 +105,7 @@ class OblioInvoiceService {
   async generateInvoice(invoiceData: OblioInvoiceData): Promise<{ success: boolean; invoiceNumber?: string; invoiceUrl?: string; error?: string }> {
     try {
       console.log('🧾 Generând factură Oblio pentru rezervarea:', invoiceData.bookingId);
+      console.log('📧 Oblio va trimite automat factura pe email:', invoiceData.clientEmail);
 
       const token = await this.authenticate();
 
@@ -133,6 +134,7 @@ class OblioInvoiceService {
           numar: result.data.number,
           link: result.data.link,
         });
+        console.log('📧 Email cu factura trimis automat către:', invoiceData.clientEmail);
 
         return {
           success: true,
@@ -166,6 +168,7 @@ class OblioInvoiceService {
       language: 'RO',
       precision: 2,
       currency: 'RON',
+      sendEmail: 1, // Trimite automat factura pe email
       products: [
         {
           name: `Servicii parcare autovehicul ${invoiceData.licensePlate}`,

@@ -1091,6 +1091,20 @@ export default function OrderPlacementForm() {
                       />
                     </div>
 
+                    <div>
+                      <Label htmlFor="numberOfPersons">Număr persoane</Label>
+                      <Input
+                        id="numberOfPersons"
+                        type="number"
+                        min="1"
+                        max="10"
+                        placeholder="1"
+                        required
+                        value={numberOfPersons}
+                        onChange={(e) => setNumberOfPersons(e.target.value)}
+                      />
+                    </div>
+
                     {!isTestMode && (
                       <>
                         <div>

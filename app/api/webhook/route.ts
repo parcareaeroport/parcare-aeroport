@@ -126,7 +126,7 @@ export async function POST(req: Request) {
       console.log(`🚀 [${webhookProcessId}] Calling createBookingWithFirestore...`)
       
       const bookingStartTime = Date.now()
-      
+
       // Folosim noua funcție care salvează totul în Firestore
       const bookingResult = await createBookingWithFirestore(formData, {
         clientEmail: bookingMetadata.customerEmail,

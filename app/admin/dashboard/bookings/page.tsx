@@ -16,6 +16,7 @@ import {
   orderBy,
   type Timestamp, // Import Timestamp
   increment,
+  serverTimestamp,
 } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -61,6 +62,7 @@ interface Booking {
   durationMinutes: number
   days?: number
   amount?: number
+  numberOfPersons?: number
   
   // Date pentru facturare (persoană juridică)
   company?: string
@@ -79,6 +81,7 @@ interface Booking {
   // Status și plată
   status: "confirmed_test" | "confirmed_paid" | "cancelled_by_admin" | "cancelled_by_api" | "api_error" | "expired" | string
   paymentStatus?: "paid" | "pending" | "refunded" | "n/a"
+  manualPaymentStatus?: "not_paid" | "partial" | "paid" | "refunded" // Pentru rezervările manuale
   paymentIntentId?: string
   
   // Date API externe
@@ -121,6 +124,10 @@ function BookingsPageContent() {
   const [isSendingEmail, setIsSendingEmail] = useState(false)
   const [sendingEmailBookingId, setSendingEmailBookingId] = useState<string | null>(null)
   
+  // State pentru actualizarea statusului de plată manual
+  const [isUpdatingPayment, setIsUpdatingPayment] = useState(false)
+  const [updatingPaymentBookingId, setUpdatingPaymentBookingId] = useState<string | null>(null)
+  
   // State pentru adăugarea manuală de rezervări
   const [isManualDialogOpen, setIsManualDialogOpen] = useState(false)
   const [isCreatingManual, setIsCreatingManual] = useState(false)
@@ -134,6 +141,45 @@ function BookingsPageContent() {
   const [manualClientEmail, setManualClientEmail] = useState("")
   const [manualNumberOfPersons, setManualNumberOfPersons] = useState("1")
   const [manualDuplicateError, setManualDuplicateError] = useState<string | null>(null)
+  
+  // State pentru logul vizual al răspunsului API multipark
+  const [apiLogData, setApiLogData] = useState<{
+    isVisible: boolean
+    request?: {
+      url: string
+      payload: string
+      timestamp: string
+    }
+    response?: {
+      status: number
+      body: string
+      success: boolean
+      errorCode?: string
+      message?: string
+      timestamp: string
+    }
+  }>({ isVisible: false })
+
+  // State pentru dialogul de email după rezervare manuală
+  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false)
+  const [newBookingForEmail, setNewBookingForEmail] = useState<{
+    bookingId: string
+    apiBookingNumber: string
+    clientEmail: string
+    clientName: string
+    licensePlate: string
+  } | null>(null)
+
+  // State pentru dialogul de recovery success
+  const [isRecoverySuccessDialogOpen, setIsRecoverySuccessDialogOpen] = useState(false)
+  const [recoverySuccessData, setRecoverySuccessData] = useState<{
+    bookingNumber: string
+    licensePlate: string
+    clientName: string
+    apiMessage: string
+    originalErrorCode?: string
+    originalError?: string
+  } | null>(null)
 
   const fetchBookings = async () => {
     setIsLoading(true)
@@ -181,7 +227,12 @@ function BookingsPageContent() {
       )
     }
     if (statusFilter !== "all") {
-      filtered = filtered.filter((b) => b.status === statusFilter)
+      if (statusFilter === "manual") {
+        // Filtrare specială pentru rezervările manuale
+        filtered = filtered.filter((b) => b.source === "manual")
+      } else {
+        filtered = filtered.filter((b) => b.status === statusFilter)
+      }
     }
     if (dateFilter) {
       const filterDateStr = formatDateFn(dateFilter, "yyyy-MM-dd")
@@ -257,18 +308,35 @@ function BookingsPageContent() {
 
     setIsRecovering(true)
     try {
+      console.log(`🔄 Starting recovery for booking ${booking.id} (${booking.licensePlate})`)
+      console.log(`🔄 Original error: ${booking.apiMessage}`)
+      console.log(`🔄 Original error code: ${booking.apiErrorCode}`)
+      
       const result = await recoverSpecificBooking(booking.id)
       
       if (result.success) {
-        toast({
-          title: "Recovery Reușit",
-          description: `Rezervarea a fost recuperată cu numărul ${result.bookingNumber}`,
+        console.log(`✅ Recovery successful! New booking number: ${result.bookingNumber}`)
+        
+        // Pregătește datele pentru dialogul de success
+        setRecoverySuccessData({
+          bookingNumber: result.bookingNumber!,
+          licensePlate: booking.licensePlate,
+          clientName: booking.clientName || 'Client',
+          apiMessage: "Rezervarea a fost creată cu succes în API multipark!",
+          originalErrorCode: booking.apiErrorCode,
+          originalError: booking.apiMessage
         })
         
-        fetchBookings() // Reîncarcă lista
+        // Afișează dialogul de success
+        setIsRecoverySuccessDialogOpen(true)
+        
+        // Reîncarcă lista
+        fetchBookings()
         if (isViewDialogOpen) setIsViewDialogOpen(false)
         
       } else {
+        console.error(`❌ Recovery failed: ${result.message}`)
+        
         toast({
           title: "Recovery Eșuat",
           description: result.message,
@@ -441,6 +509,13 @@ function BookingsPageContent() {
       console.log(`🏗️ [${uiProcessId}] FormData prepared with all fields`)
       console.log(`🏗️ [${uiProcessId}] Calling createManualBooking server action...`)
       
+      // Afișează logul de început API
+      setApiLogData({
+        isVisible: true,
+        request: undefined,
+        response: undefined
+      })
+      
       const createStartTime = Date.now()
       const result = await createManualBooking(formData)
       const createDuration = Date.now() - createStartTime
@@ -448,6 +523,16 @@ function BookingsPageContent() {
       console.log(`🏗️ [${uiProcessId}] Server action completed in ${createDuration}ms`)
       console.log(`🏗️ [${uiProcessId}] Result success: ${result.success}`)
       console.log(`🏗️ [${uiProcessId}] Result message: ${result.message}`)
+
+      // Actualizează logul cu detaliile API dacă sunt disponibile
+      if ((result as any).apiDetails) {
+        console.log(`📊 [${uiProcessId}] API Details available, updating visual log`)
+        setApiLogData({
+          isVisible: true,
+          request: (result as any).apiDetails.request,
+          response: (result as any).apiDetails.response
+        })
+      }
 
       if (result.success) {
         console.log(`✅ [${uiProcessId}] ===== MANUAL BOOKING CREATED SUCCESSFULLY =====`)
@@ -462,6 +547,32 @@ function BookingsPageContent() {
 
         console.log(`🧹 [${uiProcessId}] Resetting form fields...`)
 
+        // Închide dialogul manual
+        setApiLogData({ isVisible: false })
+        setIsManualDialogOpen(false)
+
+        // Verifică dacă se poate trimite email
+        const hasEmail = manualClientEmail && manualClientEmail.trim() !== ''
+        const hasApiBookingNumber = (result as any).apiBookingNumber
+
+        if (hasEmail && hasApiBookingNumber) {
+          console.log(`📧 [${uiProcessId}] Email available, showing email dialog...`)
+          
+          // Pregătește datele pentru dialogul de email
+          setNewBookingForEmail({
+            bookingId: (result as any).bookingId,
+            apiBookingNumber: (result as any).apiBookingNumber,
+            clientEmail: manualClientEmail,
+            clientName: manualClientName || 'Client',
+            licensePlate: manualLicensePlate
+          })
+          
+          // Afișează dialogul de email
+          setIsEmailDialogOpen(true)
+        } else {
+          console.log(`📧 [${uiProcessId}] Email not available: hasEmail=${hasEmail}, hasApiBookingNumber=${hasApiBookingNumber}`)
+        }
+
         // Resetează formularul
         setManualLicensePlate("")
         setManualStartDate(new Date())
@@ -473,7 +584,6 @@ function BookingsPageContent() {
         setManualClientEmail("")
         setManualNumberOfPersons("1")
         setManualDuplicateError(null)
-        setIsManualDialogOpen(false)
 
         console.log(`🔄 [${uiProcessId}] Refreshing bookings list...`)
 
@@ -516,6 +626,52 @@ function BookingsPageContent() {
     } finally {
       console.log(`🏁 [${uiProcessId}] UI process ended, resetting loading state`)
       setIsCreatingManual(false)
+    }
+  }
+
+  const handleSendEmailFromNewBooking = async () => {
+    if (!newBookingForEmail) return
+
+    setIsSendingEmail(true)
+    setSendingEmailBookingId(newBookingForEmail.bookingId)
+    
+    try {
+      console.log(`📧 Sending email for new manual booking: ${newBookingForEmail.bookingId}`)
+      
+      const result = await sendManualBookingEmail(newBookingForEmail.bookingId)
+      
+      if (result.success) {
+        toast({
+          title: "Email trimis",
+          description: `Email-ul a fost trimis cu succes către ${newBookingForEmail.clientEmail}`,
+          variant: "default",
+        })
+        
+        console.log(`✅ Email sent successfully to ${newBookingForEmail.clientEmail}`)
+      } else {
+        toast({
+          title: "Eroare la trimiterea email-ului",
+          description: result.message,
+          variant: "destructive",
+        })
+        
+        console.error(`❌ Email failed: ${result.message}`)
+      }
+    } catch (error) {
+      console.error("Send email error:", error)
+      toast({ 
+        title: "Eroare", 
+        description: "Eroare la trimiterea email-ului. Încercați din nou.", 
+        variant: "destructive" 
+      })
+    } finally {
+      setIsSendingEmail(false)
+      setSendingEmailBookingId(null)
+      setIsEmailDialogOpen(false)
+      setNewBookingForEmail(null)
+      
+      // Refresh lista pentru a vedea statusul email-ului actualizat
+      await fetchBookings()
     }
   }
 
@@ -572,10 +728,49 @@ function BookingsPageContent() {
     }
   }
 
+  const handleUpdateManualPaymentStatus = async (booking: Booking, newStatus: string) => {
+    setIsUpdatingPayment(true)
+    setUpdatingPaymentBookingId(booking.id)
+    
+    try {
+      const bookingRef = doc(db, 'bookings', booking.id)
+      await updateDoc(bookingRef, {
+        manualPaymentStatus: newStatus,
+        lastUpdated: serverTimestamp()
+      })
+      
+      const statusLabels = {
+        'not_paid': 'Nu este plătită',
+        'partial': 'Parțial plătită', 
+        'paid': 'Plătită',
+        'refunded': 'Rambursată'
+      }
+      
+      toast({
+        title: "Status actualizat",
+        description: `Statusul plății a fost schimbat în "${statusLabels[newStatus as keyof typeof statusLabels]}"`,
+        variant: "default",
+      })
+      
+      // Refresh lista pentru a vedea statusul actualizat
+      await fetchBookings()
+    } catch (error) {
+      console.error("Update payment status error:", error)
+      toast({ 
+        title: "Eroare", 
+        description: "Eroare la actualizarea statusului plății. Încercați din nou.", 
+        variant: "destructive" 
+      })
+    } finally {
+      setIsUpdatingPayment(false)
+      setUpdatingPaymentBookingId(null)
+    }
+  }
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed_paid":
-        return <Badge className="bg-green-100 text-green-800">Confirmat (Plătit)</Badge>
+        return <Badge className="bg-green-100 text-green-800">Confirmat</Badge>
       case "confirmed_test":
         return <Badge className="bg-blue-100 text-blue-800">Confirmat (Test)</Badge>
       case "cancelled_by_admin":
@@ -605,6 +800,79 @@ function BookingsPageContent() {
       default:
         return <Badge className="bg-gray-500">{status}</Badge>
     }
+  }
+
+  const getManualPaymentStatusBadge = (booking: Booking) => {
+    const status = booking.manualPaymentStatus || "not_paid"
+    
+    switch (status) {
+      case "not_paid":
+        return <Badge className="bg-red-500 text-white">Nu este plătită</Badge>
+      case "partial":
+        return <Badge className="bg-yellow-500 text-white">Parțial plătită</Badge>
+      case "paid":
+        return <Badge className="bg-green-500 text-white">Plătită</Badge>
+      case "refunded":
+        return <Badge className="bg-blue-500 text-white">Rambursată</Badge>
+      default:
+        return <Badge className="bg-gray-500 text-white">Nu este plătită</Badge>
+    }
+  }
+
+  const renderPaymentStatusCell = (booking: Booking) => {
+    // Pentru rezervările manuale, afișăm dropdown-ul editabil
+    if (booking.source === "manual") {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-auto p-1 hover:bg-transparent"
+              disabled={isUpdatingPayment && updatingPaymentBookingId === booking.id}
+            >
+              {isUpdatingPayment && updatingPaymentBookingId === booking.id ? (
+                <div className="flex items-center">
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                  <span className="text-xs">Actualizare...</span>
+                </div>
+              ) : (
+                getManualPaymentStatusBadge(booking)
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem 
+              onClick={() => handleUpdateManualPaymentStatus(booking, "not_paid")}
+              disabled={isUpdatingPayment}
+            >
+              <Badge className="bg-red-500 text-white mr-2 w-24 justify-center">Nu este plătită</Badge>
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => handleUpdateManualPaymentStatus(booking, "partial")}
+              disabled={isUpdatingPayment}
+            >
+              <Badge className="bg-yellow-500 text-white mr-2 w-24 justify-center">Parțial plătită</Badge>
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => handleUpdateManualPaymentStatus(booking, "paid")}
+              disabled={isUpdatingPayment}
+            >
+              <Badge className="bg-green-500 text-white mr-2 w-24 justify-center">Plătită</Badge>
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => handleUpdateManualPaymentStatus(booking, "refunded")}
+              disabled={isUpdatingPayment}
+            >
+              <Badge className="bg-blue-500 text-white mr-2 w-24 justify-center">Rambursată</Badge>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    }
+    
+    // Pentru rezervările normale (webhook/test), afișăm badge-ul simplu
+    return getPaymentStatusBadge(booking.paymentStatus)
   }
 
   if (authLoading || isLoading) {
@@ -659,6 +927,9 @@ function BookingsPageContent() {
           </TabsTrigger>
           <TabsTrigger value="confirmed_test" onClick={() => setStatusFilter("confirmed_test")}>
             Confirmate (Test)
+          </TabsTrigger>
+          <TabsTrigger value="manual" onClick={() => setStatusFilter("manual")}>
+            <span className="text-pink-700">Manual</span>
           </TabsTrigger>
           <TabsTrigger value="cancelled_by_admin" onClick={() => setStatusFilter("cancelled_by_admin")}>
             Anulate
@@ -735,8 +1006,16 @@ function BookingsPageContent() {
                   </TableRow>
                 ) : (
                   filteredBookings.map((booking) => (
-                    <TableRow key={booking.id}>
+                    <TableRow 
+                      key={booking.id}
+                      className={booking.source === "manual" ? "bg-pink-50 hover:bg-pink-100 border-l-4 border-l-pink-400" : ""}
+                    >
                       <TableCell className="font-medium">
+                        {booking.source === "manual" && (
+                          <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 mr-2 text-xs">
+                            MANUAL
+                          </Badge>
+                        )}
                         {booking.apiBookingNumber || booking.id.substring(0, 6)}
                       </TableCell>
                       <TableCell>{booking.licensePlate}</TableCell>
@@ -746,7 +1025,7 @@ function BookingsPageContent() {
                         {formatDateFn(parseISO(booking.endDate), "dd MMM", { locale: ro })} {booking.endTime}
                       </TableCell>
                       <TableCell>{getStatusBadge(booking.status)}</TableCell>
-                      <TableCell>{getPaymentStatusBadge(booking.paymentStatus)}</TableCell>
+                      <TableCell>{renderPaymentStatusCell(booking)}</TableCell>
                       <TableCell>
                         {booking.createdAt
                           ? formatDateFn(booking.createdAt.toDate(), "dd MMM yyyy, HH:mm", { locale: ro })
@@ -885,6 +1164,9 @@ function BookingsPageContent() {
                   <p>
                     <strong>Telefon:</strong> {selectedBooking.clientPhone || "N/A"}
                   </p>
+                  <p>
+                    <strong>Număr persoane:</strong> {selectedBooking.numberOfPersons || "N/A"}
+                  </p>
                   {selectedBooking.address && (
                     <p>
                       <strong>Adresă:</strong> {selectedBooking.address}
@@ -927,15 +1209,34 @@ function BookingsPageContent() {
                 
                 <h3 className="text-lg font-medium mt-4 mb-2 text-gray-800">Informații Plată</h3>
                 <div className="space-y-1 text-sm">
-                  <p>
-                    <strong>Status Plată:</strong> {getPaymentStatusBadge(selectedBooking.paymentStatus)}
-                  </p>
-                  <p>
-                    <strong>Sumă:</strong> {selectedBooking.amount ? `${selectedBooking.amount.toFixed(2)} RON` : "N/A"}
-                  </p>
-                  <p>
-                    <strong>ID Tranzacție Stripe:</strong> {selectedBooking.paymentIntentId || "N/A"}
-                  </p>
+                  {selectedBooking.source === "manual" ? (
+                    <>
+                      <p>
+                        <strong>Tip Rezervare:</strong> <Badge className="bg-pink-100 text-pink-700 border-pink-400">Manual</Badge>
+                      </p>
+                      <p>
+                        <strong>Status Plată Manual:</strong> {getManualPaymentStatusBadge(selectedBooking)}
+                      </p>
+                      <p>
+                        <strong>Sumă:</strong> {selectedBooking.amount ? `${selectedBooking.amount.toFixed(2)} RON` : "0.00 RON (Fără cost)"}
+                      </p>
+                      <p className="text-gray-600 text-xs italic">
+                        * Pentru rezervările manuale, statusul plății se actualizează manual prin tab-ul principal.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p>
+                        <strong>Status Plată:</strong> {getPaymentStatusBadge(selectedBooking.paymentStatus)}
+                      </p>
+                      <p>
+                        <strong>Sumă:</strong> {selectedBooking.amount ? `${selectedBooking.amount.toFixed(2)} RON` : "N/A"}
+                      </p>
+                      <p>
+                        <strong>ID Tranzacție Stripe:</strong> {selectedBooking.paymentIntentId || "N/A"}
+                      </p>
+                    </>
+                  )}
                   {selectedBooking.orderNotes && (
                     <p>
                       <strong>Observații:</strong> {selectedBooking.orderNotes}
@@ -1027,7 +1328,10 @@ function BookingsPageContent() {
       </Dialog>
 
       {/* Modal pentru adăugarea manuală de rezervări */}
-      <Dialog open={isManualDialogOpen} onOpenChange={setIsManualDialogOpen}>
+      <Dialog open={isManualDialogOpen} onOpenChange={(open) => {
+        if (!open) setApiLogData({ isVisible: false })
+        setIsManualDialogOpen(open)
+      }}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Adaugă Rezervare Manual</DialogTitle>
@@ -1159,8 +1463,111 @@ function BookingsPageContent() {
               </div>
             </div>
 
+            {/* Secțiunea pentru logul vizual al API-ului multipark */}
+            {apiLogData.isVisible && (
+              <div className="mt-6 border-t pt-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Log API Multipark
+                  </h3>
+                </div>
+                
+                <div className="space-y-4 max-h-80 overflow-y-auto">
+                  {/* Request Section */}
+                  {apiLogData.request && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <h4 className="font-medium text-blue-800">
+                          📤 Request către {apiLogData.request.url}
+                        </h4>
+                      </div>
+                      <div className="text-xs text-blue-600 mb-2">
+                        ⏰ {apiLogData.request.timestamp}
+                      </div>
+                      <div className="bg-white border border-blue-200 rounded p-2">
+                        <pre className="text-xs text-gray-700 whitespace-pre-wrap">
+                          {apiLogData.request.payload}
+                        </pre>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Response Section */}
+                  {apiLogData.response && (
+                    <div className={`border rounded-lg p-3 ${
+                      apiLogData.response.success 
+                        ? 'bg-green-50 border-green-200' 
+                        : 'bg-red-50 border-red-200'
+                    }`}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className={`w-2 h-2 rounded-full ${
+                          apiLogData.response.success ? 'bg-green-500' : 'bg-red-500'
+                        }`}></div>
+                        <h4 className={`font-medium ${
+                          apiLogData.response.success ? 'text-green-800' : 'text-red-800'
+                        }`}>
+                          📥 Response - Status {apiLogData.response.status} {
+                            apiLogData.response.success ? '✅' : '❌'
+                          }
+                        </h4>
+                      </div>
+                      <div className={`text-xs mb-2 ${
+                        apiLogData.response.success ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        ⏰ {apiLogData.response.timestamp}
+                      </div>
+                      
+                      {/* Success/Error Summary */}
+                      <div className={`mb-2 p-2 rounded text-sm ${
+                        apiLogData.response.success 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        <strong>
+                          {apiLogData.response.success ? '🎉 Success: ' : '⚠️ Error: '}
+                        </strong>
+                        {apiLogData.response.message}
+                        {apiLogData.response.errorCode && (
+                          <span className="ml-2 text-xs">
+                            (Code: {apiLogData.response.errorCode})
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Raw Response */}
+                      <div className="bg-white border rounded p-2">
+                        <div className="text-xs font-medium text-gray-600 mb-1">
+                          Raw Response:
+                        </div>
+                        <pre className="text-xs text-gray-700 whitespace-pre-wrap max-h-40 overflow-y-auto">
+                          {apiLogData.response.body}
+                        </pre>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Loading state când avem doar request */}
+                  {apiLogData.request && !apiLogData.response && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                        <span className="text-yellow-800 font-medium">
+                          Se așteaptă răspunsul de la serverul multipark...
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsManualDialogOpen(false)}>
+              <Button type="button" variant="outline" onClick={() => {
+                setApiLogData({ isVisible: false })
+                setIsManualDialogOpen(false)
+              }}>
                 Anulează
               </Button>
               <Button type="submit" disabled={isCreatingManual}>
@@ -1175,6 +1582,162 @@ function BookingsPageContent() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog pentru trimiterea email-ului după rezervare manuală */}
+      <Dialog open={isEmailDialogOpen} onOpenChange={(open) => {
+        if (!open) {
+          setIsEmailDialogOpen(false)
+          setNewBookingForEmail(null)
+        }
+      }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-blue-600" />
+              Trimite Email de Confirmare?
+            </DialogTitle>
+          </DialogHeader>
+          
+          {newBookingForEmail && (
+            <div className="space-y-4">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="font-medium text-green-800">
+                    Rezervarea a fost creată cu succes!
+                  </span>
+                </div>
+                <div className="text-sm text-green-700 space-y-1">
+                  <p><strong>Număr rezervare:</strong> {newBookingForEmail.apiBookingNumber}</p>
+                  <p><strong>Auto:</strong> {newBookingForEmail.licensePlate}</p>
+                  <p><strong>Client:</strong> {newBookingForEmail.clientName}</p>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Mail className="h-4 w-4 text-blue-600" />
+                  <span className="font-medium text-blue-800">
+                    Email disponibil
+                  </span>
+                </div>
+                <p className="text-sm text-blue-700">
+                  <strong>Destinatar:</strong> {newBookingForEmail.clientEmail}
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  Email-ul va conține QR code-ul pentru intrarea în parcare.
+                </p>
+              </div>
+
+              <div className="text-sm text-gray-600">
+                Doriți să trimiteți email-ul de confirmare acum?
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => {
+                setIsEmailDialogOpen(false)
+                setNewBookingForEmail(null)
+              }}
+              disabled={isSendingEmail}
+            >
+              Nu trimite
+            </Button>
+            <Button 
+              type="button" 
+              onClick={handleSendEmailFromNewBooking}
+              disabled={isSendingEmail}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {isSendingEmail ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Se trimite...
+                </>
+              ) : (
+                <>
+                  <Mail className="mr-2 h-4 w-4" />
+                  Trimite Email
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog pentru confirmarea succesului recovery-ului */}
+      <Dialog open={isRecoverySuccessDialogOpen} onOpenChange={(open) => {
+        if (!open) {
+          setIsRecoverySuccessDialogOpen(false)
+          setRecoverySuccessData(null)
+        }
+      }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+              </div>
+              Recovery Multipark Reușit!
+            </DialogTitle>
+          </DialogHeader>
+          
+          {recoverySuccessData && (
+            <div className="space-y-4">
+              {/* Success Summary */}
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="font-semibold text-green-800">
+                    ✅ Rezervarea a fost trimisă cu succes la API Multipark
+                  </span>
+                </div>
+                <div className="text-sm text-green-700 space-y-1">
+                  <p><strong>Număr rezervare nou:</strong> {recoverySuccessData.bookingNumber}</p>
+                  <p><strong>Auto:</strong> {recoverySuccessData.licensePlate}</p>
+                  <p><strong>Client:</strong> {recoverySuccessData.clientName}</p>
+                </div>
+              </div>
+
+             
+
+              {/* What happens next */}
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-4 h-4 bg-gray-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs">i</span>
+                  </div>
+                  <span className="font-medium text-gray-800">
+                    Ce urmează
+                  </span>
+                </div>
+                <div className="text-sm text-gray-700 space-y-1">
+                  <p>✅ Rezervarea este acum activă în sistemul multipark</p>
+                  <p>✅ QR code-ul este disponibil pentru trimiterea email-ului</p>
+                  <p>✅ Statusul rezervării a fost actualizat la "Confirmat"</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button 
+              type="button" 
+              onClick={() => {
+                setIsRecoverySuccessDialogOpen(false)
+                setRecoverySuccessData(null)
+              }}
+              className="w-full bg-green-600 hover:bg-green-700"
+            >
+              Perfect! Închide
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

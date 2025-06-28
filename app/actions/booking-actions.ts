@@ -1053,7 +1053,8 @@ export async function createManualBooking(formData: FormData) {
       days,
       amount: 0, // Fără cost - adăugată manual de operator
       status: 'confirmed_paid', // Status pentru rezervări reale manuale
-      paymentStatus: 'paid', // Considerată plătită (adăugată de operator)
+      paymentStatus: 'n/a', // Nu este relevantă pentru rezervările manuale
+      manualPaymentStatus: 'not_paid', // Inițial nu este plătită - va fi actualizată manual
       source: 'manual',
       numberOfPersons,
       apiSuccess: false, // Se va actualiza după apelul API
@@ -1083,27 +1084,37 @@ export async function createManualBooking(formData: FormData) {
 
     console.log(`🌐 [${manualProcessId}] ===== CALLING PARKING API =====`)
 
-    // 2. TRIMITE LA API-UL DE PARCARE
-    const xmlPayload = `<?xml version="1.0" encoding="UTF-8"?>
-    <multipark>
-      <login>
-        <username>${API_CONFIG.username}</username>
-        <password>${API_CONFIG.password}</password>
-      </login>
-      <booking>
-        <multiparkid>${API_CONFIG.multiparkId}</multiparkid>
-        <bookingnumber>${bookingNumber}</bookingnumber>
-        <licensePlate>${licensePlate.toUpperCase()}</licensePlate>
-        <startdate>${startDate}</startdate>
-        <starttime>${startTime}</starttime>
-        <enddate>${endDate}</enddate>
-        <endtime>${endTime}</endtime>
-        <clientname>${clientName}</clientname>
-        <clientphone>${clientPhone}</clientphone>
-        <clientemail>${clientEmail}</clientemail>
-        <numberofpersons>${numberOfPersons}</numberofpersons>
-      </booking>
-    </multipark>`
+    // 2. TRIMITE LA API-UL DE PARCARE (folosește același format ca test API)
+    
+    // Formatare dată de început în formatul cerut: YYYY/MM/DD HH:mm:SS
+    const startDateObj = new Date(`${startDate}T${startTime}:00`)
+    const formattedStartDate = startDateObj
+      .toISOString()
+      .replace(/T/, " ")
+      .replace(/-/g, "/")
+      .replace(/\.\d+Z$/, "")
+
+         // Calculează durata în minute pentru API
+     const apiStartDateTime = new Date(`${startDate}T${startTime}:00`)
+     const apiEndDateTime = new Date(`${endDate}T${endTime}:00`)
+     const apiDurationMinutes = Math.round((apiEndDateTime.getTime() - apiStartDateTime.getTime()) / (1000 * 60))
+
+     // XML payload în același format ca test API (format care funcționează)
+     const xmlPayload = `
+       <WSRequestBookingSubmitV1>
+         <MultiparkId>${API_CONFIG.multiparkId}</MultiparkId>
+         <OperationType>N</OperationType>
+         <BookingNumber>${bookingNumber}</BookingNumber>
+         <LicensePlate>${licensePlate.toUpperCase()}</LicensePlate>
+         <StartDate>${formattedStartDate}</StartDate>
+         <Duration>${apiDurationMinutes}</Duration>
+         ${clientName ? `<ClientName>${clientName}</ClientName>` : ""}
+         <AccessMode>0</AccessMode>
+       </WSRequestBookingSubmitV1>
+     `.trim()
+
+    // Creare header Basic Auth (același ca în test API)
+    const authHeader = `Basic ${Buffer.from(`${API_CONFIG.username}:${API_CONFIG.password}`).toString("base64")}`
 
     console.log(`🌐 [${manualProcessId}] API Configuration:`)
     console.log(`🌐 [${manualProcessId}]   URL: ${API_CONFIG.url}`)
@@ -1112,23 +1123,35 @@ export async function createManualBooking(formData: FormData) {
     console.log(`🌐 [${manualProcessId}]   Multipark ID: ${API_CONFIG.multiparkId}`)
     console.log(`🌐 [${manualProcessId}]   Booking Number: ${bookingNumber}`)
     console.log(`🌐 [${manualProcessId}]   XML Payload Length: ${xmlPayload.length} chars`)
+    console.log(`🌐 [${manualProcessId}]   Formatted Start Date: ${formattedStartDate}`)
+    console.log(`🌐 [${manualProcessId}]   Duration Minutes: ${apiDurationMinutes}`)
+
+    // Declare timeout variable outside try block
+    let timeoutId: NodeJS.Timeout | undefined
 
     try {
       console.log(`🌐 [${manualProcessId}] Sending API request...`)
       const apiStartTime = Date.now()
 
+      // Setăm un timeout consistent cu test API (30 secunde)
+      const controller = new AbortController()
+      timeoutId = setTimeout(() => controller.abort(), 30000)
+
       const apiResponse = await fetch(API_CONFIG.url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/xml',
-          'Accept': 'application/xml',
+          Authorization: authHeader,
+          'Content-Type': 'text/xml',
         },
         body: xmlPayload,
+        signal: controller.signal,
       })
+
+      if (timeoutId) clearTimeout(timeoutId)
 
       const apiDuration = Date.now() - apiStartTime
       console.log(`🌐 [${manualProcessId}] API Response received in ${apiDuration}ms`)
-      console.log(`🌐 [${manualProcessId}] Response Status: ${apiResponse.status}`)
+      console.log(`🌐 [${manualProcessId}] Response Status: ${apiResponse.status} ${apiResponse.statusText}`)
       console.log(`🌐 [${manualProcessId}] Response Headers:`, Object.fromEntries(apiResponse.headers.entries()))
 
       if (!apiResponse.ok) {
@@ -1152,24 +1175,28 @@ export async function createManualBooking(formData: FormData) {
       console.log(`📊 [${manualProcessId}]   Error Code: ${errorCode}`)
       console.log(`📊 [${manualProcessId}]   API Message: ${apiMessage}`)
       console.log(`📊 [${manualProcessId}]   API Success: ${apiSuccess}`)
+      console.log(`📊 [${manualProcessId}] Request Details:`)
+      console.log(`📊 [${manualProcessId}]   Formatted Start Date: ${formattedStartDate}`)
+      console.log(`📊 [${manualProcessId}]   Duration Minutes: ${apiDurationMinutes}`)
+      console.log(`📊 [${manualProcessId}]   XML Format: WSRequestBookingSubmitV1 (same as test API)`)
 
       console.log(`💾 [${manualProcessId}] ===== UPDATING FIRESTORE WITH API RESULT =====`)
 
-      // 3. ACTUALIZEAZĂ REZERVAREA CU REZULTATUL API
-      const updateData: any = {
-        apiSuccess,
-        apiErrorCode: errorCode,
-        apiMessage,
-        apiRequestPayload: xmlPayload,
-        apiResponseRaw: responseText,
-        apiRequestTimestamp: serverTimestamp(),
-        lastUpdated: serverTimestamp(),
-        status: apiSuccess ? 'confirmed_paid' : 'api_error'
-      }
+             // 3. ACTUALIZEAZĂ REZERVAREA CU REZULTATUL API
+       const updateData: any = {
+         apiSuccess,
+         apiErrorCode: errorCode,
+         apiMessage,
+         apiRequestPayload: xmlPayload,
+         apiResponseRaw: responseText,
+         apiRequestTimestamp: serverTimestamp(),
+         lastUpdated: serverTimestamp(),
+         status: apiSuccess ? 'confirmed_paid' : 'api_error'
+       }
 
-      // Adaugă apiBookingNumber doar dacă API-ul a fost succes
-      if (apiSuccess) {
-        updateData.apiBookingNumber = bookingNumber
+       // Adaugă apiBookingNumber doar dacă API-ul a fost succes
+       if (apiSuccess) {
+         updateData.apiBookingNumber = bookingNumber
         console.log(`🎟️ [${manualProcessId}] Adding API booking number: ${bookingNumber}`)
       }
 
@@ -1180,7 +1207,7 @@ export async function createManualBooking(formData: FormData) {
       console.log(`💾 [${manualProcessId}]   New Status: ${updateData.status}`)
 
       const updateStartTime = Date.now()
-      await updateDoc(bookingDocRef, updateData)
+       await updateDoc(bookingDocRef, updateData)
       const updateDuration = Date.now() - updateStartTime
 
       console.log(`✅ [${manualProcessId}] Firestore update completed in ${updateDuration}ms`)
@@ -1196,7 +1223,7 @@ export async function createManualBooking(formData: FormData) {
           activeBookingsCount: increment(1),
           lastUpdated: serverTimestamp()
         })
-        
+
         const statsDuration = Date.now() - statsStartTime
         console.log(`📊 [${manualProcessId}] Statistics updated in ${statsDuration}ms`)
 
@@ -1211,7 +1238,22 @@ export async function createManualBooking(formData: FormData) {
           success: true,
           message: `Rezervarea a fost creată cu succes! Număr rezervare: ${bookingNumber}`,
           bookingId: bookingDocRef.id,
-          apiBookingNumber: bookingNumber
+          apiBookingNumber: bookingNumber,
+          apiDetails: {
+            request: {
+              url: API_CONFIG.url,
+              payload: xmlPayload,
+              timestamp: new Date().toISOString()
+            },
+            response: {
+              status: apiResponse.status,
+              body: responseText,
+              success: apiSuccess,
+              errorCode: errorCode,
+              message: apiMessage,
+              timestamp: new Date().toISOString()
+            }
+          }
         }
       } else {
         console.log(`⚠️ [${manualProcessId}] ===== API FAILED BUT BOOKING SAVED =====`)
@@ -1224,11 +1266,28 @@ export async function createManualBooking(formData: FormData) {
           success: true,
           message: `Rezervarea a fost salvată local dar API-ul a eșuat: ${apiMessage}. ID: ${bookingDocRef.id}`,
           bookingId: bookingDocRef.id,
-          apiError: apiMessage
+          apiError: apiMessage,
+          apiDetails: {
+            request: {
+              url: API_CONFIG.url,
+              payload: xmlPayload,
+              timestamp: new Date().toISOString()
+            },
+            response: {
+              status: apiResponse.status,
+              body: responseText,
+              success: apiSuccess,
+              errorCode: errorCode,
+              message: apiMessage,
+              timestamp: new Date().toISOString()
+            }
+          }
         }
       }
 
     } catch (apiError) {
+      if (timeoutId) clearTimeout(timeoutId) // Asigură că timeout-ul este curățat
+      
       console.error(`❌ [${manualProcessId}] ===== API ERROR =====`)
       console.error(`❌ [${manualProcessId}] Error Type: ${apiError instanceof Error ? apiError.constructor.name : typeof apiError}`)
       console.error(`❌ [${manualProcessId}] Error Message: ${apiError instanceof Error ? apiError.message : String(apiError)}`)
@@ -1236,18 +1295,20 @@ export async function createManualBooking(formData: FormData) {
       console.error(`❌ [${manualProcessId}] API URL: ${API_CONFIG.url}`)
       console.error(`❌ [${manualProcessId}] Booking Number: ${bookingNumber}`)
       console.error(`❌ [${manualProcessId}] License Plate: ${licensePlate}`)
+      console.error(`❌ [${manualProcessId}] Request Payload:`, xmlPayload)
+      console.error(`❌ [${manualProcessId}] Auth Header: ${API_CONFIG.username ? 'SET' : 'MISSING'}`)
 
       console.log(`💾 [${manualProcessId}] Updating Firestore with API error...`)
 
-      // Actualizează rezervarea cu eroarea API
+             // Actualizează rezervarea cu eroarea API
       try {
-        await updateDoc(bookingDocRef, {
-          apiSuccess: false,
-          apiMessage: apiError instanceof Error ? apiError.message : 'Eroare necunoscută API',
+       await updateDoc(bookingDocRef, {
+         apiSuccess: false,
+         apiMessage: apiError instanceof Error ? apiError.message : 'Eroare necunoscută API',
           apiRequestPayload: xmlPayload,
-          lastUpdated: serverTimestamp(),
-          status: 'api_error'
-        })
+         lastUpdated: serverTimestamp(),
+         status: 'api_error'
+       })
         console.log(`✅ [${manualProcessId}] Firestore updated with API error status`)
       } catch (updateError) {
         console.error(`❌ [${manualProcessId}] Failed to update Firestore with API error:`, updateError)
@@ -1257,7 +1318,22 @@ export async function createManualBooking(formData: FormData) {
         success: true,
         message: `Rezervarea a fost salvată local dar a eșuat trimiterea la API. ID: ${bookingDocRef.id}`,
         bookingId: bookingDocRef.id,
-        apiError: apiError instanceof Error ? apiError.message : 'Eroare necunoscută API'
+        apiError: apiError instanceof Error ? apiError.message : 'Eroare necunoscută API',
+        apiDetails: {
+          request: {
+            url: API_CONFIG.url,
+            payload: xmlPayload,
+            timestamp: new Date().toISOString()
+          },
+          response: {
+            status: 0,
+            body: `FETCH ERROR: ${apiError instanceof Error ? apiError.message : String(apiError)}`,
+            success: false,
+            errorCode: 'FETCH_ERROR',
+            message: apiError instanceof Error ? apiError.message : 'Eroare necunoscută API',
+            timestamp: new Date().toISOString()
+          }
+        }
       }
     }
 
