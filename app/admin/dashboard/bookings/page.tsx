@@ -1372,12 +1372,15 @@ function BookingsPageContent() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Data Intrare *</label>
-                <Input
-                  type="date"
-                  value={manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : ''}
-                  onChange={(e) => setManualStartDate(e.target.value ? new Date(e.target.value) : undefined)}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    type="date"
+                    value={manualStartDate ? formatDateFn(manualStartDate, "yyyy-MM-dd") : ''}
+                    onChange={(e) => setManualStartDate(e.target.value ? new Date(e.target.value) : undefined)}
+                    className="date-input-dd-mm-yyyy"
+                    required
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -1404,12 +1407,15 @@ function BookingsPageContent() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Data Ieșire *</label>
-                <Input
-                  type="date"
-                  value={manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : ''}
-                  onChange={(e) => setManualEndDate(e.target.value ? new Date(e.target.value) : undefined)}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    type="date"
+                    value={manualEndDate ? formatDateFn(manualEndDate, "yyyy-MM-dd") : ''}
+                    onChange={(e) => setManualEndDate(e.target.value ? new Date(e.target.value) : undefined)}
+                    className="date-input-dd-mm-yyyy"
+                    required
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -1564,7 +1570,7 @@ function BookingsPageContent() {
             )}
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => {
+              <Button type="button" variant="outline" className="hover:text-white" onClick={() => {
                 setApiLogData({ isVisible: false })
                 setIsManualDialogOpen(false)
               }}>

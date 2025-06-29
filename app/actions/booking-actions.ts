@@ -1089,10 +1089,10 @@ export async function createManualBooking(formData: FormData) {
     // Formatare dată de început în formatul cerut: YYYY/MM/DD HH:mm:SS
     const startDateObj = new Date(`${startDate}T${startTime}:00`)
     const formattedStartDate = startDateObj
-      .toISOString()
-      .replace(/T/, " ")
-      .replace(/-/g, "/")
-      .replace(/\.\d+Z$/, "")
+        .toISOString()
+        .replace(/T/, " ")
+        .replace(/-/g, "/")
+        .replace(/\.\d+Z$/, "")
 
          // Calculează durata în minute pentru API
      const apiStartDateTime = new Date(`${startDate}T${startTime}:00`)
@@ -1100,18 +1100,18 @@ export async function createManualBooking(formData: FormData) {
      const apiDurationMinutes = Math.round((apiEndDateTime.getTime() - apiStartDateTime.getTime()) / (1000 * 60))
 
      // XML payload în același format ca test API (format care funcționează)
-     const xmlPayload = `
-       <WSRequestBookingSubmitV1>
+      const xmlPayload = `
+        <WSRequestBookingSubmitV1>
          <MultiparkId>${API_CONFIG.multiparkId}</MultiparkId>
-         <OperationType>N</OperationType>
-         <BookingNumber>${bookingNumber}</BookingNumber>
-         <LicensePlate>${licensePlate.toUpperCase()}</LicensePlate>
-         <StartDate>${formattedStartDate}</StartDate>
+          <OperationType>N</OperationType>
+          <BookingNumber>${bookingNumber}</BookingNumber>
+          <LicensePlate>${licensePlate.toUpperCase()}</LicensePlate>
+          <StartDate>${formattedStartDate}</StartDate>
          <Duration>${apiDurationMinutes}</Duration>
-         ${clientName ? `<ClientName>${clientName}</ClientName>` : ""}
-         <AccessMode>0</AccessMode>
-       </WSRequestBookingSubmitV1>
-     `.trim()
+          ${clientName ? `<ClientName>${clientName}</ClientName>` : ""}
+          <AccessMode>0</AccessMode>
+        </WSRequestBookingSubmitV1>
+      `.trim()
 
     // Creare header Basic Auth (același ca în test API)
     const authHeader = `Basic ${Buffer.from(`${API_CONFIG.username}:${API_CONFIG.password}`).toString("base64")}`

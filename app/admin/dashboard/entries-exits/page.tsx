@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
 import { RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -90,7 +91,7 @@ export default function EntriesExitsPage() {
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary date-input-dd-mm-yyyy"
             />
           </div>
           {loadingDailyStats && (
@@ -126,7 +127,16 @@ export default function EntriesExitsPage() {
                       {dailyEntries.map((entry) => (
                         <tr key={entry.id} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="py-3 px-2 font-medium">{entry.time}</td>
-                          <td className="py-3 px-2">{entry.licensePlate}</td>
+                          <td className="py-3 px-2">
+                            <div className="flex items-center gap-2">
+                              {entry.source === "manual" && (
+                                <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 text-xs">
+                                  MANUAL
+                                </Badge>
+                              )}
+                              {entry.licensePlate}
+                            </div>
+                          </td>
                           <td className="py-3 px-2">{entry.phone}</td>
                           <td className="py-3 px-2 text-center">{entry.numberOfPersons}</td>
                         </tr>
@@ -164,7 +174,16 @@ export default function EntriesExitsPage() {
                       {dailyExits.map((exit) => (
                         <tr key={exit.id} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="py-3 px-2 font-medium">{exit.time}</td>
-                          <td className="py-3 px-2">{exit.licensePlate}</td>
+                          <td className="py-3 px-2">
+                            <div className="flex items-center gap-2">
+                              {exit.source === "manual" && (
+                                <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 text-xs">
+                                  MANUAL
+                                </Badge>
+                              )}
+                              {exit.licensePlate}
+                            </div>
+                          </td>
                           <td className="py-3 px-2">{exit.phone}</td>
                           <td className="py-3 px-2 text-center">{exit.numberOfPersons}</td>
                         </tr>
@@ -217,7 +236,16 @@ export default function EntriesExitsPage() {
                             {dailyEntries.map((entry) => (
                               <tr key={entry.id} className="border-b border-gray-100 hover:bg-gray-50">
                                 <td className="py-3 px-2 font-medium">{entry.time}</td>
-                                <td className="py-3 px-2">{entry.licensePlate}</td>
+                                <td className="py-3 px-2">
+                                  <div className="flex items-center gap-2">
+                                    {entry.source === "manual" && (
+                                      <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 text-xs">
+                                        MANUAL
+                                      </Badge>
+                                    )}
+                                    {entry.licensePlate}
+                                  </div>
+                                </td>
                                 <td className="py-3 px-2">{entry.phone}</td>
                                 <td className="py-3 px-2 text-center">{entry.numberOfPersons}</td>
                               </tr>
@@ -242,7 +270,14 @@ export default function EntriesExitsPage() {
                             <div className="space-y-2">
                               <div className="flex items-center justify-between">
                                 <span className="text-xs text-green-600 font-medium uppercase tracking-wide">Număr auto</span>
-                                <span className="font-semibold text-gray-900">{entry.licensePlate}</span>
+                                <div className="flex items-center gap-2">
+                                  {entry.source === "manual" && (
+                                    <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 text-xs">
+                                      MANUAL
+                                    </Badge>
+                                  )}
+                                  <span className="font-semibold text-gray-900">{entry.licensePlate}</span>
+                                </div>
                               </div>
                               <div className="flex items-center justify-between">
                                 <span className="text-xs text-green-600 font-medium uppercase tracking-wide">Telefon</span>
@@ -286,7 +321,16 @@ export default function EntriesExitsPage() {
                             {dailyExits.map((exit) => (
                               <tr key={exit.id} className="border-b border-gray-100 hover:bg-gray-50">
                                 <td className="py-3 px-2 font-medium">{exit.time}</td>
-                                <td className="py-3 px-2">{exit.licensePlate}</td>
+                                <td className="py-3 px-2">
+                                  <div className="flex items-center gap-2">
+                                    {exit.source === "manual" && (
+                                      <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 text-xs">
+                                        MANUAL
+                                      </Badge>
+                                    )}
+                                    {exit.licensePlate}
+                                  </div>
+                                </td>
                                 <td className="py-3 px-2">{exit.phone}</td>
                                 <td className="py-3 px-2 text-center">{exit.numberOfPersons}</td>
                               </tr>
@@ -311,7 +355,14 @@ export default function EntriesExitsPage() {
                             <div className="space-y-2">
                               <div className="flex items-center justify-between">
                                 <span className="text-xs text-red-600 font-medium uppercase tracking-wide">Număr auto</span>
-                                <span className="font-semibold text-gray-900">{exit.licensePlate}</span>
+                                <div className="flex items-center gap-2">
+                                  {exit.source === "manual" && (
+                                    <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 text-xs">
+                                      MANUAL
+                                    </Badge>
+                                  )}
+                                  <span className="font-semibold text-gray-900">{exit.licensePlate}</span>
+                                </div>
                               </div>
                               <div className="flex items-center justify-between">
                                 <span className="text-xs text-red-600 font-medium uppercase tracking-wide">Telefon</span>

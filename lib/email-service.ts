@@ -150,7 +150,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
           
           <!-- Buton Anulare Rezervare -->
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://parcare-aeroport.ro/returnare" 
+            <a href="https://parcare-aeroport.ro/anulare" 
                style="display: inline-block; background: #dc3545; color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-size: 16px; font-weight: bold; box-shadow: 0 4px 6px rgba(220, 53, 69, 0.3);">
               🚫 Anulează rezervarea
             </a>

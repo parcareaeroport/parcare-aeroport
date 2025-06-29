@@ -348,3 +348,39 @@ EXEMPLE DE UTILIZARE:
   mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
   -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
 }
+
+/* Stiluri pentru input-uri de tip date în format dd/mm/yyyy */
+.date-input-dd-mm-yyyy {
+  position: relative;
+}
+
+/* Pentru browserele care suportă ::-webkit-datetime-edit */
+.date-input-dd-mm-yyyy::-webkit-datetime-edit {
+  direction: rtl;
+}
+
+.date-input-dd-mm-yyyy::-webkit-datetime-edit-fields-wrapper {
+  direction: ltr;
+}
+
+.date-input-dd-mm-yyyy::-webkit-datetime-edit-day-field,
+.date-input-dd-mm-yyyy::-webkit-datetime-edit-month-field,
+.date-input-dd-mm-yyyy::-webkit-datetime-edit-year-field {
+  direction: ltr;
+}
+
+/* Ascunde placeholder-ul nativ și afișează unul custom */
+.date-input-dd-mm-yyyy::-webkit-input-placeholder {
+  color: transparent;
+}
+
+/* Afișează placeholderul custom */
+.date-input-dd-mm-yyyy:invalid::before {
+  content: "dd/mm/yyyy";
+  color: #9ca3af;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}

@@ -333,7 +333,7 @@ export default function CancellationForm() {
                   onClick={() => setOpenCalendar("start")}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4 text-gray-500" />
-                  {startDate ? format(startDate, "PPP", { locale: ro }) : "Selectează data"}
+                  {startDate ? format(startDate, "dd/MM/yyyy", { locale: ro }) : "Selectează data"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -383,7 +383,7 @@ export default function CancellationForm() {
                   onClick={() => setOpenCalendar("end")}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4 text-gray-500" />
-                  {endDate ? format(endDate, "PPP", { locale: ro }) : "Selectează data"}
+                  {endDate ? format(endDate, "dd/MM/yyyy", { locale: ro }) : "Selectează data"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">

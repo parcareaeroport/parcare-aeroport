@@ -830,13 +830,13 @@ export default function OrderPlacementForm() {
                         <div className="flex justify-between items-center">
                           <span className="text-gray-600">Data intrare:</span>
                           <span className="font-medium">
-                            {new Date(reservationData.startDate).toLocaleDateString("ro-RO")} {reservationData.startTime}
+                            {new Date(reservationData.startDate).toLocaleDateString("ro-RO").replace(/\./g, '/')} {reservationData.startTime}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-gray-600">Data ieșire:</span>
                           <span className="font-medium">
-                            {new Date(reservationData.endDate).toLocaleDateString("ro-RO")} {reservationData.endTime}
+                            {new Date(reservationData.endDate).toLocaleDateString("ro-RO").replace(/\./g, '/')} {reservationData.endTime}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
@@ -923,13 +923,13 @@ export default function OrderPlacementForm() {
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Data intrare:</span>
                       <span className="font-medium">
-                        {new Date(reservationData.startDate).toLocaleDateString("ro-RO")} {reservationData.startTime}
+                        {new Date(reservationData.startDate).toLocaleDateString("ro-RO").replace(/\./g, '/')} {reservationData.startTime}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Data ieșire:</span>
                       <span className="font-medium">
-                        {new Date(reservationData.endDate).toLocaleDateString("ro-RO")} {reservationData.endTime}
+                        {new Date(reservationData.endDate).toLocaleDateString("ro-RO").replace(/\./g, '/')} {reservationData.endTime}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
@@ -1279,13 +1279,13 @@ export default function OrderPlacementForm() {
                       <div className="flex justify-between items-center">
                         <span className="text-gray-600">Data intrare:</span>
                         <span className="font-medium">
-                          {new Date(reservationData.startDate).toLocaleDateString("ro-RO")} {reservationData.startTime}
+                          {new Date(reservationData.startDate).toLocaleDateString("ro-RO").replace(/\./g, '/')} {reservationData.startTime}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-600">Data ieșire:</span>
                         <span className="font-medium">
-                          {new Date(reservationData.endDate).toLocaleDateString("ro-RO")} {reservationData.endTime}
+                          {new Date(reservationData.endDate).toLocaleDateString("ro-RO").replace(/\./g, '/')} {reservationData.endTime}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
@@ -1371,13 +1371,13 @@ export default function OrderPlacementForm() {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Data intrare:</span>
                     <span className="font-medium">
-                      {new Date(reservationData.startDate).toLocaleDateString("ro-RO")} {reservationData.startTime}
+                      {new Date(reservationData.startDate).toLocaleDateString("ro-RO").replace(/\./g, '/')} {reservationData.startTime}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Data ieșire:</span>
                     <span className="font-medium">
-                      {new Date(reservationData.endDate).toLocaleDateString("ro-RO")} {reservationData.endTime}
+                      {new Date(reservationData.endDate).toLocaleDateString("ro-RO").replace(/\./g, '/')} {reservationData.endTime}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">

@@ -33,6 +33,7 @@ export interface DailyEntryExit {
   licensePlate: string
   phone: string
   numberOfPersons: number | string // Poate fi număr sau "N/A" pentru rezervări mai vechi
+  source?: string // Pentru a identifica rezervările manuale
 }
 
 export interface DashboardStats {
@@ -92,7 +93,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       if (booking.clientEmail) {
         uniqueClients.add(booking.clientEmail)
       }
-      if (booking.status === 'confirmed' || booking.status === 'paid') {
+      if (booking.status === 'confirmed_paid' || booking.status === 'confirmed_test') {
         confirmedBookings++
       }
     })
@@ -130,7 +131,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       bookingsRef,
       where('startDate', '<=', today.toISOString().split('T')[0]),
       where('endDate', '>=', today.toISOString().split('T')[0]),
-      where('status', 'in', ['confirmed', 'paid'])
+      where('status', 'in', ['confirmed_paid', 'confirmed_test'])
     )
 
     console.log('🔍 Dashboard occupancy check for date:', today.toISOString().split('T')[0])
@@ -180,23 +181,29 @@ export async function getMonthlyRevenueData(): Promise<MonthlyStats[]> {
       bookingsRef,
       where('createdAt', '>=', Timestamp.fromDate(startOfYear)),
       where('createdAt', '<=', Timestamp.fromDate(endOfYear)),
-      where('status', 'in', ['confirmed', 'paid'])
+      where('status', 'in', ['confirmed_paid', 'confirmed_test'])
     )
 
     const snapshot = await getDocs(q)
+    
+    console.log(`📊 Monthly revenue query found ${snapshot.size} bookings with confirmed status for year ${currentYear}`)
     
     // Inițializează array-ul cu toate lunile
     const monthNames = ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     const monthlyData: MonthlyStats[] = monthNames.map(name => ({ name, value: 0 }))
 
     // Agregă veniturile pe luni
+    let totalRevenue = 0
     snapshot.forEach(doc => {
       const booking = doc.data()
       const date = booking.createdAt.toDate()
       const monthIndex = date.getMonth()
-      monthlyData[monthIndex].value += booking.amount || 0
+      const amount = booking.amount || 0
+      monthlyData[monthIndex].value += amount
+      totalRevenue += amount
     })
 
+    console.log(`📈 Total revenue for ${currentYear}: ${totalRevenue} RON from ${snapshot.size} bookings`)
     return monthlyData
 
   } catch (error) {
@@ -262,9 +269,9 @@ export async function getBookingStatusData(): Promise<BookingStatusStats[]> {
       const booking = doc.data()
       const status = booking.status || 'pending'
       
-      if (status === 'confirmed' || status === 'paid') {
+      if (status === 'confirmed_paid' || status === 'confirmed_test' || status === 'confirmed' || status === 'paid') {
         statusCounts.confirmed++
-      } else if (status === 'cancelled') {
+      } else if (status === 'cancelled_by_admin' || status === 'cancelled_by_api' || status === 'cancelled') {
         statusCounts.cancelled++
       } else {
         statusCounts.pending++
@@ -518,7 +525,8 @@ export async function getDailyEntries(selectedDate: string): Promise<DailyEntryE
         time: booking.startTime || 'N/A',
         licensePlate: booking.licensePlate || 'N/A',
         phone: booking.clientPhone || 'N/A',
-        numberOfPersons: booking.numberOfPersons ? booking.numberOfPersons : 'N/A'
+        numberOfPersons: booking.numberOfPersons ? booking.numberOfPersons : 'N/A',
+        source: booking.source || 'webhook'
       })
     })
 
@@ -555,7 +563,8 @@ export async function getDailyExits(selectedDate: string): Promise<DailyEntryExi
         time: booking.endTime || 'N/A',
         licensePlate: booking.licensePlate || 'N/A',
         phone: booking.clientPhone || 'N/A',
-        numberOfPersons: booking.numberOfPersons ? booking.numberOfPersons : 'N/A'
+        numberOfPersons: booking.numberOfPersons ? booking.numberOfPersons : 'N/A',
+        source: booking.source || 'webhook'
       })
     })
 

@@ -9,12 +9,12 @@ export const metadata: Metadata = {
     "Anulați rezervarea locului de parcare la Aeroportul Otopeni. Completați formularul pentru returnarea costurilor.",
   keywords: [
     "anulare rezervare parcare otopeni",
-    "returnare parcare aeroport",
+    "anulare parcare aeroport",
     "anulare parcare otopeni",
     "rambursare parcare aeroport",
   ],
   alternates: {
-    canonical: "/returnare",
+    canonical: "/anulare",
   },
 }
 
