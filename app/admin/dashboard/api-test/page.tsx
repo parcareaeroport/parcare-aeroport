@@ -264,7 +264,7 @@ export default function ApiTestPage() {
                           mode="single"
                           selected={startDate || new Date()}
                           onSelect={(date) => setStartDate(date || new Date())}
-                          initialFocus
+                          autoFocus
                           disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                         />
                       </PopoverContent>
@@ -564,7 +564,7 @@ export default function ApiTestPage() {
                           mode="single"
                           selected={updateStartDate || new Date()}
                           onSelect={(date) => setUpdateStartDate(date || new Date())}
-                          initialFocus
+                          autoFocus
                           disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                         />
                       </PopoverContent>
