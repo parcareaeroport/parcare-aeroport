@@ -143,7 +143,11 @@ Plata se poate efectua prin transfer bancar la IBAN: RO49RNCB0000123456789012
       tax_rates: await getTaxRateForRomania(),
     });
 
-    // 5. Finalizează și trimite factura
+    // 5. Verifică că factura are ID și finalizează
+    if (!invoice.id || typeof invoice.id !== 'string') {
+      throw new Error('Factura creată nu are ID valid');
+    }
+    
     const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
     
     // 6. Trimite factura prin email
@@ -159,7 +163,7 @@ Plata se poate efectua prin transfer bancar la IBAN: RO49RNCB0000123456789012
     return {
       success: true,
       invoiceId: finalizedInvoice.id,
-      invoiceUrl: finalizedInvoice.hosted_invoice_url,
+      invoiceUrl: finalizedInvoice.hosted_invoice_url || undefined,
     };
 
   } catch (error) {

@@ -95,6 +95,7 @@ export async function createStripeInvoiceForBooking(invoiceData: RomanianInvoice
     })
 
     // 3. Creează invoice-ul
+    // @ts-ignore - TypeScript issue with Stripe types
     const invoice = await stripe.invoices.create({
       customer: customer.id,
       collection_method: 'send_invoice', // Va trimite automat pe email

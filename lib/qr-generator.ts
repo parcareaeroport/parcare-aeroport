@@ -18,17 +18,15 @@ export async function generateMultiparkQR(bookingNumber: string): Promise<string
   console.log(`Generating QR code with content: ${qrContent}`)
   
   try {
-    // Generează QR code-ul ca base64 data URL
+    // Generează QR code-ul ca base64 data URL cu opțiuni compatibile
     const qrCodeDataUrl = await QRCode.toDataURL(qrContent, {
-      type: 'image/png',
-      quality: 0.92,
+      errorCorrectionLevel: 'M',
       margin: 1,
       color: {
         dark: '#000000',  // Culoare neagră pentru cod
         light: '#FFFFFF'  // Fundal alb
       },
-      width: 256,  // Dimensiune optimă pentru scanare
-      errorCorrectionLevel: 'M'  // Nivel mediu de corecție a erorilor
+      width: 256  // Dimensiune optimă pentru scanare
     })
     
     console.log(`QR code generated successfully for booking: ${formattedBookingNumber}`)
@@ -64,15 +62,13 @@ export async function generateMultiparkQRBuffer(bookingNumber: string): Promise<
   
   try {
     const qrBuffer = await QRCode.toBuffer(qrContent, {
-      type: 'png',
-      quality: 0.92,
+      errorCorrectionLevel: 'M',
       margin: 1,
       color: {
         dark: '#000000',
         light: '#FFFFFF'
       },
-      width: 256,
-      errorCorrectionLevel: 'M'
+      width: 256
     })
     
     return qrBuffer
