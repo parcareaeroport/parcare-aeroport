@@ -67,7 +67,7 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
       { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { href: "/admin/dashboard/bookings", label: "Rezervări", icon: Car },
       { href: "/admin/dashboard/entries-exits", label: "Intrări/Ieșiri", icon: ArrowLeftRight },
-      // { href: "/admin/dashboard/recovery", label: "Recovery", icon: RefreshCw },
+      { href: "/admin/dashboard/statistics", label: "Statistici", icon: RefreshCw },
       { href: "/admin/dashboard/prices", label: "Prețuri", icon: Tag },
       { href: "/admin/dashboard/api-test", label: "Test API", icon: ListTree },
     ] : [

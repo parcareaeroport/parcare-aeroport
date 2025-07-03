@@ -1,5 +1,5 @@
 import { db } from './firebase'
-import { collection, query, where, getDocs, orderBy, limit, Timestamp, doc, updateDoc, increment, serverTimestamp } from 'firebase/firestore'
+import { collection, query, where, getDocs, orderBy, limit, Timestamp, doc, updateDoc, increment, serverTimestamp, getDoc } from 'firebase/firestore'
 
 // Interfețe pentru tipurile de date
 export interface MonthlyStats {
@@ -34,6 +34,40 @@ export interface DailyEntryExit {
   phone: string
   numberOfPersons: number | string // Poate fi număr sau "N/A" pentru rezervări mai vechi
   source?: string // Pentru a identifica rezervările manuale
+}
+
+// Noi interfețe pentru statisticile suplimentare
+export interface DailyStatistics {
+  date: string
+  availableSpots: number
+  scheduledEntries: number
+  actualEntries: number
+  remainingEntries: number
+  scheduledExits: number
+  actualExits: number
+  expiredReservations: number
+}
+
+export interface ActualEntryExit {
+  id: string
+  time: string
+  licensePlate: string
+  phone: string
+  actualDateTime: string
+  bookingId?: string
+  source: 'manual' | 'automatic' | 'system'
+}
+
+export interface ExpiredReservation {
+  id: string
+  licensePlate: string
+  clientName: string
+  clientPhone: string
+  plannedEndDate: string
+  plannedEndTime: string
+  actualEndDateTime?: string
+  daysOverdue: number
+  status: string
 }
 
 export interface DashboardStats {
@@ -139,7 +173,9 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     const activeBookingsSnap = await getDocs(activeBookingsQuery)
     console.log('📊 Dashboard active bookings found:', activeBookingsSnap.size)
     
-    const currentOccupancy = Math.min((activeBookingsSnap.size / 100) * 100, 100) // Presupunem 100 locuri maxim
+    // Obține limita reală de rezervări pentru calcul corect
+    const maxReservations = await getMaxTotalReservations()
+    const currentOccupancy = Math.min((activeBookingsSnap.size / maxReservations) * 100, 100)
 
     return {
       totalRevenue,
@@ -379,6 +415,9 @@ async function markExpiredBookingsAsInactive() {
  */
 export async function getOccupancyData(): Promise<OccupancyStats[]> {
   try {
+    // Obține limita maximă reală din configurație
+    const totalSpots = await getMaxTotalReservations()
+    
     // Folosește query-ul inteligent pentru ocuparea curentă
     const { getCurrentParkingOccupancy } = await import('./booking-utils')
     const currentOccupancy = await getCurrentParkingOccupancy()
@@ -438,7 +477,6 @@ export async function getOccupancyData(): Promise<OccupancyStats[]> {
       }
     })
 
-    const totalSpots = 100 // Presupunem 100 locuri total
     const occupiedPercentage = Math.round((reallyActiveBookings / totalSpots) * 100)
     const freePercentage = 100 - occupiedPercentage
 
@@ -573,5 +611,195 @@ export async function getDailyExits(selectedDate: string): Promise<DailyEntryExi
   } catch (error) {
     console.error('Error fetching daily exits:', error)
     return []
+  }
+}
+
+/**
+ * Obține intrările efectuate pentru o dată specifică (din server + manuale)
+ */
+export async function getActualEntries(selectedDate: string): Promise<ActualEntryExit[]> {
+  try {
+    // Pentru moment, simulez datele - în implementarea reală, acestea ar veni din sisteme de tracking/server
+    // Pot fi integrate cu sistemele de intrări automate, camere, senzori, etc.
+    const entries: ActualEntryExit[] = []
+    
+    // În implementarea reală, aici ar fi query-uri către:
+    // 1. Tabelul de intrări efective din server
+    // 2. Intrările marcate manual de admin
+    // 3. Datele de la sistemele de tracking
+    
+    console.log(`📍 Fetching actual entries for date: ${selectedDate}`)
+    
+    // Placeholder - în implementarea reală va fi înlocuit cu query-uri reale
+    // const actualEntriesRef = collection(db, 'actualEntries')
+    // const q = query(
+    //   actualEntriesRef,
+    //   where('date', '==', selectedDate),
+    //   orderBy('actualDateTime', 'asc')
+    // )
+    
+    return entries
+
+  } catch (error) {
+    console.error('Error fetching actual entries:', error)
+    return []
+  }
+}
+
+/**
+ * Obține ieșirile efectuate pentru o dată specifică (din server + manuale)
+ */
+export async function getActualExits(selectedDate: string): Promise<ActualEntryExit[]> {
+  try {
+    // Pentru moment, simulez datele - în implementarea reală, acestea ar veni din sisteme de tracking/server
+    const exits: ActualEntryExit[] = []
+    
+    console.log(`📍 Fetching actual exits for date: ${selectedDate}`)
+    
+    // În implementarea reală, aici ar fi query-uri către:
+    // 1. Tabelul de ieșiri efective din server
+    // 2. Ieșirile marcate manual de admin
+    // 3. Datele de la sistemele de tracking
+    
+    return exits
+
+  } catch (error) {
+    console.error('Error fetching actual exits:', error)
+    return []
+  }
+}
+
+/**
+ * Obține rezervările care au depășit termenul de ședere
+ */
+export async function getExpiredReservations(): Promise<ExpiredReservation[]> {
+  try {
+    const bookingsRef = collection(db, 'bookings')
+    const now = new Date()
+    const currentDateStr = now.toISOString().split('T')[0]
+    
+    // Query pentru rezervările care ar fi trebuit să se termine până acum
+    const expiredQuery = query(
+      bookingsRef,
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']),
+      where('endDate', '<', currentDateStr)
+    )
+
+    const snapshot = await getDocs(expiredQuery)
+    const expiredReservations: ExpiredReservation[] = []
+
+    snapshot.forEach(doc => {
+      const booking = doc.data()
+      const plannedEndDateTime = new Date(`${booking.endDate}T${booking.endTime}:00`)
+      const daysDiff = Math.floor((now.getTime() - plannedEndDateTime.getTime()) / (1000 * 60 * 60 * 24))
+      
+      if (daysDiff > 0) { // Doar dacă a trecut cu adevărat termenul
+        expiredReservations.push({
+          id: doc.id,
+          licensePlate: booking.licensePlate || 'N/A',
+          clientName: booking.clientName || 'N/A',
+          clientPhone: booking.clientPhone || 'N/A',
+          plannedEndDate: booking.endDate || '',
+          plannedEndTime: booking.endTime || '',
+          daysOverdue: daysDiff,
+          status: booking.status || 'unknown'
+        })
+      }
+    })
+
+    // Sortează după numărul de zile întârziate (mai multe zile = mai urgent)
+    expiredReservations.sort((a, b) => b.daysOverdue - a.daysOverdue)
+
+    console.log(`⚠️ Found ${expiredReservations.length} expired reservations`)
+    return expiredReservations
+
+  } catch (error) {
+    console.error('Error fetching expired reservations:', error)
+    return []
+  }
+}
+
+/**
+ * Obține statisticile complete pentru o dată specifică
+ */
+export async function getDailyStatistics(selectedDate: string): Promise<DailyStatistics> {
+  try {
+    console.log(`📊 Computing daily statistics for date: ${selectedDate}`)
+
+    // Obține toate datele în paralel pentru eficiență
+    const [
+      totalSpots,
+      occupancyData,
+      scheduledEntries,
+      actualEntries,
+      scheduledExits,
+      actualExits,
+      expiredReservations
+    ] = await Promise.all([
+      getMaxTotalReservations(),
+      getOccupancyData(),
+      getDailyEntries(selectedDate),
+      getActualEntries(selectedDate),
+      getDailyExits(selectedDate),
+      getActualExits(selectedDate),
+      getExpiredReservations()
+    ])
+
+    // Calculează locurile disponibile
+    const occupiedPercentage = occupancyData.find(item => item.name === 'Ocupat')?.value || 0
+    const occupiedSpots = Math.round((occupiedPercentage / 100) * totalSpots)
+    const availableSpots = totalSpots - occupiedSpots
+
+    // Calculează statisticile
+    const scheduledEntriesCount = scheduledEntries.length
+    const actualEntriesCount = actualEntries.length
+    const remainingEntries = Math.max(0, scheduledEntriesCount - actualEntriesCount)
+    const scheduledExitsCount = scheduledExits.length
+    const actualExitsCount = actualExits.length
+    const expiredReservationsCount = expiredReservations.length
+
+    const statistics: DailyStatistics = {
+      date: selectedDate,
+      availableSpots,
+      scheduledEntries: scheduledEntriesCount,
+      actualEntries: actualEntriesCount,
+      remainingEntries,
+      scheduledExits: scheduledExitsCount,
+      actualExits: actualExitsCount,
+      expiredReservations: expiredReservationsCount
+    }
+
+    console.log('📈 Daily statistics calculated:', statistics)
+    return statistics
+
+  } catch (error) {
+    console.error('Error computing daily statistics:', error)
+    return {
+      date: selectedDate,
+      availableSpots: 0,
+      scheduledEntries: 0,
+      actualEntries: 0,
+      remainingEntries: 0,
+      scheduledExits: 0,
+      actualExits: 0,
+      expiredReservations: 0
+    }
+  }
+}
+
+/**
+ * Obține limita maximă de rezervări din configurația Firebase
+ */
+export async function getMaxTotalReservations(): Promise<number> {
+  try {
+    const settingsDoc = await getDoc(doc(db, 'config', 'reservationSettings'))
+    const data = settingsDoc.data()
+    const maxReservations = data?.maxTotalReservations ?? 100 // Fallback la 100 dacă nu e setat
+    
+    console.log('📋 Retrieved max total reservations:', maxReservations)
+    return maxReservations
+  } catch (error) {
+    console.error('Error fetching max reservations:', error)
+    return 100 // Fallback în caz de eroare
   }
 } 
