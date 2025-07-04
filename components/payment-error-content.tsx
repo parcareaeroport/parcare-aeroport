@@ -192,11 +192,11 @@ export default function PaymentErrorContent() {
             }`} />
           </div>
           
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl md:text-2xl font-bold text-gray-900 mb-2 tracking-normal">
             {errorInfo.title}
           </h1>
           
-          <p className="text-gray-600 text-lg mb-4">
+          <p className="text-gray-600 text-lg md:text-base mb-4">
             {errorInfo.message}
           </p>
           
@@ -244,7 +244,7 @@ export default function PaymentErrorContent() {
 
         {/* Help Section */}
         <div className="border-t pt-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 text-center">
+          <h2 className="text-lg md:text-base font-semibold text-gray-900 mb-4 text-center tracking-normal">
             Ai nevoie de ajutor?
           </h2>
           
@@ -277,7 +277,7 @@ export default function PaymentErrorContent() {
         {process.env.NODE_ENV === 'development' && (
           <div className="mt-8 p-4 bg-gray-100 rounded-lg">
             <h3 className="font-medium text-gray-900 mb-2">Debug Info:</h3>
-            <div className="text-xs text-gray-600 space-y-1">
+            <div className="text-sm text-gray-600 space-y-1">
               <p>Error Code: {searchParams.get('code') || 'unknown'}</p>
               <p>Error Message: {searchParams.get('message') || 'none'}</p>
               <p>Payment Intent: {searchParams.get('payment_intent') || 'none'}</p>

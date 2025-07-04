@@ -136,7 +136,7 @@ export default function PricingTable() {
     <section className="py-12 md:py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-primary">
+          <h2 className="text-4xl md:text-2xl font-bold mb-2 text-center text-primary tracking-normal">
             Tarife Parcare Otopeni (1-30 zile)
           </h2>
           <p className="text-center text-sm text-gray-600 mb-6">
@@ -159,8 +159,8 @@ export default function PricingTable() {
                     i < 3 && "border-r border-white/20"
                   }`}
                 >
-                  <div className="text-sm sm:text-base">{t}</div>
-                  {sub && <div className="text-xs mt-1">{sub}</div>}
+                  <div className="text-base md:text-sm">{t}</div>
+                  {sub && <div className="text-sm mt-1">{sub}</div>}
                 </div>
               ))}
             </div>

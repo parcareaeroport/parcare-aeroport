@@ -109,23 +109,28 @@ export default function PricingTableSection() {
       <div className="container mx-auto px-4">
         {/* ---------- HEADER ---------- */}
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-waze-blue">
+          <h2 className="text-5xl md:text-3xl font-bold mb-3 text-waze-blue tracking-normal">
             Parcare Otopeni preț avantajos
           </h2>
-          <p className="text-lg sm:text-xl mb-4 sm:mb-5">
+          <p className="text-lg md:text-base mb-4 sm:mb-5">
             Lângă aeroportul Henri Coandă București
           </p>
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 text-gray-700 text-xs sm:text-sm font-semibold mb-4">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 text-gray-700 text-sm font-semibold mb-4 tracking-wider">
             <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Parcare ASFALTATĂ</span>
             <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Rezervare rapidă</span>
-            <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Securitate NON-STOP</span>
-            <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Proximitate aeroport</span>
+            <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Prețuri mici</span>
             <span className="bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm">Transfer gratuit</span>
           </div>
           <div className="text-base sm:text-lg mb-2">
             Profită de promoțiile noastre și rezervă acum!<br />
             <span>30% reducere începând cu a-2-a zi de parcare</span>
           </div>
+          <p className="text-xl md:text-lg font-bold">
+            Transfer gratuit de la parcare la aeroport și retur
+          </p>
+          <p className="text-sm mt-1 opacity-90">
+            Dus-întors cu microbuz modern și confortabil
+          </p>
         </div>
 
         <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -142,7 +147,7 @@ export default function PricingTableSection() {
           {/* ======================= MOBILE ======================= */}
           <div className="p-4 sm:p-6 md:hidden">
             <div className="flex items-center gap-4 mb-6 b  g-primary/10 p-3 rounded-xl">
-              <span className="text-xl font-bold text-primary">30%</span>
+              <span className="text-2xl md:text-xl font-bold text-primary">30%</span>
               <span className="text-primary font-medium text-sm">REDUCERE</span>
             </div>
 
@@ -240,7 +245,7 @@ export default function PricingTableSection() {
               </Tabs>
             )}
 
-            <p className="mt-6 text-xs sm:text-sm text-gray-600 bg-gray-50 p-4 rounded-xl">
+            <p className="mt-6 text-sm text-gray-600 bg-gray-50 p-4 rounded-xl">
               * TVA&nbsp;19&nbsp;%. Reducerea de 30&nbsp;% se aplică începând cu
               a&nbsp;2-a zi de staționare.{" "}
               <Link
@@ -266,8 +271,10 @@ export default function PricingTableSection() {
           {/* ======================= DESKTOP ======================= */}
           <div className="hidden md:block p-8">
             <div className="flex items-center gap-4 mb-8 bg-primary/10 p-4 rounded-xl inline-block">
-              <span className="text-2xl font-bold text-primary">30%</span>
-              <span className="text-primary font-medium">REDUCERE</span>
+              <span className="text-2xl md:text-xl font-bold text-primary">30%</span>
+              <span className="text-sm font-medium">
+                <span className="text-primary">REDUCERE</span>
+              </span>
             </div>
 
             {/* HEAD ROW */}

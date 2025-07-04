@@ -60,7 +60,7 @@ export default function ParkingRulesTabs() {
 
             {/* Right side - Content */}
             <div className="order-1 md:order-2">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-primary">
+              <h2 className="text-5xl md:text-3xl font-bold mb-6 text-primary tracking-normal">
                 {activeTab === "sosire" ? "Cum funcționează la sosire" : "Cum funcționează la plecare"}
               </h2>
               <p className="text-gray-600 mb-8">
@@ -165,6 +165,79 @@ export default function ParkingRulesTabs() {
                     </div>
                   </>
                 )}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Clock className="h-6 w-6 text-primary" />
+              </div>
+              <h2 className="text-5xl md:text-3xl font-bold mb-6 text-primary tracking-normal">
+                Programul Nostru
+              </h2>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Program Transfer</h3>
+                  <p className="text-gray-600 text-sm">
+                    Transferul funcționează 24/7, cu plecări frecvente către și de la aeroport. În perioada 05:00-23:00 avem plecări programate la fiecare 15 minute.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Asistență Clienți</h3>
+                  <p className="text-gray-600 text-sm">
+                    Echipa noastră de asistență este disponibilă 24/7 pentru orice întrebări sau probleme. Puteți să ne contactați oricând la numerele afișate pe site.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Securitate</h3>
+                  <p className="text-gray-600 text-sm">
+                    Parcarea este monitorizată video 24/7, cu personal de securitate prezent permanent. Toate vehiculele sunt asigurate pe perioada parcării.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Condiții Speciale</h3>
+                  <p className="text-gray-600 text-sm">
+                    Pentru rezervări de peste 30 de zile, vă rugăm să ne contactați pentru condiții speciale. Oferim reduceri suplimentare pentru parcări pe termen lung.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Acces Vehicule</h3>
+                  <p className="text-gray-600 text-sm">
+                    Parcarea acceptă toate tipurile de vehicule: autoturisme, SUV-uri, van-uri și vehicule comerciale ușoare. Pentru vehicule de mari dimensiuni, vă rugăm să ne anunțați în avans.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Modificări Rezervare</h3>
+                  <p className="text-gray-600 text-sm">
+                    Modificările de rezervare se pot face online cu până la 2 ore înainte de sosire. Pentru modificări în ultimul moment, vă rugăm să ne contactați telefonic.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

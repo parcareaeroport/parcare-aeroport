@@ -5,9 +5,9 @@ export default function WhyChooseUsSection() {
     <section className="py-12 md:py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-12 md:mb-16 text-center text-primary">
-            De ce să alegi parcarea noastră?
-          </h2>
+                  <h2 className="text-5xl md:text-3xl font-bold mb-12 md:mb-16 text-center text-primary tracking-normal">
+          De ce să alegi parcarea noastră?
+        </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 relative">
             {/* Vertical dividing lines - only visible on desktop */}
@@ -35,7 +35,7 @@ export default function WhyChooseUsSection() {
                   <div className="absolute w-4 h-4 bg-yellow-400 rounded-full group-hover:scale-110 transition-transform duration-300"></div>
                 </div>
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-indigo-700 transition-colors duration-300">Control total și eficiență maximă</h3>
+                              <h3 className="text-xl md:text-lg font-bold mb-3 group-hover:text-indigo-700 transition-colors duration-300 tracking-normal">Control total și eficiență maximă</h3>
               <p className="text-gray-600 leading-relaxed">
                 Alege parcarea noastră și economisești nu doar bani, ci și timp prețios și energie. Începi și termini călătoria relaxat, fără surprize neplăcute, cu un serviciu premium la un preț corect și transparent.
               </p>
@@ -62,7 +62,7 @@ export default function WhyChooseUsSection() {
                   <div className="absolute w-4 h-4 bg-yellow-400 rounded-full group-hover:scale-110 transition-transform duration-300"></div>
                 </div>
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-teal-700 transition-colors duration-300">Acces rapid în parcare</h3>
+                              <h3 className="text-xl md:text-lg font-bold mb-3 group-hover:text-teal-700 transition-colors duration-300 tracking-normal">Acces rapid în parcare</h3>
               <p className="text-gray-600 leading-relaxed">
                 Accesul în parcare se poate face prin citirea automată a numărului de înmatriculare sau codul QR generat pentru tine. În plus, ai parte de un tarif avantajos pentru parcare lângă aeroportul Otopeni.
               </p>
@@ -89,7 +89,7 @@ export default function WhyChooseUsSection() {
                   <div className="absolute w-4 h-4 bg-yellow-400 rounded-full group-hover:scale-110 transition-transform duration-300"></div>
                 </div>
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-orange-700 transition-colors duration-300">Zonă de relaxare</h3>
+                              <h3 className="text-xl md:text-lg font-bold mb-3 group-hover:text-orange-700 transition-colors duration-300 tracking-normal">Zonă de relaxare</h3>
               <p className="text-gray-600 leading-relaxed">
                 Așteaptă transferul sau relaxează-te după un zbor lung în zona noastră special amenajată. Savurează o cafea aromată, un ceai sau răcorește-te cu o apă plată și mici snack-uri pentru un plus de energie.
               </p>

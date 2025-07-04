@@ -8,8 +8,8 @@ export default function MapSection() {
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         {/* Header - Text Content */}
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-waze-blue">
-            Locația Noastră
+          <h2 className="text-5xl md:text-3xl font-bold mb-3 text-waze-blue tracking-normal">
+            Locația noastră
           </h2>
           <p className="text-lg sm:text-xl mb-4 sm:mb-5">
             Parcarea noastră este amplasată strategic la doar 500 de metri de Aeroportul Henri Coandă, 

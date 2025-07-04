@@ -96,7 +96,7 @@ export default function Header() {
           {/* Buton Secundar - Border alb + Text alb + Fundal transparent */}
           <Link href="/tarife">
             <Button
-              className="group bg-transparent hover:bg-white text-white border-2 border-white hover:border-white rounded-md text-sm font-medium px-3 md:px-4 py-2 h-auto transition-all duration-200 shadow-sm hover:shadow-md"
+              className="group bg-transparent hover:bg-white text-white border-2 border-white hover:border-white rounded-md text-sm font-bold tracking-widest px-3 md:px-4 py-2 h-auto transition-all duration-200 shadow-sm hover:shadow-md"
               aria-label="Vezi tarifele"
             >
               <span className="group-hover:text-[#06048c] transition-colors duration-200">Tarife</span>
@@ -105,7 +105,7 @@ export default function Header() {
           {/* Buton Principal - Fundal roz + Text alb */}
           <Link
             href="tel:+40734292818"
-            className="bg-[#ff0066] hover:bg-[#e6005c] rounded-md text-sm font-medium shadow-md hover:shadow-lg px-3 md:px-4 py-2 h-auto flex items-center text-white transition-all duration-200"
+            className="bg-[#ff0066] hover:bg-[#e6005c] rounded-md text-sm font-bold tracking-widest shadow-md hover:shadow-lg px-3 md:px-4 py-2 h-auto flex items-center text-white transition-all duration-200"
             aria-label="Contact rapid telefonic"
           >
             <Phone className="h-4 w-4 md:mr-2" />
@@ -172,7 +172,7 @@ export default function Header() {
 
             <div className="py-4 px-4 space-y-6">
               <div className="space-y-4">
-                <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Navigare</h3>
+                <h3 className="text-sm font-semibold tracking-wider text-gray-500 uppercase">Navigare</h3>
                 <div className="space-y-1">
                   {navItems.map((item) => (
                     <Link
@@ -198,8 +198,8 @@ export default function Header() {
               {/* Butoane în sidebar mobil */}
               <div className="space-y-3 pt-4 border-t border-gray-100">
                 <Link href="/tarife" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="w-full bg-transparent hover:bg-[#06048c] text-[#06048c] hover:text-white border-2 border-[#06048c] hover:border-[#06048c] rounded-md text-sm font-medium py-3 transition-all duration-200">
-                    Tarife
+                  <Button className="w-full bg-transparent border-[#06048c] hover:bg-[#06048c] text-[#06048c] hover:text-white border-2 hover:border-[#06048c] rounded-md text-sm font-bold tracking-widest py-3 transition-all duration-200">
+                    Prețuri
                   </Button>
                 </Link>
                 <Link 
@@ -207,9 +207,9 @@ export default function Header() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block"
                 >
-                  <Button className="w-full bg-[#ff0066] hover:bg-[#e6005c] text-white rounded-md text-sm font-medium py-3 transition-all duration-200 shadow-md hover:shadow-lg">
+                  <Button className="w-full bg-[#ff0066] hover:bg-[#e6005c] text-white rounded-md text-sm font-bold tracking-widest py-3 transition-all duration-200 shadow-md hover:shadow-lg">
                     <Phone className="h-4 w-4 mr-2" />
-                    Contact rapid
+                    Rezervă
                   </Button>
                 </Link>
               </div>

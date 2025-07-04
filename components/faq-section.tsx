@@ -8,6 +8,33 @@ type FAQItem = {
   answer: string
 }
 
+const faqItems: FAQItem[] = [
+  {
+    question: "Cât costă parcarea la aeroport?",
+    answer: "Prețurile diferă în funcție de durata parcării. Pentru o zi, tariful este de 50 lei, iar pentru perioade mai lungi oferim reduceri progresive. Verifică tabelul nostru de prețuri pentru tarife complete."
+  },
+  {
+    question: "Ce servicii includ tarifele?",
+    answer: "Toate tarifele includ: parcare asigurată în spațiu privat, transfer gratuit la/de la aeroport, supraveghere video non-stop, și asistență 24/7. Nu există costuri ascunse."
+  },
+  {
+    question: "Cât durează transferul la aeroport?",
+    answer: "Transferul durează aproximativ 5-10 minute, în funcție de trafic. Microbuzurile noastre moderne circulă din 15 în 15 minute în orele de vârf și la cerere în restul timpului."
+  },
+  {
+    question: "Pot anula rezervarea?",
+    answer: "Da, poți anula rezervarea gratuit cu minimum 24 ore înainte de data sosirii. Pentru anulări în ultimul moment, se poate aplica o taxă de procesare."
+  },
+  {
+    question: "Este parcarea securizată?",
+    answer: "Da, parcarea este 100% securizată cu garduri perimetrale, supraveghere video non-stop, și personal de pază. Toate mașinile sunt asigurate în timpul parcării."
+  },
+  {
+    question: "Unde se află parcarea?",
+    answer: "Parcarea se află la doar 5 minute de Aeroportul Henri Coandă (Otopeni), cu acces ușor prin DN1. Vei primi locația exactă prin GPS după confirmarea rezervării."
+  }
+]
+
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
@@ -15,49 +42,12 @@ export default function FAQSection() {
     setOpenIndex(openIndex === index ? null : index)
   }
 
-  const faqItems: FAQItem[] = [
-    {
-      question: "Cum pot rezerva un loc de parcare?",
-      answer:
-        "Rezervarea unui loc de parcare este simplă. Accesați site-ul nostru, introduceți datele de sosire și plecare și urmați pașii pentru finalizarea plății. Veți primi o confirmare pe email cu toate detaliile necesare.",
-    },
-    {
-      question: "Ce se întâmplă dacă întârzii la ora rezervată?",
-      answer:
-        "Locul de parcare vă este rezervat pentru întreaga perioadă specificată în rezervare. Dacă ajungeți mai târziu decât ora specificată, locul vă rămâne rezervat, dar nu se oferă reduceri sau rambursări pentru timpul neutilizat.",
-    },
-    {
-      question: "Pot să prelungesc perioada de parcare dacă am nevoie de mai mult timp?",
-      answer:
-        "Prelungirea se poate face online pe site-ul nostru. Vă recomandăm să faceți prelungirea cu cel puțin 24 de ore înainte de expirarea rezervării inițiale.",
-    },
-    {
-      question: "Ce metode de plată acceptați?",
-      answer:
-        "Acceptăm plăți cu cardul de credit/debit (Visa, Mastercard), plăți prin transfer bancar și plăți prin aplicații mobile precum Apple Pay și Google Pay.",
-    },
-    {
-      question: "Există serviciu de transfer către aeroport?",
-      answer:
-        "Da, oferim un serviciu gratuit de transfer către și de la Aeroportul Otopeni. Transferul funcționează 24/7 și durează aproximativ 4 minute.",
-    },
-    {
-      question: "Ce măsuri de siguranță sunt implementate în parcare?",
-      answer:
-        "Parcarea noastră este complet împrejmuită, iluminată corespunzător și monitorizată video 24/7. Avem personal de securitate prezent permanent și sisteme de alarmă conectate la dispeceratul de securitate. Accesul în parcare se face doar pe baza codului de rezervare sau prin recunoașterea numărului de înmatriculare.",
-    },
-    {
-      question: "Caut parcare Otopeni preț, care sunt prețurile voastre?",
-      answer: "Prețul este în funcție de durata aleasa și le poți vedea în tabelul atașat.",
-    },
-  ]
-
   return (
     <section className="py-12 md:py-16 bg-gray-50">
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 md:mb-10 text-center text-primary">Întrebări frecvente</h2>
-
+          <h2 className="text-5xl md:text-3xl font-bold mb-8 md:mb-10 text-center text-primary tracking-normal">Întrebări frecvente</h2>
+          
           <div className="space-y-4">
             {faqItems.map((item, index) => (
               <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
@@ -67,7 +57,7 @@ export default function FAQSection() {
                   aria-expanded={openIndex === index}
                   aria-controls={`faq-answer-${index}`}
                 >
-                  <h3 className="text-lg font-medium text-gray-900">{item.question}</h3>
+                  <h3 className="text-lg md:text-base font-medium text-gray-900">{item.question}</h3>
                   <span className="ml-6 flex-shrink-0 text-primary">
                     {openIndex === index ? <Minus className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
                   </span>
@@ -78,19 +68,12 @@ export default function FAQSection() {
                     openIndex === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                   }`}
                 >
-                  <div className="p-6 md:p-8 pt-0 text-gray-600 text-justify">{item.answer}</div>
+                  <div className="p-6 md:p-8 pt-0 md:pt-0">
+                    <p className="text-gray-700 leading-relaxed">{item.answer}</p>
+                  </div>
                 </div>
               </div>
             ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <p className="text-gray-600">
-              Ai alte întrebări?{" "}
-              <a href="/contact" className="text-primary font-medium hover:underline">
-                Contactează-ne
-              </a>
-            </p>
           </div>
         </div>
       </div>

@@ -600,7 +600,7 @@ export default function ReservationForm() {
         <div className="flex flex-col flex-1 mb-2 md:mb-0">
           {/* Header pentru Dată și oră Intrare */}
           <div className="flex w-full bg-waze-blue text-white px-3 py-2 rounded-md border border-waze-blue mb-2 justify-center">
-            <span className="text-sm font-semibold">Dată și oră Intrare</span>
+            <span className="text-sm font-semibold tracking-wider">Dată și oră Intrare</span>
           </div>
           
           {/* Container pentru inputurile de intrare */}
@@ -661,7 +661,7 @@ export default function ReservationForm() {
         <div className="flex flex-col flex-1 mb-2 md:mb-0">
           {/* Header pentru Dată și oră Ieșire */}
           <div className="flex w-full bg-waze-blue text-white px-3 py-2 rounded-md border border-waze-blue mb-2 justify-center">
-            <span className="text-sm font-semibold">Dată și oră Ieșire</span>
+            <span className="text-sm font-semibold tracking-wider">Dată și oră Ieșire</span>
           </div>
           
           {/* Container pentru inputurile de ieșire */}
@@ -722,7 +722,7 @@ export default function ReservationForm() {
         <div className="flex flex-col flex-1 mb-2 md:mb-0">
           {/* Header pentru Număr înmatriculare */}
           <div className="flex w-full text-white px-3 py-2 rounded-md bg-waze-blue   border border-waze-blue mb-2 justify-center">
-            <span className="text-sm font-semibold">Număr înmatriculare</span>
+            <span className="text-sm font-semibold tracking-wider">Număr înmatriculare</span>
           </div>
           
           <div className="flex flex-col">
@@ -748,12 +748,12 @@ export default function ReservationForm() {
         <div className="flex flex-col flex-1 mb-2 md:mb-0">
           {/* Header invizibil pentru aliniament cu inputurile - doar pe desktop */}
           <div className="hidden md:flex w-full px-3 py-2 rounded-md mb-2 justify-center opacity-0 pointer-events-none">
-            <span className="text-sm font-semibold">Placeholder</span>
+            <span className="text-sm font-semibold tracking-wider">Placeholder</span>
           </div>
           
           <Button
             type="submit"
-            className="h-10 w-full px-6 rounded-md bg-[#ff0066] hover:bg-[#e6005c] text-white font-bold text-base shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all duration-200"
+            className="h-10 w-full px-6 rounded-md bg-[#ff0066] hover:bg-[#e6005c] text-white font-bold text-base md:text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all duration-200 tracking-widest"
             disabled={isSubmitting || !!dateError || isLoadingPrices || isLoadingSystemStatus}
           >
             {isSubmitting || isLoadingSystemStatus ? (
@@ -797,7 +797,7 @@ export default function ReservationForm() {
                   href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#ff0066] hover:bg-[#e6005c] text-white px-4 py-2 md:px-6 md:py-3 rounded-md text-xs md:text-sm font-medium transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#ff0066] hover:bg-[#e6005c] text-white px-4 py-2 md:px-6 md:py-3 rounded-md text-sm font-bold tracking-widest transition-all duration-200"
                   title="Deschide în Google Maps"
                 >
                   <MapPin className="w-3 h-3 md:w-4 md:h-4" />
@@ -807,7 +807,7 @@ export default function ReservationForm() {
                   href="https://waze.com/ul?ll=44.575660,26.069918&navigate=yes"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-4 py-2 md:px-6 md:py-3 rounded-md text-xs md:text-sm font-medium transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0099ff] hover:bg-[#007acc] text-white px-4 py-2 md:px-6 md:py-3 rounded-md text-sm font-bold tracking-widest transition-all duration-200"
                   title="Deschide în Waze"
                 >
                   <Navigation className="w-3 h-3 md:w-4 md:h-4" />

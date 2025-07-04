@@ -76,10 +76,10 @@ export default function HeroSection() {
               className={`transition-all duration-700 ease-in-out w-full md:max-w-2xl ${current === idx ? 'opacity-100 translate-x-0 pointer-events-auto' : 'opacity-0 -translate-x-8 pointer-events-none'} absolute md:relative top-0 left-0`}
               style={{ position: current === idx ? 'relative' : 'absolute' }}
             >
-              <h1 className="text-2xl md:text-4xl font-extrabold text-center md:text-left mb-3 leading-tight drop-shadow-lg uppercase tracking-tight w-full">
+              <h1 className="text-6xl md:text-5xl font-extrabold text-center md:text-left mb-3 leading-tight drop-shadow-lg uppercase tracking-normal w-full">
                 {slide.headline}
               </h1>
-              <p className="text-sm md:text-lg text-center md:text-left mb-4 drop-shadow-md font-medium w-full">
+              <p className="text-base md:text-sm text-center md:text-left mb-4 drop-shadow-md font-medium w-full">
                 {slide.subheadline}
               </p>
             </div>

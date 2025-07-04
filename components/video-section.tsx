@@ -14,11 +14,11 @@ export default function VideoSection() {
 
       {/* Content Overlay */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 sm:mb-10 md:mb-12 tracking-tight">
+        <h2 className="text-6xl md:text-5xl font-bold mb-8 sm:mb-10 md:mb-12 tracking-normal">
           Mașina ta este în siguranță la noi! Îți dorim călătorie placută!
         </h2>
         
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl max-w-4xl mb-8 sm:mb-10 md:mb-12 opacity-90 leading-relaxed">
+        <p className="text-lg md:text-base max-w-4xl mb-8 sm:mb-10 md:mb-12 opacity-90 leading-relaxed">
           Am gândit fiecare serviciu pentru a-ți simplifica experiența și a adăuga o notă de relaxare chiar înainte de zbor sau imediat după aterizare. Dacă încă nu ai rezervat, o poți face acum!
         </p>
 

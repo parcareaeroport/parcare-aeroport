@@ -4,11 +4,11 @@ export default function FacilitiesSection() {
   return (
     <section className="py-12 md:py-16 bg-primary/5">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-10 text-center text-primary">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-5xl md:text-3xl font-bold mb-8 md:mb-10 text-center text-primary tracking-normal">
             Mergi liniștit în vacanță alături de cei drag sau în călătoria ta de afaceri, noi avem grijă de mașina ta!
           </h2>
-          <p className="text-lg sm:text-xl text-center text-gray-700 mb-10 md:mb-12 max-w-4xl mx-auto">
+          <p className="text-lg md:text-base text-center text-gray-700 mb-10 md:mb-12 max-w-4xl mx-auto">
             Cauți cea mai bună parcare privată aeroport Otopeni? Sau parcare long term Otopeni? Sau chiar o parcare Otopeni ieftină? Suntem aici pentru tine!
           </p>
 
@@ -34,7 +34,7 @@ export default function FacilitiesSection() {
                       />
                     </div>
                   </div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300">City break</h3>
+                  <h3 className="text-xl md:text-lg font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300 tracking-normal">City break</h3>
                 </div>
                 <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-yellow-400 to-yellow-500 hidden md:block shadow-lg"></div>
               </div>
@@ -56,7 +56,7 @@ export default function FacilitiesSection() {
                       />
                     </div>
                   </div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300">Sejur prelungit</h3>
+                  <h3 className="text-xl md:text-lg font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300 tracking-normal">Sejur prelungit</h3>
                 </div>
                 <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-yellow-400 to-yellow-500 hidden md:block shadow-lg"></div>
               </div>
@@ -78,7 +78,7 @@ export default function FacilitiesSection() {
                       />
                     </div>
                   </div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300">Business trip</h3>
+                  <h3 className="text-xl md:text-lg font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300 tracking-normal">Business trip</h3>
                 </div>
                 <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-yellow-400 to-yellow-500 hidden md:block shadow-lg"></div>
               </div>
@@ -100,7 +100,7 @@ export default function FacilitiesSection() {
                       />
                     </div>
                   </div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300">Călătorii pentru evenimente</h3>
+                  <h3 className="text-xl md:text-lg font-bold text-center text-waze-blue hover:text-waze-blue/80 transition-colors duration-300 tracking-normal">Călătorii pentru evenimente</h3>
                 </div>
                 <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-yellow-400 to-yellow-500 hidden md:block shadow-lg"></div>
               </div>

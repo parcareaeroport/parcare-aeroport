@@ -54,7 +54,7 @@ export default function CheckoutSteps({ activeStep }: CheckoutStepsProps) {
               {/* eticheta */}
               <span
                 className={`
-                  mt-2 text-xs sm:text-sm font-medium text-center
+                  mt-2 text-sm font-medium text-center
                   ${activeStep >= id ? "text-gray-900" : "text-gray-500"}
                 `}
               >

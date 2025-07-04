@@ -142,7 +142,7 @@ export default function StatisticsPage() {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold tracking-tight">Statistici Detaliate</h1>
+          <h1 className="text-2xl md:text-xl font-bold tracking-normal">Statistici Detaliate</h1>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(8)].map((_, i) => (
@@ -165,7 +165,7 @@ export default function StatisticsPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-bold tracking-tight">Statistici Detaliate</h1>
+        <h1 className="text-2xl md:text-xl font-bold tracking-normal">Statistici Detaliate</h1>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="flex items-center gap-2">
             <Label htmlFor="date">Selectează data:</Label>
@@ -205,7 +205,7 @@ export default function StatisticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{dailyStats.availableSpots}</div>
-            <p className="text-xs text-muted-foreground">din {maxTotalReservations} locuri total</p>
+            <p className="text-sm text-muted-foreground">din {maxTotalReservations} locuri total</p>
           </CardContent>
         </Card>
 
@@ -216,7 +216,7 @@ export default function StatisticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">{dailyStats.scheduledEntries}</div>
-            <p className="text-xs text-muted-foreground">rezervări + manual</p>
+            <p className="text-sm text-muted-foreground">rezervări + manual</p>
           </CardContent>
         </Card>
 
@@ -227,7 +227,7 @@ export default function StatisticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{dailyStats.actualEntries}</div>
-            <p className="text-xs text-muted-foreground">din server + manual</p>
+            <p className="text-sm text-muted-foreground">din server + manual</p>
           </CardContent>
         </Card>
 
@@ -238,7 +238,7 @@ export default function StatisticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">{dailyStats.remainingEntries}</div>
-            <p className="text-xs text-muted-foreground">programate - efectuate</p>
+            <p className="text-sm text-muted-foreground">programate - efectuate</p>
           </CardContent>
         </Card>
 
@@ -249,7 +249,7 @@ export default function StatisticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-600">{dailyStats.scheduledExits}</div>
-            <p className="text-xs text-muted-foreground">din rezervări + manual</p>
+            <p className="text-sm text-muted-foreground">din rezervări + manual</p>
           </CardContent>
         </Card>
 
@@ -260,7 +260,7 @@ export default function StatisticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-cyan-600">{dailyStats.actualExits}</div>
-            <p className="text-xs text-muted-foreground">din server + manual</p>
+            <p className="text-sm text-muted-foreground">din server + manual</p>
           </CardContent>
         </Card>
 
@@ -271,7 +271,7 @@ export default function StatisticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">{dailyStats.expiredReservations}</div>
-            <p className="text-xs text-muted-foreground">depășit termenul</p>
+            <p className="text-sm text-muted-foreground">depășit termenul</p>
           </CardContent>
         </Card>
 
@@ -286,7 +286,7 @@ export default function StatisticsPage() {
                 ? Math.round((dailyStats.actualEntries / dailyStats.scheduledEntries) * 100) 
                 : 0}%
             </div>
-            <p className="text-xs text-muted-foreground">efectuate din programate</p>
+            <p className="text-sm text-muted-foreground">efectuate din programate</p>
           </CardContent>
         </Card>
       </div>
@@ -369,16 +369,16 @@ export default function StatisticsPage() {
                         <div className="flex items-center gap-2 mb-1">
                           <p className="text-sm font-medium">{entry.licensePlate}</p>
                           {entry.source === 'manual' && (
-                            <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-xs">
+                            <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-sm">
                               MANUAL
                             </Badge>
                           )}
                         </div>
-                        <p className="text-xs text-muted-foreground">Tel: {entry.phone}</p>
+                        <p className="text-sm text-muted-foreground">Tel: {entry.phone}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium">{entry.time}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                           {entry.source === 'manual' ? 'Intrare manuală' : 'Din rezervare'}
                         </p>
                       </div>
@@ -407,16 +407,16 @@ export default function StatisticsPage() {
                         <div className="flex items-center gap-2 mb-1">
                           <p className="text-sm font-medium">{exit.licensePlate}</p>
                           {exit.source === 'manual' && (
-                            <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-xs">
+                            <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-sm">
                               MANUAL
                             </Badge>
                           )}
                         </div>
-                        <p className="text-xs text-muted-foreground">Tel: {exit.phone}</p>
+                        <p className="text-sm text-muted-foreground">Tel: {exit.phone}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium">{exit.time}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                           {exit.source === 'manual' ? 'Ieșire manuală' : 'Din rezervare'}
                         </p>
                       </div>
@@ -443,7 +443,7 @@ export default function StatisticsPage() {
                     <div key={reservation.id} className="flex justify-between items-center p-3 border rounded-lg">
                       <div>
                         <p className="text-sm font-medium">{reservation.licensePlate}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                           {reservation.clientName} - {reservation.clientPhone}
                         </p>
                       </div>
@@ -451,7 +451,7 @@ export default function StatisticsPage() {
                         <p className="text-sm">
                           Sfârșit planificat: {formatDate(reservation.plannedEndDate)} {reservation.plannedEndTime}
                         </p>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(reservation.daysOverdue)}`}>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${getStatusBadge(reservation.daysOverdue)}`}>
                           {reservation.daysOverdue} {reservation.daysOverdue === 1 ? 'zi' : 'zile'} întârziere
                         </span>
                       </div>
