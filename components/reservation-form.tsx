@@ -174,12 +174,14 @@ export default function ReservationForm() {
   }
 
   const handleStartTimeChange = (time: string) => {
-    setStartTime(time)
+    const adjusted = time === "00:00" ? "00:05" : time
+    setStartTime(adjusted)
     setTimeError(null)
   }
 
   const handleEndTimeChange = (time: string) => {
-    setEndTime(time)
+    const adjusted = time === "00:00" ? "00:05" : time
+    setEndTime(adjusted)
     setTimeError(null)
   }
 

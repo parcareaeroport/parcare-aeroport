@@ -1399,7 +1399,10 @@ function BookingsPageContent() {
                   <PopoverContent className="w-auto p-4" align="start">
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Oră intrare</label>
-                      <TimePickerDemo value={manualStartTime} onChange={setManualStartTime} />
+                      <TimePickerDemo
+                        value={manualStartTime}
+                        onChange={(t) => setManualStartTime(t === "00:00" ? "00:05" : t)}
+                      />
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -1434,7 +1437,10 @@ function BookingsPageContent() {
                   <PopoverContent className="w-auto p-4" align="start">
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Oră ieșire</label>
-                      <TimePickerDemo value={manualEndTime} onChange={setManualEndTime} />
+                      <TimePickerDemo
+                        value={manualEndTime}
+                        onChange={(t) => setManualEndTime(t === "00:00" ? "00:05" : t)}
+                      />
                     </div>
                   </PopoverContent>
                 </Popover>

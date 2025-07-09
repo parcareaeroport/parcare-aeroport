@@ -57,16 +57,17 @@ export default function HeroSection() {
           style={{ background: 'linear-gradient(to bottom, #e6007a 0%, #0a1172 80%)' }}
         />
       </div>
-      {/* Conținutul sliderului */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-2 md:px-6 flex flex-col gap-4 md:gap-6">
-        {/* Formularul sus, centrat */}
-        <div className="w-full flex justify-center mb-2 md:mb-4">
-          <div className="w-full max-w-6xl">
-            <div className="bg-white rounded-2xl shadow-2xl p-4 md:p-6 flex flex-col gap-4 border border-gray-100">
-              <ReservationForm />
-            </div>
+      {/* Formularul fix în partea superioară a imaginii pe toate ecranele */}
+      <div className="w-full flex justify-center md:absolute md:top-12 md:left-1/2 md:-translate-x-1/2 z-20 px-2 md:px-0 mt-4">
+        <div className="w-full max-w-6xl">
+          <div className="bg-white rounded-2xl shadow-2xl p-4 md:p-6 flex flex-col gap-4 border border-gray-100">
+            <ReservationForm />
           </div>
         </div>
+      </div>
+      {/* Conținutul sliderului */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-2 md:px-6 flex flex-col gap-4 md:gap-6 mt-8 md:mt-0 md:pt-48">
+        {/* Formularul a fost mutat în partea superioară a imaginii */}
         {/* Slide-uri headline/subheadline, toate în DOM pentru SEO, doar unul vizibil */}
         <div className="w-full flex flex-col items-center md:items-start text-white z-10 relative min-h-[160px] md:min-h-[180px]">
           {SLIDES.map((slide, idx) => (
