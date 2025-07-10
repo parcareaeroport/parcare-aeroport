@@ -17,7 +17,7 @@ export default function ParkingRulesTabs() {
               <button
                 className={`py-4 px-6 font-medium text-center transition-colors ${
                   activeTab === "sosire"
-                    ? "bg-blue-50 text-primary border-b-2 border-primary"
+                    ? "bg-waze-blue/10 text-waze-blue border-b-2 border-waze-blue"
                     : "text-gray-600 hover:bg-gray-50"
                 }`}
                 onClick={() => setActiveTab("sosire")}
@@ -27,7 +27,7 @@ export default function ParkingRulesTabs() {
               <button
                 className={`py-4 px-6 font-medium text-center transition-colors ${
                   activeTab === "plecare"
-                    ? "bg-blue-50 text-primary border-b-2 border-primary"
+                    ? "bg-waze-blue/10 text-waze-blue border-b-2 border-waze-blue"
                     : "text-gray-600 hover:bg-gray-50"
                 }`}
                 onClick={() => setActiveTab("plecare")}
@@ -60,7 +60,7 @@ export default function ParkingRulesTabs() {
 
             {/* Right side - Content */}
             <div className="order-1 md:order-2">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-primary">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-waze-blue">
                 {activeTab === "sosire" ? "Cum funcționează la sosire" : "Cum funcționează la plecare"}
               </h2>
               <p className="text-gray-600 mb-8">

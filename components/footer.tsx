@@ -13,7 +13,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-[#0A1172] text-white pt-10 sm:pt-16 pb-8">
+    <footer className="bg-waze-blue text-white pt-10 sm:pt-16 pb-8">
       <div className="container mx-auto px-4">
 
 
@@ -138,7 +138,7 @@ export default function Footer() {
         </div>
 
         {/* Social Media Links */}
-        <div className="flex flex-col md:flex-row justify-between items-center border-t border-[#1a2285] pt-6 md:pt-8">
+        <div className="flex flex-col md:flex-row justify-between items-center border-t border-waze-blue/40 pt-6 md:pt-8">
           <div className="flex space-x-4 mb-6 md:mb-0">
             <Link href="https://www.instagram.com/parcare_aeroport?igsh=MXV5d2d2M3NibHh0Yg%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
               <Instagram size={20} className="sm:w-5 sm:h-5" />
@@ -155,7 +155,7 @@ export default function Footer() {
         </div>
 
         {/* Copyright and Legal */}
-        <div className="flex flex-col md:flex-row justify-between items-center border-t border-[#1a2285] pt-6 md:pt-8 mt-6 md:mt-8 text-xs sm:text-sm text-gray-400">
+        <div className="flex flex-col md:flex-row justify-between items-center border-t border-waze-blue/40 pt-6 md:pt-8 mt-6 md:mt-8 text-xs sm:text-sm text-gray-400">
           <div className="mb-4 md:mb-0">© Copyright parcare-aeroport.ro {new Date().getFullYear()}</div>
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
             <Link href="/politica-anulare" className="hover:text-white transition-colors">

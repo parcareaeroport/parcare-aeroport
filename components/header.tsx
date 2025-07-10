@@ -110,14 +110,17 @@ export default function Header() {
           </Link>
           <Button
             variant="ghost"
-            size="icon"
-            className="md:hidden rounded-full text-[#13005a] hover:bg-[#13005a]/10"
+            className="md:hidden rounded-full text-[#13005a] hover:bg-[#13005a]/10 p-4 w-14 h-14"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
             aria-label={isMobileMenuOpen ? "Închide meniul" : "Deschide meniul"}
           >
-            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isMobileMenuOpen ? (
+              <X style={{ width: 32, height: 32 }} />
+            ) : (
+              <Menu style={{ width: 32, height: 32 }} />
+            )}
           </Button>
         </div>
       </div>

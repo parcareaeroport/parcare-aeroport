@@ -1729,7 +1729,7 @@ function BookingsPageContent() {
               type="button" 
               onClick={handleSendEmailFromNewBooking}
               disabled={isSendingEmail}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-waze-blue hover:bg-waze-blue/80"
             >
               {isSendingEmail ? (
                 <>

@@ -132,7 +132,7 @@ export default function PricingTableSection() {
           {/* ---------- BANNER ---------- */}
           <div className="gradient-bg text-black p-4 sm:p-5 text-center">
             <p className="text-base sm:text-xl font-bold">
-              Tarife&nbsp;REDUSE* Parcare&nbsp;Otopeni
+              Tarife&nbsp;Parcare&nbsp;Otopeni
             </p>
             <p className="text-xs sm:text-sm mt-1 opacity-90">
               * Prețurile promoționale sunt valabile pe perioada afișării pe site
@@ -185,13 +185,13 @@ export default function PricingTableSection() {
                         strike: false,
                         colorSpinner: "primary",
                       },
-                      {
-                        label: "STANDARD",
-                        map: pricesStandard,
-                        bg: "gray-100",
-                        strike: true,
-                        colorSpinner: "gray-400",
-                      },
+                      // {
+                      //   label: "STANDARD",
+                      //   map: pricesStandard,
+                      //   bg: "gray-100",
+                      //   strike: true,
+                      //   colorSpinner: "gray-400",
+                      // },
                     ].map(
                       (
                         { label, map, bg, strike, colorSpinner },
@@ -236,7 +236,7 @@ export default function PricingTableSection() {
               </Tabs>
             )}
 
-            <p className="mt-6 text-xs sm:text-sm text-gray-600 bg-gray-50 p-4 rounded-xl">
+            {/* <p className="mt-6 text-xs sm:text-sm text-gray-600 bg-gray-50 p-4 rounded-xl">
               * TVA&nbsp;19&nbsp;%. Reducerea de 30&nbsp;% se aplică începând cu
               a&nbsp;2-a zi de staționare.{" "}
               <Link
@@ -245,7 +245,7 @@ export default function PricingTableSection() {
               >
                 Vezi detalii și rezervă
               </Link>
-            </p>
+            </p> */}
 
             <div className="mt-6 text-center">
               {/* Buton Principal - Fundal roz + Text alb */}
@@ -295,7 +295,7 @@ export default function PricingTableSection() {
               }}
             >
               <div className="flex items-center justify-center bg-primary/10 p-4 rounded-xl">
-                <span className="font-bold text-primary">REDUS</span>
+                <span className="font-bold text-primary">TARIFE</span>
               </div>
               {dayKeys.map((d) => (
                 <div
@@ -312,7 +312,7 @@ export default function PricingTableSection() {
             </div>
 
             {/* STANDARD ROW */}
-            <div
+            {/* <div
               className="grid gap-3"
               style={{
                 gridTemplateColumns: `120px repeat(${dayKeys.length}, minmax(80px,1fr))`,
@@ -335,7 +335,7 @@ export default function PricingTableSection() {
                   )}
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
 
           {/* CTA la finalul containerului alb */}
