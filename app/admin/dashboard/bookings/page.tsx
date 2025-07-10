@@ -938,9 +938,9 @@ function BookingsPageContent() {
           <TabsTrigger value="manual" onClick={() => setStatusFilter("manual")}>
                             <span className="text-orange-700">Manual</span>
           </TabsTrigger>
-          <TabsTrigger value="pay_on_site" onClick={() => setStatusFilter("pay_on_site")}>
+          {/* <TabsTrigger value="pay_on_site" onClick={() => setStatusFilter("pay_on_site")}>
             <span className="text-orange-700">Plată la parcare</span>
-          </TabsTrigger>
+          </TabsTrigger> */}
           <TabsTrigger value="cancelled_by_admin" onClick={() => setStatusFilter("cancelled_by_admin")}>
             Anulate
           </TabsTrigger>
@@ -1033,11 +1033,11 @@ function BookingsPageContent() {
                             MANUAL
                           </Badge>
                         )}
-                        {booking.source === "pay_on_site" && (
+                        {/* {booking.source === "pay_on_site" && (
                           <Badge variant="outline" className="text-orange-700 border-orange-400 bg-orange-100 mr-2 text-xs">
                             PLATĂ LA PARCARE
                           </Badge>
-                        )}
+                        )} */}
                         {booking.apiBookingNumber || booking.id.substring(0, 6)}
                       </TableCell>
                       <TableCell>{booking.licensePlate}</TableCell>
@@ -1255,9 +1255,9 @@ function BookingsPageContent() {
                     </>
                   ) : selectedBooking.source === "pay_on_site" ? (
                     <>
-                      <p>
+                      {/* <p>
                         <strong>Tip Rezervare:</strong> <Badge className="bg-orange-100 text-orange-700 border-orange-400">Plată la Parcare</Badge>
-                      </p>
+                      </p> */}
                       <p>
                         <strong>Status Plată:</strong> <Badge className="bg-yellow-500 text-white">Nepaid (se plătește la parcare)</Badge>
                       </p>

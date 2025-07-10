@@ -786,7 +786,7 @@ export default function OrderPlacementForm() {
                           </Label>
                         </div>
 
-                        <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
+                        {/* <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
                           <input
                             type="radio"
                             id="pay_on_site"
@@ -796,13 +796,13 @@ export default function OrderPlacementForm() {
                             onChange={() => setPaymentMethod("pay_on_site")}
                             className="h-4 w-4 text-primary"
                           />
-                          {/* <Label htmlFor="pay_on_site" className="flex-1 cursor-pointer">
+                          <Label htmlFor="pay_on_site" className="flex-1 cursor-pointer">
                             <div className="flex flex-col">
                               <span>Plată la parcare</span>
                               <span className="text-sm text-gray-500">Plătiți când ajungeți la parcare</span>
                             </div>
-                          </Label> */}
-                        </div>
+                          </Label>
+                        </div> */}
                       </div>
                     </div>
 
@@ -1251,7 +1251,7 @@ export default function OrderPlacementForm() {
                           </Label>
                         </div>
 
-                        <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
+                        {/* <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
                           <input
                             type="radio"
                             id="pay_on_site"
@@ -1261,13 +1261,13 @@ export default function OrderPlacementForm() {
                             onChange={() => setPaymentMethod("pay_on_site")}
                             className="h-4 w-4 text-primary"
                           />
-                          {/* <Label htmlFor="pay_on_site" className="flex-1 cursor-pointer">
+                          <Label htmlFor="pay_on_site" className="flex-1 cursor-pointer">
                             <div className="flex flex-col">
                               <span>Plată la parcare</span>
                               <span className="text-sm text-gray-500">Plătiți când ajungeți la parcare</span>
                             </div>
-                          </Label> */}
-                        </div>
+                          </Label>
+                        </div> */}
                       </div>
                     </div>
 
