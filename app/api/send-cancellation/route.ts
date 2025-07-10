@@ -32,7 +32,7 @@ function generateCancellationEmailHTML(data: CancellationData): string {
       <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px; background-color: #f5f5f5; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header { background: linear-gradient(135deg, #ff0066, #e6005c); color: white; padding: 20px; text-align: center; }
+        .header { background: linear-gradient(135deg, #ee7f1a, #d67016); color: white; padding: 20px; text-align: center; }
         .header h1 { color: #ffffff; margin: 0; font-size: 24px; }
         .content { padding: 30px; }
         .details-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
     // Configurează email-ul
     const mailOptions = {
       from: {
-        name: 'Parcare-Aeroport Otopeni - Anulări',
+        name: 'OTP Parking - Anulări',
         address: process.env.GMAIL_USER
       },
       to: process.env.GMAIL_USER, // Trimite către adresa companiei

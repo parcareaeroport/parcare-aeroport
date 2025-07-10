@@ -6,7 +6,7 @@ export default function ParkingRulesHero() {
           Regulile Parcării
         </h1>
         <h2 className="text-xl md:text-2xl font-medium mb-6 text-primary">
-          Parcare Aeroport Otopeni
+          OTP Parking
         </h2>
         <p className="text-base md:text-lg text-slate-600 max-w-3xl mx-auto">
           Pentru o experiență plăcută și sigură, vă rugăm să respectați aceste reguli simple de parcare.

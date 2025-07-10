@@ -5,7 +5,7 @@ export default function PricingHero() {
     <section className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto text-center mb-16">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 text-primary">Tarife Parcare Otopeni</h1>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 text-primary">Tarife Parcare Otopeni- OTP Parking</h1>
           <p className="text-xl md:text-2xl lg:text-3xl text-gray-700 max-w-3xl mx-auto">
             Prețuri transparente și competitive pentru parcarea ta de lângă aeroport.
           </p>
@@ -18,8 +18,8 @@ export default function PricingHero() {
             <div className="flex flex-col space-y-12 md:space-y-24">
               {/* Top Left Stat */}
               <div className="text-center md:text-right relative">
-                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] right-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform translate-x-full">
-                  <div className="absolute right-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
+                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] right-0 w-24 lg:w-32 h-0.5 bg-orange-500 transform translate-x-full">
+                  <div className="absolute right-0 top-1/2 w-4 h-4 bg-orange-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-waze-blue">49,98 LEI</h3>
                 <p className="text-gray-600">preț pentru o zi de parcare</p>
@@ -27,8 +27,8 @@ export default function PricingHero() {
 
               {/* Bottom Left Stat */}
               <div className="text-center md:text-right relative">
-                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] right-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform translate-x-full">
-                  <div className="absolute right-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
+                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] right-0 w-24 lg:w-32 h-0.5 bg-orange-500 transform translate-x-full">
+                  <div className="absolute right-0 top-1/2 w-4 h-4 bg-orange-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-waze-blue">500m</h3>
                 <p className="text-gray-600">distanță față de aeroport</p>
@@ -36,13 +36,14 @@ export default function PricingHero() {
             </div>
 
             {/* Center Column - Image */}
-            <div className="flex justify-center">
-              <div className="relative z-10 w-64 h-64 md:w-72 md:h-72 aspect-square rounded-full overflow-hidden border-4 border-white shadow-xl shrink-0">
+            <div className="flex justify-center mt-8 md:mt-12">
+              <div className="relative z-10 w-72 h-72 md:w-80 md:h-80 aspect-square rounded-full overflow-hidden border-4 border-white shadow-xl shrink-0">
                 <Image
-                  src="/parcare_otopeni pret_tarife_parcare_otopeni.jpg"
+                  src="/Tarife Parcare Otopeni - OTP Parking.jpg"
                   alt="Parcare Otopeni"
                   fill
                   className="object-cover"
+                  style={{ objectPosition: 'center 25%' }}
                 />
               </div>
             </div>
@@ -51,8 +52,8 @@ export default function PricingHero() {
             <div className="flex flex-col space-y-12 md:space-y-24">
               {/* Top Right Stat */}
               <div className="text-center md:text-left relative">
-                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] left-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform -translate-x-full">
-                  <div className="absolute left-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
+                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] left-0 w-24 lg:w-32 h-0.5 bg-orange-500 transform -translate-x-full">
+                  <div className="absolute left-0 top-1/2 w-4 h-4 bg-orange-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-waze-blue">24/7</h3>
                 <p className="text-gray-600">supraveghere video și pază</p>
@@ -60,21 +61,21 @@ export default function PricingHero() {
 
               {/* Bottom Right Stat */}
               <div className="text-center md:text-left relative">
-                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] left-0 w-24 lg:w-32 h-0.5 bg-pink-500 transform -translate-x-full">
-                  <div className="absolute left-0 top-1/2 w-4 h-4 bg-pink-500 rounded-full transform -translate-y-1/2"></div>
+                <div className="hidden md:block absolute bottom-[calc(19%+0.75rem)] left-0 w-24 lg:w-32 h-0.5 bg-orange-500 transform -translate-x-full">
+                  <div className="absolute left-0 top-1/2 w-4 h-4 bg-orange-500 rounded-full transform -translate-y-1/2"></div>
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-waze-blue">30%</h3>
-                <p className="text-gray-600">reducere pentru rezervări online</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-waze-blue">Parcare Otopeni</h3>
+                <p className="text-gray-600">Rezervări online</p>
               </div>
             </div>
           </div>
 
           {/* Mobile dots for visual connection (visible only on mobile) */}
           <div className="flex justify-center space-x-2 mt-8 md:hidden">
-            <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+      <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+      <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+      <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
           </div>
 
           {/* Additional features below the image */}

@@ -124,7 +124,7 @@ export default function PricingTableSection() {
           </div>
           <div className="text-base sm:text-lg mb-2">
             Profită de promoțiile noastre și rezervă acum!<br />
-            <span>30% reducere începând cu a-2-a zi de parcare</span>
+         
           </div>
         </div>
 
@@ -141,11 +141,7 @@ export default function PricingTableSection() {
 
           {/* ======================= MOBILE ======================= */}
           <div className="p-4 sm:p-6 md:hidden">
-            <div className="flex items-center gap-4 mb-6 b  g-primary/10 p-3 rounded-xl">
-              <span className="text-xl font-bold text-primary">30%</span>
-              <span className="text-primary font-medium text-sm">REDUCERE</span>
-            </div>
-
+           
             {dayKeys.length > 0 && (
               <Tabs
                 value={selectedDayMobile}
@@ -255,7 +251,7 @@ export default function PricingTableSection() {
               {/* Buton Principal - Fundal roz + Text alb */}
               <Link
                 href="/#rezerva-formular"
-                className="inline-flex items-center gap-2 bg-[#ff0066] hover:bg-[#e6005c] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105"
+                className="inline-flex items-center gap-2 bg-[#ee7f1a] hover:bg-[#d67016] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105"
               >
                 <span>Rezervă acum</span>
                 <ChevronRight className="h-4 w-4" />
@@ -265,10 +261,7 @@ export default function PricingTableSection() {
 
           {/* ======================= DESKTOP ======================= */}
           <div className="hidden md:block p-8">
-            <div className="flex items-center gap-4 mb-8 bg-primary/10 p-4 rounded-xl inline-block">
-              <span className="text-2xl font-bold text-primary">30%</span>
-              <span className="text-primary font-medium">REDUCERE</span>
-            </div>
+            
 
             {/* HEAD ROW */}
             <div
@@ -353,7 +346,7 @@ export default function PricingTableSection() {
             {/* Buton Secundar - Fundal alb + Border & Text roz */}
             <Link
               href="/tarife"
-              className="inline-flex items-center gap-2 bg-white hover:bg-[#ff0066]/5 text-[#ff0066] hover:text-[#ff0066] border-2 border-[#ff0066] hover:border-[#e6005c] px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-2 bg-white hover:bg-[#ee7f1a]/5 text-[#ee7f1a] hover:text-[#ee7f1a] border-2 border-[#ee7f1a] hover:border-[#d67016] px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-sm hover:shadow-md"
             >
               Vezi toate tarifele (30+ zile)
             </Link>

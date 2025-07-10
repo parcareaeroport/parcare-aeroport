@@ -84,6 +84,10 @@ interface Booking {
   manualPaymentStatus?: "not_paid" | "partial" | "paid" | "refunded" // Pentru rezervările manuale
   paymentIntentId?: string
   
+  // Termeni și condiții
+  termsAccepted?: boolean
+  termsAcceptedAt?: Timestamp
+  
   // Date API externe
   apiBookingNumber?: string // Numărul de la API-ul de parcare
   apiSuccess?: boolean
@@ -94,7 +98,7 @@ interface Booking {
   apiRequestTimestamp?: Timestamp
   
   // Metadata sistem
-  source?: "webhook" | "test_mode" | "manual"
+  source?: "webhook" | "test_mode" | "manual" | "pay_on_site"
   createdAt: Timestamp // Firestore Timestamp
   lastUpdated?: Timestamp
   expiredAt?: Timestamp // Când a fost marcată ca expirată
@@ -230,6 +234,9 @@ function BookingsPageContent() {
       if (statusFilter === "manual") {
         // Filtrare specială pentru rezervările manuale
         filtered = filtered.filter((b) => b.source === "manual")
+      } else if (statusFilter === "pay_on_site") {
+        // Filtrare specială pentru rezervările cu plată la parcare
+        filtered = filtered.filter((b) => b.source === "pay_on_site")
       } else {
         filtered = filtered.filter((b) => b.status === statusFilter)
       }
@@ -929,7 +936,10 @@ function BookingsPageContent() {
             Confirmate (Test)
           </TabsTrigger>
           <TabsTrigger value="manual" onClick={() => setStatusFilter("manual")}>
-            <span className="text-pink-700">Manual</span>
+                            <span className="text-orange-700">Manual</span>
+          </TabsTrigger>
+          <TabsTrigger value="pay_on_site" onClick={() => setStatusFilter("pay_on_site")}>
+            <span className="text-orange-700">Plată la parcare</span>
           </TabsTrigger>
           <TabsTrigger value="cancelled_by_admin" onClick={() => setStatusFilter("cancelled_by_admin")}>
             Anulate
@@ -993,6 +1003,7 @@ function BookingsPageContent() {
                   <TableHead>Perioada</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Plată</TableHead>
+                  <TableHead>T&C</TableHead>
                   <TableHead>Creată la</TableHead>
                   <TableHead className="text-right">Acțiuni</TableHead>
                 </TableRow>
@@ -1000,7 +1011,7 @@ function BookingsPageContent() {
               <TableBody>
                 {filteredBookings.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={9} className="text-center py-8 text-gray-500">
                       Nu s-au găsit rezervări.
                     </TableCell>
                   </TableRow>
@@ -1008,12 +1019,23 @@ function BookingsPageContent() {
                   filteredBookings.map((booking) => (
                     <TableRow 
                       key={booking.id}
-                      className={booking.source === "manual" ? "bg-pink-50 hover:bg-pink-100 border-l-4 border-l-pink-400" : ""}
+                      className={
+                        booking.source === "manual" 
+                          ? "bg-orange-50 hover:bg-orange-100 border-l-4 border-l-orange-400" 
+                          : booking.source === "pay_on_site"
+                          ? "bg-orange-50 hover:bg-orange-100 border-l-4 border-l-orange-400"
+                          : ""
+                      }
                     >
                       <TableCell className="font-medium">
                         {booking.source === "manual" && (
-                          <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 mr-2 text-xs">
+                          <Badge variant="outline" className="text-orange-700 border-orange-400 bg-orange-100 mr-2 text-xs">
                             MANUAL
+                          </Badge>
+                        )}
+                        {booking.source === "pay_on_site" && (
+                          <Badge variant="outline" className="text-orange-700 border-orange-400 bg-orange-100 mr-2 text-xs">
+                            PLATĂ LA PARCARE
                           </Badge>
                         )}
                         {booking.apiBookingNumber || booking.id.substring(0, 6)}
@@ -1026,6 +1048,13 @@ function BookingsPageContent() {
                       </TableCell>
                       <TableCell>{getStatusBadge(booking.status)}</TableCell>
                       <TableCell>{renderPaymentStatusCell(booking)}</TableCell>
+                      <TableCell className="text-center">
+                        {booking.termsAccepted ? (
+                          <span className="text-green-600" title="Termeni acceptați">✅</span>
+                        ) : (
+                          <span className="text-red-600" title="Termeni nu au fost acceptați">❌</span>
+                        )}
+                      </TableCell>
                       <TableCell>
                         {booking.createdAt
                           ? formatDateFn(booking.createdAt.toDate(), "dd MMM yyyy, HH:mm", { locale: ro })
@@ -1212,7 +1241,7 @@ function BookingsPageContent() {
                   {selectedBooking.source === "manual" ? (
                     <>
                       <p>
-                        <strong>Tip Rezervare:</strong> <Badge className="bg-pink-100 text-pink-700 border-pink-400">Manual</Badge>
+                        <strong>Tip Rezervare:</strong> <Badge className="bg-orange-100 text-orange-700 border-orange-400">Manual</Badge>
                       </p>
                       <p>
                         <strong>Status Plată Manual:</strong> {getManualPaymentStatusBadge(selectedBooking)}
@@ -1222,6 +1251,21 @@ function BookingsPageContent() {
                       </p>
                       <p className="text-gray-600 text-xs italic">
                         * Pentru rezervările manuale, statusul plății se actualizează manual prin tab-ul principal.
+                      </p>
+                    </>
+                  ) : selectedBooking.source === "pay_on_site" ? (
+                    <>
+                      <p>
+                        <strong>Tip Rezervare:</strong> <Badge className="bg-orange-100 text-orange-700 border-orange-400">Plată la Parcare</Badge>
+                      </p>
+                      <p>
+                        <strong>Status Plată:</strong> <Badge className="bg-yellow-500 text-white">Nepaid (se plătește la parcare)</Badge>
+                      </p>
+                      <p>
+                        <strong>Sumă:</strong> {selectedBooking.amount ? `${selectedBooking.amount.toFixed(2)} RON` : "0.00 RON"}
+                      </p>
+                      <p className="text-gray-600 text-xs italic">
+                        * Plata se va efectua la sosirea în parcare.
                       </p>
                     </>
                   ) : (
@@ -1279,6 +1323,26 @@ function BookingsPageContent() {
                   {selectedBooking.lastEmailError && (
                     <p>
                       <strong>Ultima eroare email:</strong> <span className="text-red-600 text-xs">{selectedBooking.lastEmailError}</span>
+                    </p>
+                  )}
+                </div>
+                
+                <h3 className="text-lg font-medium mt-4 mb-2 text-gray-800">Termeni și Condiții</h3>
+                <div className="space-y-1 text-sm">
+                  <p>
+                    <strong>Acceptat Termenii:</strong> {selectedBooking.termsAccepted ? 
+                      <span className="text-green-600">✅ Da</span> : 
+                      <span className="text-red-600">❌ Nu</span>
+                    }
+                  </p>
+                  {selectedBooking.termsAcceptedAt && (
+                    <p>
+                      <strong>Data acceptării:</strong> {formatDateFn(selectedBooking.termsAcceptedAt.toDate(), "dd MMM yyyy, HH:mm", { locale: ro })}
+                    </p>
+                  )}
+                  {!selectedBooking.termsAccepted && (
+                    <p className="text-amber-600 text-xs italic">
+                      ⚠️ Clientul nu a acceptat termenii și condițiile
                     </p>
                   )}
                 </div>

@@ -55,8 +55,8 @@ const config = {
         },
         // Actualizăm culorile Waze
         waze: {
-          blue: "#06048c", // Albastru închis pentru navbar
-          pink: "#FF0066", // Roz magenta pentru butoane
+          blue: "#13005a", // Albastru închis pentru navbar
+          pink: "#ee7f1a", // Orange pentru butoane
         },
         // Păstrăm culorile verde pentru compatibilitate, dar le vom înlocui treptat
         green: {

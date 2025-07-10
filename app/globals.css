@@ -177,14 +177,14 @@ body {
 GHID CULORI APLICAȚIE:
 
 LINKURI ȘI TEXTE:
-- Culoare: albastru #06048c (waze-blue)
+- Culoare: albastru #13005a (waze-blue)
 - Hover: albastru mai închis
 - Utilizare: navigare, linkuri, titluri, text-primary
 
 BUTOANE - 2 VARIANTE:
 
 VARIANTA 1 - BUTON PRINCIPAL (CTA):
-- Fundal: roz #ff0066
+- Fundal: orange #ee7f1a
 - Text: alb
 - Border: roz #ff0066
 - Hover: fundal mai închis #e6005c + shadow mai mare + scale 1.05
@@ -192,24 +192,24 @@ VARIANTA 1 - BUTON PRINCIPAL (CTA):
 
 VARIANTA 2 - BUTON SECUNDAR:
 - Fundal: alb
-- Text: roz #ff0066  
+- Text: orange #ee7f1a  
 - Border: roz #ff0066
 - Hover: fundal roz transparent + shadow + border mai închis
 - Utilizare: acțiuni secundare, "Tarife", "Vezi mai multe"
 
 EXEMPLE DE UTILIZARE:
-<Button className="bg-[#ff0066] hover:bg-[#e6005c] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105">
+<Button className="bg-[#ee7f1a] hover:bg-[#d67016] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105">
   Buton Principal
 </Button>
 
-<Button className="bg-white hover:bg-[#ff0066]/5 text-[#ff0066] border-2 border-[#ff0066] hover:border-[#e6005c] px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-sm hover:shadow-md">
+<Button className="bg-white hover:bg-[#ee7f1a]/5 text-[#ee7f1a] border-2 border-[#ee7f1a] hover:border-[#d67016] px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-sm hover:shadow-md">
   Buton Secundar
 </Button>
 */
 
 /* Buton Principal - Fundal roz + Text alb */
 .btn-primary {
-  background-color: #ff0066;
+  background-color: #ee7f1a;
   color: white;
   border: 2px solid #ff0066;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -217,7 +217,7 @@ EXEMPLE DE UTILIZARE:
 }
 
 .btn-primary:hover {
-  background-color: #e6005c;
+  background-color: #d67016;
   border-color: #e6005c;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   transform: scale(1.05);
@@ -240,7 +240,7 @@ EXEMPLE DE UTILIZARE:
 
 /* Actualizăm bg-color pentru a folosi culoarea albastru navy */
 .waze-button {
-  background-color: #06048c;
+  background-color: #13005a;
   color: white;
 }
 
@@ -285,9 +285,9 @@ EXEMPLE DE UTILIZARE:
 .rdp {
   --rdp-cell-size: 40px;
   /* Actualizăm culorile calendarului pentru a folosi albastrul navy */
-  --rdp-accent-color: #06048c;
+  --rdp-accent-color: #13005a;
   --rdp-background-color: rgba(6, 4, 140, 0.1);
-  --rdp-accent-color-dark: #06048c;
+  --rdp-accent-color-dark: #13005a;
   --rdp-background-color-dark: rgba(6, 4, 140, 0.2);
   --rdp-outline: 2px solid var(--rdp-accent-color);
   --rdp-outline-selected: 2px solid var(--rdp-accent-color);

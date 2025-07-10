@@ -89,7 +89,7 @@ export default function Footer() {
             </div>
               {/* Phone */}
               <div className="flex items-center space-x-3">
-                <Phone size={16} className="text-[#FF0066] flex-shrink-0" />
+                <Phone size={16} className="text-[#ee7f1a] flex-shrink-0" />
                 <a href="tel:+40734292818" className="text-gray-300 hover:text-white transition-colors text-sm">
                   +40 734 292 818
                 </a>
@@ -97,7 +97,7 @@ export default function Footer() {
               
               {/* Email */}
               <div className="flex items-center space-x-3">
-                <Mail size={16} className="text-[#FF0066] flex-shrink-0" />
+                <Mail size={16} className="text-[#ee7f1a] flex-shrink-0" />
                 <a href="mailto:contact.parcareaeroport@gmail.com" className="text-gray-300 hover:text-white transition-colors text-sm">
                   contact.parcareaeroport@gmail.com
                 </a>
@@ -109,7 +109,7 @@ export default function Footer() {
                 
                 {/* Google Maps */}
                 <div className="flex items-center space-x-3">
-                  <MapPin size={16} className="text-[#FF0066] flex-shrink-0" />
+                  <MapPin size={16} className="text-[#ee7f1a] flex-shrink-0" />
                   <a 
                     href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw" 
                     target="_blank" 
@@ -122,7 +122,7 @@ export default function Footer() {
                 
                 {/* Waze */}
                 <div className="flex items-center space-x-3">
-                  <Navigation size={16} className="text-[#FF0066] flex-shrink-0" />
+                  <Navigation size={16} className="text-[#ee7f1a] flex-shrink-0" />
                   <a 
                     href="https://waze.com/ul?ll=44.575660,26.069918&navigate=yes" 
                     target="_blank" 
@@ -175,10 +175,10 @@ export default function Footer() {
         {/* Scroll to top button */}
         <button
           onClick={scrollToTop}
-          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-[#0A1172] hover:bg-[#080d5a] text-white rounded-full p-2 shadow-lg transition-all duration-300"
+          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-[#ee7f1a] hover:bg-[#d67016] text-white rounded-full p-3 sm:p-4 shadow-lg transition-all duration-300 hover:scale-110"
           aria-label="Scroll to top"
         >
-          <ArrowUp size={16} className="sm:w-4 sm:h-4" />
+          <ArrowUp size={20} className="sm:w-6 sm:h-6" />
         </button>
       </div>
     </footer>

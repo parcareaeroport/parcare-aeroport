@@ -148,9 +148,6 @@ export default function OrderPlacementForm() {
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
   
-  // Test mode toggle
-  const [isTestMode, setIsTestMode] = useState(false)
-
   // Add ref for payment section
   const paymentSectionRef = useRef<HTMLDivElement>(null)
 
@@ -247,8 +244,8 @@ export default function OrderPlacementForm() {
     return reservationData.price // Preț integral, fără discount
   }
 
-  // Test mode booking function
-  const handleTestBooking = async () => {
+  // Pay on site booking function
+  const handlePayOnSiteBooking = async () => {
     if (!reservationData) {
       toast({
         title: "Eroare",
@@ -271,7 +268,7 @@ export default function OrderPlacementForm() {
       formData.append("clientName", `${firstName} ${lastName}`.trim())
       if (firstName) formData.append("clientTitle", firstName)
 
-      console.log("Test Mode - Apelăm createBookingWithFirestore cu datele:", {
+      console.log("Pay on Site - Apelăm createBookingWithFirestore cu datele:", {
         licensePlate: reservationData.licensePlate,
         startDate: reservationData.startDate,
         startTime: reservationData.startTime,
@@ -287,10 +284,10 @@ export default function OrderPlacementForm() {
         clientEmail: email,
         clientPhone: phone,
         numberOfPersons: parseInt(numberOfPersons) || 1,
-        paymentStatus: "n/a", // Mod test - fără plată
+        paymentStatus: "pending", // Plată în așteptare
         amount: calculateTotal(),
         days: reservationData.days,
-        source: "test_mode",
+        source: "pay_on_site",
         // Date pentru facturare și adresă
         company: needInvoice ? company : undefined,
         companyVAT: needInvoice ? companyVAT : undefined,
@@ -301,7 +298,9 @@ export default function OrderPlacementForm() {
         city: city,
         county: county,
         postalCode: postalCode,
-        orderNotes: orderNotes
+        orderNotes: orderNotes,
+        // Termeni și condiții
+        termsAccepted: acceptTerms
       })
 
       // Log pentru debugging doar în caz de eroare
@@ -323,8 +322,8 @@ export default function OrderPlacementForm() {
         const firestoreId = 'firestoreId' in result ? result.firestoreId : null
         
         const successMessage = hasFirestoreSuccess 
-          ? `Rezervarea de test ${bookingNumber} a fost creată cu succes și salvată în sistem!`
-          : `Rezervarea de test ${bookingNumber} a fost creată la API, dar nu s-a putut salva local.`
+          ? `Rezervarea ${bookingNumber} a fost creată cu succes! Veți plăti la parcare.`
+          : `Rezervarea ${bookingNumber} a fost creată la API, dar nu s-a putut salva local.`
         
         toast({
           title: "Succes!",
@@ -341,25 +340,25 @@ export default function OrderPlacementForm() {
           apiBookingNumber: bookingNumber,
           firestoreId: firestoreId,
           amount: calculateTotal(),
-          status: "confirmed_test"
+          status: "confirmed_pay_on_site"
         }
 
         sessionStorage.setItem("reservationDataForConfirmation", JSON.stringify(completeReservationData))
 
-        // Redirectează la pagina de confirmare cu parametrii de test
-        router.push(`/confirmare?bookingNumber=${bookingNumber}&status=success_test&firestoreId=${firestoreId || ''}`)
+        // Redirectează la pagina de confirmare cu parametrii de plată la parcare
+        router.push(`/confirmare?bookingNumber=${bookingNumber}&status=success_pay_on_site&firestoreId=${firestoreId || ''}`)
       } else {
         toast({
           title: "Eroare la rezervare",
-          description: result.message || "A apărut o eroare la crearea rezervării de test.",
+          description: result.message || "A apărut o eroare la crearea rezervării.",
           variant: "destructive",
         })
       }
     } catch (error) {
-      console.error("Error creating test booking:", error)
+      console.error("Error creating pay on site booking:", error)
       toast({
         title: "Eroare",
-        description: "A apărut o eroare tehnică la testare. Verificați consola pentru detalii.",
+        description: "A apărut o eroare tehnică la crearea rezervării. Verificați consola pentru detalii.",
         variant: "destructive",
       })
     } finally {
@@ -388,9 +387,9 @@ export default function OrderPlacementForm() {
       return
     }
 
-    // Dacă este modul de test, apelează direct API-ul
-    if (isTestMode) {
-      await handleTestBooking()
+    // Dacă este plată la parcare, apelează direct API-ul
+    if (paymentMethod === "pay_on_site") {
+      await handlePayOnSiteBooking()
       return
     }
 
@@ -456,6 +455,7 @@ export default function OrderPlacementForm() {
             companyAddress: needInvoice ? companyAddress : undefined,
             notes: orderNotes,
             needInvoice: needInvoice,
+            termsAccepted: acceptTerms,
           },
           orderId: completeOrderData.orderId,
         }),
@@ -514,7 +514,7 @@ export default function OrderPlacementForm() {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Left column - Customer details form or Payment form */}
             <div className="flex-1">
-              {showPaymentForm && clientSecret && !isTestMode ? (
+              {showPaymentForm && clientSecret ? (
                 <div
                   className="w-full bg-white p-0 border-0 rounded-none md:p-6 md:rounded-xl md:border border-gray-200"
                   style={{ maxWidth: '100%' }}
@@ -589,235 +589,252 @@ export default function OrderPlacementForm() {
                 </div>
               ) : (
                 <>
-             
-                  <form onSubmit={handleSubmit}>
-                    <div className="space-y-6">
-                      <div>
-                        <h2 className="text-lg font-bold mb-4">Detalii pentru facturare</h2>
+                {/* Test mode toggle - removed completely */}
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <form onSubmit={handleSubmit}>
+                  <div className="space-y-6">
+                    <div>
+                      <h2 className="text-lg font-bold mb-4">Detalii pentru facturare</h2>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="firstName">Prenume</Label>
+                          <Input
+                            id="firstName"
+                            placeholder="Prenumele dvs."
+                            required
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="lastName">Nume</Label>
+                          <Input
+                            id="lastName"
+                            placeholder="Numele dvs."
+                            required
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="email@exemplu.com"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="phone">Telefon</Label>
+                      <Input
+                        id="phone"
+                        placeholder="07xx xxx xxx"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="numberOfPersons">Număr persoane</Label>
+                      <Input
+                        id="numberOfPersons"
+                        type="number"
+                        min="1"
+                        max="10"
+                        placeholder="1"
+                        required
+                        value={numberOfPersons}
+                        onChange={(e) => setNumberOfPersons(e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="address">Adresă</Label>
+                      <Textarea
+                        id="address"
+                        placeholder="Adresa dvs. completă"
+                        rows={3}
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label htmlFor="city">Oraș</Label>
+                        <Input
+                          id="city"
+                          placeholder="Orașul dvs."
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="county">Județ</Label>
+                        <Input
+                          id="county"
+                          placeholder="Județului dvs."
+                          value={county}
+                          onChange={(e) => setCounty(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="country">Țara</Label>
+                        <Input
+                          id="country"
+                          placeholder="Țara"
+                          required
+                          value={country}
+                          onChange={(e) => setCounty(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <div className="flex items-start space-x-2 mb-4">
+                        <Checkbox
+                          id="needInvoice"
+                          checked={needInvoice}
+                          onCheckedChange={(checked) => setNeedInvoice(checked === true)}
+                        />
+                        <Label htmlFor="needInvoice" className="text-sm">
+                          Doresc factură pentru persoană juridică
+                        </Label>
+                      </div>
+
+                      {needInvoice && (
+                        <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
                           <div>
-                            <Label htmlFor="firstName">Prenume</Label>
+                            <Label htmlFor="company">Denumire firmă</Label>
                             <Input
-                              id="firstName"
-                              placeholder="Prenumele dvs."
-                              required
-                              value={firstName}
-                              onChange={(e) => setFirstName(e.target.value)}
+                              id="company"
+                              placeholder="Denumirea firmei"
+                              value={company}
+                              onChange={(e) => setCompany(e.target.value)}
                             />
                           </div>
                           <div>
-                            <Label htmlFor="lastName">Nume</Label>
+                            <Label htmlFor="companyVAT">CUI / CIF</Label>
                             <Input
-                              id="lastName"
-                              placeholder="Numele dvs."
-                              required
-                              value={lastName}
-                              onChange={(e) => setLastName(e.target.value)}
+                              id="companyVAT"
+                              placeholder="Codul fiscal"
+                              value={companyVAT}
+                              onChange={(e) => setCompanyVAT(e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="companyReg">Număr Registrul Comerțului</Label>
+                            <Input
+                              id="companyReg"
+                              placeholder="J40/12345/2023"
+                              value={companyReg}
+                              onChange={(e) => setCompanyReg(e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="companyAddress">Adresa firmei</Label>
+                            <Textarea
+                              id="companyAddress"
+                              placeholder="Adresa completă a firmei"
+                              rows={3}
+                              value={companyAddress}
+                              onChange={(e) => setCompanyAddress(e.target.value)}
                             />
                           </div>
                         </div>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="email@exemplu.com"
-                          required
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="phone">Telefon</Label>
-                        <Input
-                          id="phone"
-                          placeholder="07xx xxx xxx"
-                          required
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="numberOfPersons">Număr persoane</Label>
-                        <Input
-                          id="numberOfPersons"
-                          type="number"
-                          min="1"
-                          max="10"
-                          placeholder="1"
-                          required
-                          value={numberOfPersons}
-                          onChange={(e) => setNumberOfPersons(e.target.value)}
-                        />
-                      </div>
-
-                      {!isTestMode && (
-                        <>
-                          <div>
-                            <Label htmlFor="address">Adresă</Label>
-                            <Textarea
-                              id="address"
-                              placeholder="Adresa dvs. completă"
-                              rows={3}
-                              value={address}
-                              onChange={(e) => setAddress(e.target.value)}
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                              <Label htmlFor="city">Oraș</Label>
-                              <Input
-                                id="city"
-                                placeholder="Orașul dvs."
-                                value={city}
-                                onChange={(e) => setCity(e.target.value)}
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="county">Județ</Label>
-                              <Input
-                                id="county"
-                                placeholder="Județul dvs."
-                                value={county}
-                                onChange={(e) => setCounty(e.target.value)}
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="country">Țara</Label>
-                              <Input
-                                id="country"
-                                placeholder="Țara"
-                                required
-                                value={country}
-                                onChange={(e) => setCountry(e.target.value)}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="pt-4 border-t border-gray-200">
-                            <div className="flex items-start space-x-2 mb-4">
-                              <Checkbox
-                                id="needInvoice"
-                                checked={needInvoice}
-                                onCheckedChange={(checked) => setNeedInvoice(checked === true)}
-                              />
-                              <Label htmlFor="needInvoice" className="text-sm">
-                                Doresc factură pentru persoană juridică
-                              </Label>
-                            </div>
-
-                            {needInvoice && (
-                              <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
-                                <div>
-                                  <Label htmlFor="company">Denumire firmă</Label>
-                                  <Input
-                                    id="company"
-                                    placeholder="Denumirea firmei"
-                                    value={company}
-                                    onChange={(e) => setCompany(e.target.value)}
-                                  />
-                                </div>
-                                <div>
-                                  <Label htmlFor="companyVAT">CUI / CIF</Label>
-                                  <Input
-                                    id="companyVAT"
-                                    placeholder="Codul fiscal"
-                                    value={companyVAT}
-                                    onChange={(e) => setCompanyVAT(e.target.value)}
-                                  />
-                                </div>
-                                <div>
-                                  <Label htmlFor="companyReg">Număr Registrul Comerțului</Label>
-                                  <Input
-                                    id="companyReg"
-                                    placeholder="J40/12345/2023"
-                                    value={companyReg}
-                                    onChange={(e) => setCompanyReg(e.target.value)}
-                                  />
-                                </div>
-                                <div>
-                                  <Label htmlFor="companyAddress">Adresa firmei</Label>
-                                  <Textarea
-                                    id="companyAddress"
-                                    placeholder="Adresa completă a firmei"
-                                    rows={3}
-                                    value={companyAddress}
-                                    onChange={(e) => setCompanyAddress(e.target.value)}
-                                  />
-                                </div>
-                              </div>
-                            )}
-                          </div>
-
-                          <div>
-                            <Label htmlFor="notes">Observații comandă</Label>
-                            <Textarea
-                              id="notes"
-                              placeholder="Observații speciale pentru comanda dvs."
-                              rows={3}
-                              value={orderNotes}
-                              onChange={(e) => setOrderNotes(e.target.value)}
-                            />
-                          </div>
-
-                          <div>
-                            <h2 className="text-lg font-bold mb-4">Metodă de plată</h2>
-
-                            <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
-                              <input
-                                type="radio"
-                                id="card"
-                                name="paymentMethod"
-                                value="card"
-                                checked={paymentMethod === "card"}
-                                onChange={() => setPaymentMethod("card")}
-                                className="h-4 w-4 text-primary"
-                              />
-                              <Label htmlFor="card" className="flex-1 cursor-pointer">
-                                <div className="flex items-center">
-                                  <span>Plată cu cardul (Stripe)</span>
-                                </div>
-                              </Label>
-                            </div>
-                          </div>
-                        </>
                       )}
+                    </div>
 
-                      <div className="pt-4 border-t border-gray-200">
-                        <div className="flex items-start space-x-2">
-                          <Checkbox
-                            id="terms"
-                            checked={acceptTerms}
-                            onCheckedChange={(checked) => setAcceptTerms(checked === true)}
+                    <div>
+                      <Label htmlFor="notes">Observații comandă</Label>
+                      <Textarea
+                        id="notes"
+                        placeholder="Observații speciale pentru comanda dvs."
+                        rows={3}
+                        value={orderNotes}
+                        onChange={(e) => setOrderNotes(e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <h2 className="text-lg font-bold mb-4">Metodă de plată</h2>
+
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
+                          <input
+                            type="radio"
+                            id="card"
+                            name="paymentMethod"
+                            value="card"
+                            checked={paymentMethod === "card"}
+                            onChange={() => setPaymentMethod("card")}
+                            className="h-4 w-4 text-primary"
                           />
-                          <Label htmlFor="terms" className="text-sm">
-                            Am citit și sunt de acord cu{" "}
-                            <Link href="/termeni" className="text-primary hover:underline">
-                              Termenii și Condițiile
-                            </Link>{" "}
-                            și{" "}
-                            <Link href="/confidentialitate" className="text-primary hover:underline">
-                              Politica de Confidențialitate
-                            </Link>
+                          <Label htmlFor="card" className="flex-1 cursor-pointer">
+                            <div className="flex items-center">
+                              <span>Plată online cu cardul (Stripe)</span>
+                            </div>
+                          </Label>
+                        </div>
+
+                        <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
+                          <input
+                            type="radio"
+                            id="pay_on_site"
+                            name="paymentMethod"
+                            value="pay_on_site"
+                            checked={paymentMethod === "pay_on_site"}
+                            onChange={() => setPaymentMethod("pay_on_site")}
+                            className="h-4 w-4 text-primary"
+                          />
+                          <Label htmlFor="pay_on_site" className="flex-1 cursor-pointer">
+                            <div className="flex flex-col">
+                              <span>Plată la parcare</span>
+                              <span className="text-sm text-gray-500">Plătiți când ajungeți la parcare</span>
+                            </div>
                           </Label>
                         </div>
                       </div>
-
-                      <Button
-                        type="submit"
-                        className="w-full gradient-bg hover:opacity-90 py-6 text-base font-medium rounded-md"
-                        disabled={isSubmitting || !acceptTerms}
-                      >
-                        {isSubmitting ? "Se procesează..." : isTestMode ? "Rezervare directă (TEST)" : "Continuă spre plată"}
-                      </Button>
                     </div>
-                  </form>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <div className="flex items-start space-x-2">
+                        <Checkbox
+                          id="terms"
+                          checked={acceptTerms}
+                          onCheckedChange={(checked) => setAcceptTerms(checked === true)}
+                        />
+                        <Label htmlFor="terms" className="text-sm">
+                          Am citit și sunt de acord cu{" "}
+                          <Link href="/termeni" className="text-primary hover:underline">
+                            Termenii și Condițiile
+                          </Link>{" "}
+                          și{" "}
+                          <Link href="/confidentialitate" className="text-primary hover:underline">
+                            Politica de Confidențialitate
+                          </Link>
+                        </Label>
+                      </div>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full gradient-bg hover:opacity-90 py-6 text-base font-medium rounded-md"
+                      disabled={isSubmitting || !acceptTerms}
+                    >
+                      {isSubmitting ? "Se procesează..." : paymentMethod === "pay_on_site" ? "Confirmă rezervarea" : "Continuă spre plată"}
+                    </Button>
+                  </div>
+                </form>
                   {/* Mobile Order Summary - visible only on mobile */}
                   <div className="lg:hidden bg-gray-50 rounded-xl p-6 mb-6">
                     <h2 className="text-lg font-bold mb-4">Sumar comandă</h2>
@@ -962,7 +979,7 @@ export default function OrderPlacementForm() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left column - Customer details form or Payment form */}
           <div className="flex-1">
-            {showPaymentForm && clientSecret && !isTestMode ? (
+            {showPaymentForm && clientSecret ? (
               <div
                 className="w-full bg-white p-0 border-0 rounded-none md:p-6 md:rounded-xl md:border border-gray-200"
                 style={{ maxWidth: '100%' }}
@@ -1037,7 +1054,7 @@ export default function OrderPlacementForm() {
               </div>
             ) : (
               <>
-             
+                {/* Test mode toggle - removed completely */}
 
                 <form onSubmit={handleSubmit}>
                   <div className="space-y-6">
@@ -1105,138 +1122,154 @@ export default function OrderPlacementForm() {
                       />
                     </div>
 
-                    {!isTestMode && (
-                      <>
-                        <div>
-                          <Label htmlFor="address">Adresă</Label>
-                          <Textarea
-                            id="address"
-                            placeholder="Adresa dvs. completă"
-                            rows={3}
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
+                    <div>
+                      <Label htmlFor="address">Adresă</Label>
+                      <Textarea
+                        id="address"
+                        placeholder="Adresa dvs. completă"
+                        rows={3}
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label htmlFor="city">Oraș</Label>
+                        <Input
+                          id="city"
+                          placeholder="Orașul dvs."
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="county">Județ</Label>
+                        <Input
+                          id="county"
+                          placeholder="Județului dvs."
+                          value={county}
+                          onChange={(e) => setCounty(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="country">Țara</Label>
+                        <Input
+                          id="country"
+                          placeholder="Țara"
+                          required
+                          value={country}
+                          onChange={(e) => setCounty(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <div className="flex items-start space-x-2 mb-4">
+                        <Checkbox
+                          id="needInvoice"
+                          checked={needInvoice}
+                          onCheckedChange={(checked) => setNeedInvoice(checked === true)}
+                        />
+                        <Label htmlFor="needInvoice" className="text-sm">
+                          Doresc factură pentru persoană juridică
+                        </Label>
+                      </div>
+
+                      {needInvoice && (
+                        <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+                          <div>
+                            <Label htmlFor="company">Denumire firmă</Label>
+                            <Input
+                              id="company"
+                              placeholder="Denumirea firmei"
+                              value={company}
+                              onChange={(e) => setCompany(e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="companyVAT">CUI / CIF</Label>
+                            <Input
+                              id="companyVAT"
+                              placeholder="Codul fiscal"
+                              value={companyVAT}
+                              onChange={(e) => setCompanyVAT(e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="companyReg">Număr Registrul Comerțului</Label>
+                            <Input
+                              id="companyReg"
+                              placeholder="J40/12345/2023"
+                              value={companyReg}
+                              onChange={(e) => setCompanyReg(e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="companyAddress">Adresa firmei</Label>
+                            <Textarea
+                              id="companyAddress"
+                              placeholder="Adresa completă a firmei"
+                              rows={3}
+                              value={companyAddress}
+                              onChange={(e) => setCompanyAddress(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="notes">Observații comandă</Label>
+                      <Textarea
+                        id="notes"
+                        placeholder="Observații speciale pentru comanda dvs."
+                        rows={3}
+                        value={orderNotes}
+                        onChange={(e) => setOrderNotes(e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <h2 className="text-lg font-bold mb-4">Metodă de plată</h2>
+
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
+                          <input
+                            type="radio"
+                            id="card"
+                            name="paymentMethod"
+                            value="card"
+                            checked={paymentMethod === "card"}
+                            onChange={() => setPaymentMethod("card")}
+                            className="h-4 w-4 text-primary"
                           />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div>
-                            <Label htmlFor="city">Oraș</Label>
-                            <Input
-                              id="city"
-                              placeholder="Orașul dvs."
-                              value={city}
-                              onChange={(e) => setCity(e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="county">Județ</Label>
-                            <Input
-                              id="county"
-                              placeholder="Județului dvs."
-                              value={county}
-                              onChange={(e) => setCounty(e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="country">Țara</Label>
-                            <Input
-                              id="country"
-                              placeholder="Țara"
-                              required
-                              value={country}
-                              onChange={(e) => setCountry(e.target.value)}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="pt-4 border-t border-gray-200">
-                          <div className="flex items-start space-x-2 mb-4">
-                            <Checkbox
-                              id="needInvoice"
-                              checked={needInvoice}
-                              onCheckedChange={(checked) => setNeedInvoice(checked === true)}
-                            />
-                            <Label htmlFor="needInvoice" className="text-sm">
-                              Doresc factură pentru persoană juridică
-                            </Label>
-                          </div>
-
-                          {needInvoice && (
-                            <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
-                              <div>
-                                <Label htmlFor="company">Denumire firmă</Label>
-                                <Input
-                                  id="company"
-                                  placeholder="Denumirea firmei"
-                                  value={company}
-                                  onChange={(e) => setCompany(e.target.value)}
-                                />
-                              </div>
-                              <div>
-                                <Label htmlFor="companyVAT">CUI / CIF</Label>
-                                <Input
-                                  id="companyVAT"
-                                  placeholder="Codul fiscal"
-                                  value={companyVAT}
-                                  onChange={(e) => setCompanyVAT(e.target.value)}
-                                />
-                              </div>
-                              <div>
-                                <Label htmlFor="companyReg">Număr Registrul Comerțului</Label>
-                                <Input
-                                  id="companyReg"
-                                  placeholder="J40/12345/2023"
-                                  value={companyReg}
-                                  onChange={(e) => setCompanyReg(e.target.value)}
-                                />
-                              </div>
-                              <div>
-                                <Label htmlFor="companyAddress">Adresa firmei</Label>
-                                <Textarea
-                                  id="companyAddress"
-                                  placeholder="Adresa completă a firmei"
-                                  rows={3}
-                                  value={companyAddress}
-                                  onChange={(e) => setCompanyAddress(e.target.value)}
-                                />
-                              </div>
+                          <Label htmlFor="card" className="flex-1 cursor-pointer">
+                            <div className="flex items-center">
+                              <span>Plată online cu cardul (Stripe)</span>
                             </div>
-                          )}
+                          </Label>
                         </div>
 
-                        <div>
-                          <Label htmlFor="notes">Observații comandă</Label>
-                          <Textarea
-                            id="notes"
-                            placeholder="Observații speciale pentru comanda dvs."
-                            rows={3}
-                            value={orderNotes}
-                            onChange={(e) => setOrderNotes(e.target.value)}
+                        <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
+                          <input
+                            type="radio"
+                            id="pay_on_site"
+                            name="paymentMethod"
+                            value="pay_on_site"
+                            checked={paymentMethod === "pay_on_site"}
+                            onChange={() => setPaymentMethod("pay_on_site")}
+                            className="h-4 w-4 text-primary"
                           />
+                          <Label htmlFor="pay_on_site" className="flex-1 cursor-pointer">
+                            <div className="flex flex-col">
+                              <span>Plată la parcare</span>
+                              <span className="text-sm text-gray-500">Plătiți când ajungeți la parcare</span>
+                            </div>
+                          </Label>
                         </div>
-
-                        <div>
-                          <h2 className="text-lg font-bold mb-4">Metodă de plată</h2>
-
-                          <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
-                            <input
-                              type="radio"
-                              id="card"
-                              name="paymentMethod"
-                              value="card"
-                              checked={paymentMethod === "card"}
-                              onChange={() => setPaymentMethod("card")}
-                              className="h-4 w-4 text-primary"
-                            />
-                            <Label htmlFor="card" className="flex-1 cursor-pointer">
-                              <div className="flex items-center">
-                                <span>Plată cu cardul (Stripe)</span>
-                              </div>
-                            </Label>
-                          </div>
-                        </div>
-                      </>
-                    )}
+                      </div>
+                    </div>
 
                     <div className="pt-4 border-t border-gray-200">
                       <div className="flex items-start space-x-2">
@@ -1263,7 +1296,7 @@ export default function OrderPlacementForm() {
                       className="w-full gradient-bg hover:opacity-90 py-6 text-base font-medium rounded-md"
                       disabled={isSubmitting || !acceptTerms}
                     >
-                      {isSubmitting ? "Se procesează..." : isTestMode ? "Rezervare directă (TEST)" : "Continuă spre plată"}
+                      {isSubmitting ? "Se procesează..." : paymentMethod === "pay_on_site" ? "Confirmă rezervarea" : "Continuă spre plată"}
                     </Button>
                   </div>
                 </form>

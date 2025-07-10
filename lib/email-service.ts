@@ -22,7 +22,7 @@ interface BookingEmailData {
   // Date sistem
   bookingNumber: string
   status: string
-  source: "webhook" | "test_mode" | "manual"
+  source: "webhook" | "test_mode" | "manual" | "pay_on_site"
   createdAt: Date
 }
 
@@ -62,7 +62,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
       <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #ff0066, #e6005c); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+        .header { background: linear-gradient(135deg, #ee7f1a, #d67016); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
 
         .header h1 { color: #ffffff; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin: 10px 0; }
         .header p { color: #f0f8ff; font-size: 16px; margin: 5px 0; }
@@ -78,7 +78,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
         .contact-section { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
         .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .contact-item { text-align: center; padding: 10px; }
-        .contact-item h4 { margin: 0 0 5px; color: #ff0066; font-size: 14px; }
+        .contact-item h4 { margin: 0 0 5px; color: #ee7f1a; font-size: 14px; }
         .contact-item p { margin: 0; font-size: 13px; }
         .footer { text-align: center; color: #666; font-size: 12px; margin-top: 30px; }
         @media (max-width: 600px) {
@@ -89,7 +89,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
     <body>
       <div class="container">
         <div class="header">
-          <h1>🅿️ Confirmare Rezervare Parcare</h1>
+          <h1>🅿️ Confirmare Rezervare OTP Parking</h1>
           <p>Rezervarea dumneavoastră a fost confirmată cu succes!</p>
         </div>
         
@@ -160,7 +160,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
           </div>
 
           <div class="contact-section">
-            <h3 style="text-align: center; color: #ff0066; margin-bottom: 20px;">📞 Contactați-ne</h3>
+            <h3 style="text-align: center; color: #ee7f1a; margin-bottom: 20px;">📞 Contactați-ne</h3>
             <div class="contact-grid">
               <div class="contact-item">
                 <h4>📞 Telefon suport</h4>
@@ -181,7 +181,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
                 <p><small>La 500 metri de Aeroportul Henri Coandă</small></p>
                 <div style="margin-top: 10px; display: flex; gap: 8px; justify-content: center;">
                   <a href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw" 
-                     style="display: inline-block; background: #ff0066; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px;">
+                     style="display: inline-block; background: #ee7f1a; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px;">
                     📍 Google Maps
                   </a>
                   <a href="https://waze.com/ul?ll=44.575660,26.069918&navigate=yes" 
@@ -195,10 +195,10 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
         </div>
         
         <div class="footer">
-          <p>Acest email a fost trimis automat de sistemul Parcare-Aeroport Otopeni.</p>
+          <p>Acest email a fost trimis automat de sistemul OTP Parking.</p>
           <p>Rezervarea a fost creată la: ${bookingData.createdAt.toLocaleString('ro-RO')}</p>
           <p style="margin-top: 10px;">
-            <strong>Parcare-Aeroport SRL</strong> | 
+            <strong>OTP Parking SRL</strong> | 
                           Str. Calea Bucureştilor, Nr.303A1, Otopeni, Ilfov | 
             contact.parcareaeroport@gmail.com
           </p>
@@ -258,11 +258,11 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     const formattedBookingNumber = bookingData.bookingNumber.padStart(6, '0')
     const mailOptions = {
       from: {
-        name: 'Parcare-Aeroport Otopeni',
+        name: 'OTP Parking',
         address: process.env.GMAIL_USER || 'noreply@parcare-aeroport.ro'
       },
       to: bookingData.clientEmail,
-      subject: `Confirmare Rezervare Parcare - ${formattedBookingNumber}`,
+      subject: `Confirmare Rezervare OTP Parking - ${formattedBookingNumber}`,
       html: generateBookingEmailHTML(bookingData),
       attachments: [
         {

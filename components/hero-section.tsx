@@ -10,16 +10,16 @@ const SLIDES = [
     headline: "Parcare premium la doar 500 de metri de aeroportul Otopeni",
     subheadline:
       "Parcarea ta inteligentă și sigură, situată fix lângă Aeroportul Internațional Henri Coandă. Confort garantat, asfaltată. transfer rapid și zero stres, la un preț avantajos. Pentru călătoria ta perfectă!",
-    image: "/parcare_aeroport_otopeni_slider.jpg",
-    alt: "Parcare Otopeni lângă Aeroportul Henri Coandă - vedere panoramică a parcării asfaltate"
+    image: "/slider-otp-parking.jpg",
+    alt: "OTP Parking - Parcare premium lângă Aeroportul Henri Coandă - vedere panoramică a parcării asfaltate"
   },
   // Poți adăuga mai multe slide-uri aici cu alte imagini și texte
   {
-    headline: "Parcare cu transfer rapid",
+    headline: "OTP PARKING - PARCARE OTOPENI CU TRANSFER RAPID",
     subheadline:
       "Transfer gratuit la aeroport, pază 24/7 și locuri asfaltate. Rezervă online și călătorește fără griji!",
-    image: "/parcare_aeroport_otopeni_slider.jpg",
-    alt: "Parcare cu transfer rapid la aeroport Otopeni"
+    image: "/slider-otp-parking.jpg",
+    alt: "OTP Parking - Parcare cu transfer rapid la aeroport Otopeni"
   }
 ]
 
@@ -37,7 +37,7 @@ export default function HeroSection() {
   }, [current])
 
   return (
-    <section id="rezerva-formular" className="relative w-full bg-gradient-to-br from-[#e6007a] to-[#0a1172] py-10 md:py-16 overflow-hidden min-h-screen md:h-[95vh] flex flex-col justify-center md:justify-end">
+          <section id="rezerva-formular" className="relative w-full bg-gradient-to-br from-[#ee7f1a] to-[#0a1172] py-10 md:py-16 overflow-hidden min-h-screen md:h-[95vh] flex flex-col justify-center md:justify-end">
       {/* Imagine de fundal cu fade pentru fiecare slide, toate în DOM pentru SEO */}
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
         {SLIDES.map((slide, idx) => (
@@ -54,7 +54,7 @@ export default function HeroSection() {
         {/* Gradient roz-mov peste imagine, acum vertical roz->albastru și cu mask-fade-right */}
         <div
           className="absolute inset-0 mask-fade-right"
-          style={{ background: 'linear-gradient(to bottom, #e6007a 0%, #0a1172 80%)' }}
+                      style={{ background: 'linear-gradient(to bottom, #ee7f1a 0%, #0a1172 80%)' }}
         />
       </div>
       {/* Formularul fix în partea superioară a imaginii pe toate ecranele */}

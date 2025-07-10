@@ -14,11 +14,11 @@ import Script from "next/script"
 
 // Enhanced SEO metadata for better ranking
 export const metadata: Metadata = {
-  title: "Parcare Aeroport Otopeni - Rezervare Online | Transfer Gratuit 24/7",
+  title: "OTP Parking - Rezervare Online | Transfer Gratuit 24/7",
   description: "Parcare sigură lângă Aeroportul Otopeni cu transfer gratuit, supraveghere 24/7, locuri asfaltate. Rezervă online cu reduceri de până la 30%. Serviciu premium la prețuri avantajoase.",
   keywords: "parcare otopeni, parcare aeroport, parcare henri coanda, rezervare parcare online, transfer gratuit aeroport, parcare sigura otopeni, parcare asfaltata",
   openGraph: {
-    title: "Parcare Aeroport Otopeni - Transfer Gratuit & Securitate 24/7",
+    title: "OTP Parking - Transfer Gratuit & Securitate 24/7",
     description: "Cea mai convenabilă parcare lângă Aeroportul Otopeni. Transfer gratuit, supraveghere video, locuri asfaltate. Rezervă acum cu reducere!",
     type: "website",
     url: "https://parcare-aeroport.ro",
@@ -27,15 +27,15 @@ export const metadata: Metadata = {
         url: "/parcare_otopeni_seo_image.jpg",
         width: 1200,
         height: 630,
-        alt: "Parcare Aeroport Otopeni - Serviciu Premium"
+        alt: "OTP Parking - Serviciu Premium"
       }
     ],
     locale: "ro_RO",
-    siteName: "Parcare Aeroport Otopeni"
+    siteName: "OTP Parking"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Parcare Aeroport Otopeni - Transfer Gratuit 24/7",
+    title: "OTP Parking - Transfer Gratuit 24/7",
     description: "Parcare sigură cu transfer gratuit la Aeroportul Otopeni. Rezervă online cu reduceri!",
     images: ["/parcare_otopeni_seo_image.jpg"]
   },
@@ -175,7 +175,7 @@ export default function Home() {
         {`
           // Preload important images for better Core Web Vitals
           const imageUrls = [
-            "/parcare_aeroport_otopeni_slider.jpg",
+            "/slider-otp-parking.jpg",
             "/parcare_otopeni_seo_image.jpg"
           ];
           

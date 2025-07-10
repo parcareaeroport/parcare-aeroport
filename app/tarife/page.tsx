@@ -8,7 +8,7 @@ import Footer from "@/components/footer"
 import Script from "next/script"
 
 export const metadata: Metadata = {
-  title: "Tarif Parcare Aeroport Otopeni - Parcare Otopeni Preț",
+  title: "Tarif OTP Parking - Parcare Otopeni Preț",
   description:
     "Cauți parcare Otopeni preț mic? La noi găsești probabil cel mai avantajos tarif pentru parcarea lângă aeroport. Rezervă acum!",
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     canonical: "/tarife",
   },
   openGraph: {
-    title: "Tarif Parcare Aeroport Otopeni - Parcare Otopeni Preț",
+    title: "Tarif OTP Parking - Parcare Otopeni Preț",
     description:
       "Cauți parcare Otopeni preț mic? La noi găsești probabil cel mai avantajos tarif pentru parcarea lângă aeroport. Rezervă acum!",
     url: "https://parcare-aeroport.ro/tarife",

@@ -20,7 +20,7 @@ export default function HowItWorksSection() {
           <div className="mt-10 md:mt-12 text-center">
             <Link
               href="/#rezerva-formular"
-              className="inline-flex items-center gap-2 bg-[#ff0066] hover:bg-[#e6005c] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105"
+              className="inline-flex items-center gap-2 bg-[#ee7f1a] hover:bg-[#d67016] text-white px-8 py-4 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg hover:scale-105"
             >
               Rezervă locul tău acum
             </Link>

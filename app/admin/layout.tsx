@@ -80,16 +80,16 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
         <div className="flex items-center justify-center p-6 border-b">
           {/* Mobile logo for sidebar */}
           <Image
-            src="/sigla-mobile.png"
-            alt="Parcare-Aeroport Logo"
+            src="/otp_parking.png"
+            alt="OTP Parking Logo"
             width={120}
             height={48}
             className="h-8 w-auto md:hidden"
           />
           {/* Desktop logo for sidebar */}
           <Image
-            src="/sigla-desktop.png"
-            alt="Parcare-Aeroport Logo"
+            src="/otp_parking.png"
+            alt="OTP Parking Logo"
             width={120}
             height={48}
             className="hidden md:block h-8 w-auto"
@@ -167,8 +167,8 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
               <Menu className="h-5 w-5" />
             </Button>
             <Image
-              src="/sigla-mobile.png"
-              alt="Parcare-Aeroport Logo"
+              src="/otp_parking.png"
+              alt="OTP Parking Logo"
               width={100}
               height={40}
               className="h-6 w-auto"

@@ -40,18 +40,15 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300`}
-      style={{
-        backgroundColor: isScrolled ? "#06048c" : "#06048c"
-      }}
+      className={`sticky top-0 z-50 transition-all duration-300 bg-white border-b border-gray-200`}
     >
       <div className="container mx-auto flex items-center justify-between py-1.5">
         {/* Logo în stânga */}
-          <Link href="/" className="flex items-center" title="Parcare-Aeroport Otopeni" aria-label="Acasă">
+          <Link href="/" className="flex items-center" title="OTP Parking" aria-label="Acasă">
             {/* Mobile logo */}
             <Image
-              src="/sigla-mobile.png"
-              alt="Parcare-Aeroport Logo"
+              src="/otp_parking.png"
+              alt="OTP Parking Logo"
               width={170}
               height={55}
               className="h-12 w-auto md:hidden"
@@ -59,8 +56,8 @@ export default function Header() {
             />
             {/* Desktop logo */}
             <Image
-              src="/sigla-desktop.png"
-              alt="Parcare-Aeroport Logo"
+              src="/otp_parking.png"
+              alt="OTP Parking Logo"
               width={280}
               height={80}
               className="hidden md:block w-auto -my-2 p-2"
@@ -83,8 +80,8 @@ export default function Header() {
                 >
                   <Button
                     variant="ghost"
-                    className={`flex items-center gap-1 rounded-md text-sm font-medium transition-all duration-200 text-white hover:bg-white/10 hover:text-white hover:scale-105 ${
-                      pathname === item.href ? "bg-white/20 text-white" : ""
+                    className={`flex items-center gap-1 rounded-md text-sm font-medium transition-all duration-200 text-[#13005a] hover:bg-[#13005a]/10 hover:text-[#13005a] hover:scale-105 ${
+                      pathname === item.href ? "bg-[#13005a]/20 text-[#13005a]" : ""
                     }`}
                   >
                     {item.name}
@@ -96,16 +93,16 @@ export default function Header() {
           {/* Buton Secundar - Border alb + Text alb + Fundal transparent */}
           <Link href="/tarife">
             <Button
-              className="group bg-transparent hover:bg-white text-white border-2 border-white hover:border-white rounded-md text-sm font-medium px-3 md:px-4 py-2 h-auto transition-all duration-200 shadow-sm hover:shadow-md"
+              className="group bg-transparent hover:bg-[#13005a] text-[#13005a] border-2 border-[#13005a] hover:border-[#13005a] rounded-md text-sm font-medium px-3 md:px-4 py-2 h-auto transition-all duration-200 shadow-sm hover:shadow-md"
               aria-label="Vezi tarifele"
             >
-              <span className="group-hover:text-[#06048c] transition-colors duration-200">Tarife</span>
+              <span className="group-hover:text-white transition-colors duration-200">Tarife</span>
             </Button>
           </Link>
           {/* Buton Principal - Fundal roz + Text alb */}
           <Link
             href="tel:+40734292818"
-            className="bg-[#ff0066] hover:bg-[#e6005c] rounded-md text-sm font-medium shadow-md hover:shadow-lg px-3 md:px-4 py-2 h-auto flex items-center text-white transition-all duration-200"
+            className="bg-[#ee7f1a] hover:bg-[#d67016] rounded-md text-sm font-medium shadow-md hover:shadow-lg px-3 md:px-4 py-2 h-auto flex items-center text-white transition-all duration-200"
             aria-label="Contact rapid telefonic"
           >
             <Phone className="h-4 w-4 md:mr-2" />
@@ -114,7 +111,7 @@ export default function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden rounded-full text-white hover:bg-white/10"
+            className="md:hidden rounded-full text-[#13005a] hover:bg-[#13005a]/10"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
@@ -149,11 +146,11 @@ export default function Header() {
                 href="/"
                 className="flex items-center"
                 onClick={() => setIsMobileMenuOpen(false)}
-                title="Parcare-Aeroport Otopeni"
+                title="OTP Parking"
               >
                 <Image
-                  src="/sigla-mobile.png"
-                  alt="Parcare-Aeroport Logo"
+                  src="/otp_parking.png"
+                  alt="OTP Parking Logo"
                   width={100}
                   height={35}
                   className="h-7 w-auto"
@@ -184,8 +181,8 @@ export default function Header() {
                     >
                       <Button
                         variant="ghost"
-                        className={`flex items-center justify-start w-full rounded-lg text-left h-auto py-3 transition-all duration-200 hover:bg-[#06048c]/10 hover:text-[#06048c] hover:pl-4 ${
-                          pathname === item.href ? "bg-[#06048c]/10 text-[#06048c]" : ""
+                        className={`flex items-center justify-start w-full rounded-lg text-left h-auto py-3 transition-all duration-200 hover:bg-[#13005a]/10 hover:text-[#13005a] hover:pl-4 ${
+                          pathname === item.href ? "bg-[#13005a]/10 text-[#13005a]" : ""
                         }`}
                       >
                         <span className="font-medium">{item.name}</span>
@@ -198,7 +195,7 @@ export default function Header() {
               {/* Butoane în sidebar mobil */}
               <div className="space-y-3 pt-4 border-t border-gray-100">
                 <Link href="/tarife" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="w-full bg-transparent hover:bg-[#06048c] text-[#06048c] hover:text-white border-2 border-[#06048c] hover:border-[#06048c] rounded-md text-sm font-medium py-3 transition-all duration-200">
+                  <Button className="w-full bg-transparent hover:bg-[#13005a] text-[#13005a] hover:text-white border-2 border-[#13005a] hover:border-[#13005a] rounded-md text-sm font-medium py-3 transition-all duration-200">
                     Tarife
                   </Button>
                 </Link>
@@ -207,7 +204,7 @@ export default function Header() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block"
                 >
-                  <Button className="w-full bg-[#ff0066] hover:bg-[#e6005c] text-white rounded-md text-sm font-medium py-3 transition-all duration-200 shadow-md hover:shadow-lg">
+                  <Button className="w-full bg-[#ee7f1a] hover:bg-[#d67016] text-white rounded-md text-sm font-medium py-3 transition-all duration-200 shadow-md hover:shadow-lg">
                     <Phone className="h-4 w-4 mr-2" />
                     Contact rapid
                   </Button>
@@ -220,7 +217,7 @@ export default function Header() {
                     href="https://www.instagram.com/parcare_aeroport?igsh=MXV5d2d2M3NibHh0Yg%3D%3D&utm_source=qr"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-[#06048c] transition-all duration-200 hover:scale-110"
+                    className="text-gray-400 hover:text-[#13005a] transition-all duration-200 hover:scale-110"
                     aria-label="Instagram"
                     title="Urmărește-ne pe Instagram"
                   >
@@ -246,7 +243,7 @@ export default function Header() {
                     href="https://www.facebook.com/share/1EYNt8Zp19/?mibextid=wwXIfr"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-[#06048c] transition-all duration-200 hover:scale-110"
+                    className="text-gray-400 hover:text-[#13005a] transition-all duration-200 hover:scale-110"
                     aria-label="Facebook"
                     title="Urmărește-ne pe Facebook"
                   >
@@ -270,7 +267,7 @@ export default function Header() {
                     href="https://www.tiktok.com/@parcare_aeroport?_t=ZN-8wmzQZdnbra&_r=1"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-[#06048c] transition-all duration-200 hover:scale-110"
+                    className="text-gray-400 hover:text-[#13005a] transition-all duration-200 hover:scale-110"
                     aria-label="TikTok"
                     title="Urmărește-ne pe TikTok"
                   >

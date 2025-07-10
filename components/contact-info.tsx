@@ -107,7 +107,7 @@ export default function ContactInfo() {
                       handleLocationClick()
                     }
                   }}
-                  className="bg-[#ff0066] hover:bg-[#e6005c] text-white px-4 py-3 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg"
+                  className="bg-[#ee7f1a] hover:bg-[#d67016] text-white px-4 py-3 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg"
                 >
                   {card.title === "Telefon" && "Sună acum"}
                   {card.title === "Email" && "Trimite email"}

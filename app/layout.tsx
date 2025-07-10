@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
 export const viewport: Viewport = {
-  themeColor: "#E6005C",
+      themeColor: "#ee7f1a",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -16,11 +16,11 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Parcare-Aeroport Otopeni",
-    default: "Parcare Aeroport Otopeni - Parcare Privată Otopeni - Tarif Mic",
+    template: "%s | OTP Parking",
+    default: "OTP Parking - Parcare Privată Otopeni - Tarif Mic",
   },
   description:
-    "Alege inteligent, alege siguranța, alege confortul. Alege Parcare Aeroport Otopeni la un tarif avantajos pentru tine!",
+    "Alege inteligent, alege siguranța, alege confortul. Alege OTP Parking la un tarif avantajos pentru tine!",
   keywords: [
     "parcare aeroport otopeni",
     "parcare henri coanda",
@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     "parcare sigura aeroport",
     "transfer aeroport otopeni",
   ],
-  authors: [{ name: "Parcare-Aeroport SRL" }],
-  creator: "Parcare-Aeroport SRL",
-  publisher: "Parcare-Aeroport SRL",
+  authors: [{ name: "OTP Parking SRL" }],
+  creator: "OTP Parking SRL",
+  publisher: "OTP Parking SRL",
   formatDetection: {
     telephone: true,
     email: true,
@@ -49,24 +49,24 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ro_RO",
     url: "https://parcare-aeroport.ro",
-    title: "Parcare Aeroport Otopeni - Parcare Privată Otopeni - Tarif Mic",
+    title: "OTP Parking - Parcare Privată Otopeni - Tarif Mic",
     description:
-      "Alege inteligent, alege siguranța, alege confortul. Alege Parcare Aeroport Otopeni la un tarif avantajos pentru tine!",
-    siteName: "Parcare-Aeroport Otopeni",
+      "Alege inteligent, alege siguranța, alege confortul. Alege OTP Parking la un tarif avantajos pentru tine!",
+    siteName: "OTP Parking",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Parcare-Aeroport Otopeni",
+        alt: "OTP Parking",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Parcare Aeroport Otopeni - Parcare Privată Otopeni - Tarif Mic",
+    title: "OTP Parking - Parcare Privată Otopeni - Tarif Mic",
     description:
-      "Alege inteligent, alege siguranța, alege confortul. Alege Parcare Aeroport Otopeni la un tarif avantajos pentru tine!",
+      "Alege inteligent, alege siguranța, alege confortul. Alege OTP Parking la un tarif avantajos pentru tine!",
     images: ["/og-image.jpg"],
     creator: "@parcareaeroport",
   },
@@ -106,10 +106,10 @@ export default function RootLayout({
     <html lang="ro" className="scroll-smooth">
       <head>
         {/* Enhanced Theme Color Support */}
-        <meta name="theme-color" content="#E6005C" />
-        <meta name="msapplication-TileColor" content="#E6005C" />
-        <meta name="msapplication-navbutton-color" content="#E6005C" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="#E6005C" />
+        <meta name="theme-color" content="#ee7f1a" />
+        <meta name="msapplication-TileColor" content="#ee7f1a" />
+        <meta name="msapplication-navbutton-color" content="#ee7f1a" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="#ee7f1a" />
         
         {/* Google Tag Manager */}
         <Script

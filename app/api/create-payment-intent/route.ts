@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
     if (customerInfo.companyAddress) metadata.companyAddress = customerInfo.companyAddress
     if (customerInfo.notes) metadata.orderNotes = customerInfo.notes
     if (customerInfo.needInvoice !== undefined) metadata.needInvoice = customerInfo.needInvoice.toString()
+    if (customerInfo.termsAccepted !== undefined) metadata.termsAccepted = customerInfo.termsAccepted.toString()
 
     // Creăm un obiect de plată în Stripe
     const paymentIntent = await stripe.paymentIntents.create({

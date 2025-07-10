@@ -46,7 +46,7 @@ export default function ParkingRulesTabs() {
                   <Image
                     src={
                       activeTab === "sosire"
-                        ? "/parcare_langa_aeroportul_otopeni_intrare.jpg"
+                        ? "/Cum functioneza la sosire - parcare otopeni.jpg"
                         : "/parcare_langa_aeroportul_otopeni_iesire.jpg"
                     }
                     alt={activeTab === "sosire" ? "Mașină la sosire în parcare" : "Mașină la plecare din parcare"}

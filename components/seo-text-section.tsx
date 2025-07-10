@@ -9,7 +9,7 @@ export default function SeoTextSection() {
 
           <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none bg-white rounded-2xl shadow-sm p-6 md:p-8 border border-gray-100">
             <p className="text-gray-700 mb-6 md:mb-8">
-              <strong>Parcare Aeroport Otopeni</strong> s-a născut din dorința de a-ți oferi o soluție de parcare completă, care să combine siguranța maximă cu un confort desăvârșit și servicii impecabile. Echipa noastră este formată din profesioniști dedicați, gata să îți asigure o experiență cât mai plăcută, de la rezervare și până la preluarea mașinii la întoarcere. Ne mândrim cu atenția la detalii și cu angajamentul nostru față de satisfacția ta și a familiei tale!
+              <strong>OTP Parking</strong> s-a născut din dorința de a-ți oferi o soluție de parcare completă, care să combine siguranța maximă cu un confort desăvârșit și servicii impecabile. Echipa noastră este formată din profesioniști dedicați, gata să îți asigure o experiență cât mai plăcută, de la rezervare și până la preluarea mașinii la întoarcere. Ne mândrim cu atenția la detalii și cu angajamentul nostru față de satisfacția ta și a familiei tale!
             </p>
 
             <p className="text-gray-700 mb-4">
@@ -32,7 +32,7 @@ export default function SeoTextSection() {
             </p>
 
             <p className="text-gray-700 mb-4">
-              <strong>Caut cel mai bun preț parcare aeroport Otopeni. Care este tariful vostru?</strong><br />
+              <strong>Caut cel mai bun preț la OTP Parking. Care este tariful vostru?</strong><br />
               Suntem siguri că dorești un cost parcare Otopeni foarte avantajos pentru tine, iar noi te putem ajuta! Poți vizualiza lista noastră de prețuri în secțiunea tarife. Veți vedea beneficii extra de preț, începând cu cea de-a doua zi.
             </p>
 

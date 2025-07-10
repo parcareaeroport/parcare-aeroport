@@ -147,7 +147,9 @@ export async function POST(req: Request) {
         county: bookingMetadata.county || undefined,
         postalCode: bookingMetadata.postalCode || undefined,
         country: bookingMetadata.country || undefined,
-        orderNotes: bookingMetadata.orderNotes || undefined
+        orderNotes: bookingMetadata.orderNotes || undefined,
+        // Termeni și condiții
+        termsAccepted: bookingMetadata.termsAccepted ? bookingMetadata.termsAccepted === 'true' : undefined
       })
       
       const bookingDuration = Date.now() - bookingStartTime

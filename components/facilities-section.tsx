@@ -84,18 +84,18 @@ export default function FacilitiesSection() {
               </div>
 
               {/* Facility 4 - Călătorii pentru evenimente */}
-              <div className="bg-white rounded-2xl shadow-lg overflow-hidden relative z-10 group hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-gradient-to-br hover:from-purple-50 hover:to-pink-50">
+              <div className="bg-white rounded-2xl shadow-lg overflow-hidden relative z-10 group hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-gradient-to-br hover:from-purple-50 hover:to-orange-50">
                 <div className="p-6 md:p-8 flex flex-col items-center">
                   <div className="mb-4 md:mb-6 relative">
                     {/* 3D Icon Container */}
                     <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 flex items-center justify-center relative transform group-hover:scale-110 transition-transform duration-300">
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl opacity-20 group-hover:opacity-30 transition-opacity duration-300 shadow-inner"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-orange-600 rounded-xl opacity-20 group-hover:opacity-30 transition-opacity duration-300 shadow-inner"></div>
                       <Music 
-                        className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-purple-600 drop-shadow-lg relative z-10 group-hover:text-pink-700 transition-colors duration-300 group-hover:animate-bounce" 
+                        className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-purple-600 drop-shadow-lg relative z-10 group-hover:text-orange-700 transition-colors duration-300 group-hover:animate-bounce" 
                         strokeWidth={1.5}
                       />
                       <Sparkles 
-                        className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-yellow-500 absolute -top-1 -right-1 drop-shadow-md group-hover:text-pink-400 group-hover:animate-spin transition-all duration-300" 
+                        className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-yellow-500 absolute -top-1 -right-1 drop-shadow-md group-hover:text-orange-400 group-hover:animate-spin transition-all duration-300" 
                         strokeWidth={2}
                       />
                     </div>

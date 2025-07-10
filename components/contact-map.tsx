@@ -3,7 +3,7 @@ export default function ContactMap() {
     <section className="py-12 md:py-16 bg-gray-50">
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-10 text-center text-primary">Locația noastră</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8 md:mb-10 text-center text-primary">Locația OTP Parking</h2>
           
           <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 overflow-hidden">
             <iframe
@@ -15,7 +15,7 @@ export default function ContactMap() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               className="rounded-lg"
-              title="Locația Parcare Aeroport Otopeni"
+              title="Locația OTP Parking"
             ></iframe>
           </div>
 
@@ -31,7 +31,7 @@ export default function ContactMap() {
                 href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#ff0066] hover:bg-[#e6005c] text-white px-6 py-3 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg"
+                className="inline-flex items-center gap-2 bg-[#ee7f1a] hover:bg-[#d67016] text-white px-6 py-3 rounded-md transition-all duration-200 font-medium shadow-md hover:shadow-lg"
               >
                 📍 Google Maps
               </a>

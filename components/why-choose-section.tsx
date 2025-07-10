@@ -1,19 +1,19 @@
-import { Shield, Clock, Car, MapPin, Banknote, Phone, Star, Zap } from "lucide-react"
+import Image from "next/image"
 
 export default function WhyChooseSection() {
   const features = [
     {
-      icon: <Car className="h-8 w-8" />,
+      icon: <Image src="/icons homepage/Confort si Siguranta Garantate - Parcare Aeroport Otopeni OTP Parking (1).png" alt="Confort și siguranță garantate" width={64} height={64} className="h-16 w-16" />,
       title: "Confort și siguranță garantate",
       description: "Ai parte de o parcare iluminată, asfaltată, locuri de parcare generoase trasate și un spațiu special pentru relaxare, cu cafea si snacks-uri. Parchezi ușor și eviți zgârieturile, cu spațiu suficient între vehicule. Rămâne doar să rezervi!"
     },
     {
-      icon: <Zap className="h-8 w-8" />,
+      icon: <Image src="/icons homepage/Parcare inteligentă cu rezervare online și acces automatizat - Parcare Otopeni OTP Parking (1).png" alt="Parcare inteligentă cu rezervare online și acces automatizat" width={64} height={64} className="h-16 w-16" />,
       title: "Parcare inteligentă cu rezervare online și acces automatizat",
       description: "Am pregătit pentru tine un sistem de rezervare online simplu și intuitiv. Accesul în parcare se poate face și prin citirea automată a numărului de înmatriculare sau a codului QR pe care îl generăm special pentru tine."
     },
     {
-      icon: <Shield className="h-8 w-8" />,
+      icon: <Image src="/icons homepage/Supraveghere CCTV și pază dedicată - Parcare Ieftina Otopeni OTP Parking.png" alt="Supraveghere CCTV și pază dedicată" width={64} height={64} className="h-16 w-16" />,
       title: "Supraveghere CCTV și pază dedicată",
       description: "Monitorizare video CCTV 24/7 la care tu ai acces, pază umană, gard împrejmuitor și barieră cu cod de acces. Mașina ta este protejată în permanență."
     }

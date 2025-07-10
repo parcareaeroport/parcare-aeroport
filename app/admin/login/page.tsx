@@ -84,16 +84,16 @@ export default function LoginPage() {
           <div className="flex justify-center mb-4">
             {/* Mobile logo */}
             <Image
-              src="/sigla-mobile.png"
-              alt="Parcare-Aeroport Logo"
+              src="/otp_parking.png"
+              alt="OTP Parking Logo"
               width={150}
               height={60}
               className="h-12 w-auto md:hidden"
             />
             {/* Desktop logo */}
             <Image
-              src="/sigla-desktop.png"
-              alt="Parcare-Aeroport Logo"
+              src="/otp_parking.png"
+              alt="OTP Parking Logo"
               width={150}
               height={60}
               className="hidden md:block h-12 w-auto"

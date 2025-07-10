@@ -67,6 +67,10 @@ interface CompleteBookingData {
   paymentIntentId?: string
   paymentStatus: "paid" | "n/a" | "pending" | "refunded"
   
+  // Termeni și condiții
+  termsAccepted?: boolean
+  termsAcceptedAt?: any // serverTimestamp
+  
   // Date API
   apiBookingNumber?: string
   apiSuccess: boolean
@@ -77,8 +81,8 @@ interface CompleteBookingData {
   apiRequestTimestamp: any // serverTimestamp
   
   // Status intern
-  status: "confirmed_paid" | "confirmed_test" | "api_error" | "cancelled_by_admin" | "cancelled_by_api"
-  source: "webhook" | "test_mode" | "manual"
+  status: "confirmed_paid" | "confirmed_test" | "api_error" | "cancelled_by_admin" | "cancelled_by_api" | "confirmed_pay_on_site"
+  source: "webhook" | "test_mode" | "manual" | "pay_on_site"
   
   // Metadata
   createdAt: any // serverTimestamp
@@ -553,10 +557,10 @@ export async function createBookingWithFirestore(
     clientPhone?: string
     numberOfPersons?: number
     paymentIntentId?: string
-    paymentStatus?: "paid" | "n/a"
+    paymentStatus?: "paid" | "n/a" | "pending"
     amount?: number
     days?: number
-    source?: "webhook" | "test_mode" | "manual"
+    source?: "webhook" | "test_mode" | "manual" | "pay_on_site"
     // Date pentru facturare și adresă
     company?: string
     companyVAT?: string
@@ -569,6 +573,8 @@ export async function createBookingWithFirestore(
     postalCode?: string
     country?: string
     orderNotes?: string
+    // Termeni și condiții
+    termsAccepted?: boolean
   }
 ) {
   const debugLogs: string[] = []
@@ -632,7 +638,8 @@ export async function createBookingWithFirestore(
       
       // Status intern
       status: apiResult.success 
-        ? (additionalData?.paymentStatus === "paid" ? "confirmed_paid" : "confirmed_test")
+        ? (additionalData?.paymentStatus === "paid" ? "confirmed_paid" : 
+           additionalData?.source === "pay_on_site" ? "confirmed_pay_on_site" : "confirmed_test")
         : "api_error",
       source: additionalData?.source || "manual",
       
@@ -653,6 +660,11 @@ export async function createBookingWithFirestore(
       completeBookingData.county = additionalData.county
       completeBookingData.postalCode = additionalData.postalCode
       completeBookingData.country = additionalData.country
+      // Termeni și condiții
+      completeBookingData.termsAccepted = additionalData.termsAccepted
+      if (additionalData.termsAccepted) {
+        completeBookingData.termsAcceptedAt = serverTimestamp()
+      }
     }
     
     if (apiResult.success) {

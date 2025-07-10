@@ -182,6 +182,16 @@ function ConfirmationContent() {
         return
       }
 
+      // Verificăm dacă este o confirmare cu plată la parcare
+      if (testBookingNumber && testStatus === "success_pay_on_site" && tempReservationData) {
+        setStatus("success")
+        setMessage(
+          `Rezervarea (nr. ${testBookingNumber}) a fost înregistrată cu succes! Veți plăti la sosirea în parcare. Veți primi un email de confirmare.`,
+        )
+        setBookingNumber(testBookingNumber) // Setează numărul de rezervare pentru afișare
+        return
+      }
+
       // Dacă avem paymentIntentId dar nu clientSecret, verificăm dacă webhook-ul a procesat deja rezervarea
       if (paymentIntentId && !clientSecret && tempReservationData) {
         checkExistingBooking(paymentIntentId, tempReservationData)
@@ -348,8 +358,15 @@ function ConfirmationContent() {
                   <div className="text-lg font-bold">{reservationDetails.days} {reservationDetails.days === 1 ? 'zi' : 'zile'}</div>
                 </div>
                 <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
-                  <div className="text-sm text-green-700 mb-1">Total Plătit</div>
+                  <div className="text-sm text-green-700 mb-1">
+                    {searchParams.get("status") === "success_pay_on_site" ? "Total de Plată (la parcare)" : "Total Plătit"}
+                  </div>
                   <div className="text-xl font-bold text-green-600">{reservationDetails.price.toFixed(2)} LEI</div>
+                  {searchParams.get("status") === "success_pay_on_site" && (
+                    <div className="text-xs text-orange-600 mt-1 font-medium">
+                      💳 Se plătește la sosirea în parcare
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -359,6 +376,9 @@ function ConfirmationContent() {
                   <li>• Veți primi un email de confirmare cu codul QR</li>
                   <li>• Folosiți codul QR pentru accesul la parcare</li>
                   <li>• Prezentați-vă cu maximum 2 ore înainte de ora rezervată</li>
+                  {searchParams.get("status") === "success_pay_on_site" && (
+                    <li className="text-orange-700 font-medium">💳 Plătiți tariful la sosirea în parcare ({reservationDetails.price.toFixed(2)} LEI)</li>
+                  )}
                 </ul>
               </div>
 
@@ -374,7 +394,7 @@ function ConfirmationContent() {
                     href="https://maps.app.goo.gl/GhoVMNWvst6BamHx5?g_st=aw"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-[#ff0066] hover:bg-[#e6005c] text-white px-4 py-2 rounded-md transition-all duration-200 font-medium text-sm"
+                    className="inline-flex items-center gap-2 bg-[#ee7f1a] hover:bg-[#d67016] text-white px-4 py-2 rounded-md transition-all duration-200 font-medium text-sm"
                   >
                     📍 Google Maps
                   </a>

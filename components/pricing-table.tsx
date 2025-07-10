@@ -137,7 +137,7 @@ export default function PricingTable() {
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-primary">
-            Tarife Parcare Otopeni (1-30 zile)
+          Tarife Parcare Otopeni- OTP Parking (1-30 zile)
           </h2>
           <p className="text-center text-sm text-gray-600 mb-6">
             Prețurile sunt actualizate dinamic.
@@ -146,17 +146,16 @@ export default function PricingTable() {
           {/* ---------------- table shell ---------------- */}
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
             {/* header */}
-            <div className="grid grid-cols-4 bg-waze-blue text-white">
+            <div className="grid grid-cols-3 bg-waze-blue text-white">
               {[
-                ["NR. ZILE", ""],
-                ["TARIF STANDARD ZILE STAȚIONARE [CU TVA]", "[RON]"],
-                ["REDUCERE APLICATĂ", "[RON] (% stabilit)"],
-                ["TOTAL RON CU REDUCERE ȘI TVA", "[RON]"],
+                ["Număr de Zile", ""],
+                ["TOTAL Preț cu TVA inclus", "[RON]"],
+                ["Preț per Zi", "[RON]"],
               ].map(([t, sub], i) => (
                 <div
                   key={i}
                   className={`p-4 sm:p-6 text-center font-bold ${
-                    i < 3 && "border-r border-white/20"
+                    i < 2 && "border-r border-white/20"
                   }`}
                 >
                   <div className="text-sm sm:text-base">{t}</div>
@@ -183,23 +182,16 @@ export default function PricingTable() {
                 visibleRows.map((r, idx) => (
                   <div
                     key={r.id}
-                    className={`grid grid-cols-4 ${
+                    className={`grid grid-cols-3 ${
                       idx % 2 === 0 ? "bg-gray-50" : "bg-white"
                     } hover:bg-waze-blue/5 transition-colors`}
                   >
-                    <Cell>{r.days}</Cell>
-                    <Cell>{fmt.format(r.standardPrice)}</Cell>
-                    <Cell>
-                      <span
-                        className={`${
-                          r.discountPercentage > 0 ? "text-waze-pink" : ""
-                        } font-medium`}
-                      >
-                        {r.discountNote}
-                      </span>
-                    </Cell>
-                    <Cell bold className="text-waze-blue">
+                    <Cell className="border-r border-gray-200">{r.days}</Cell>
+                    <Cell bold className="text-waze-blue border-r border-gray-200">
                       {fmt.format(r.finalPrice)}
+                    </Cell>
+                    <Cell bold className="text-green-600">
+                      {fmt.format(r.finalPrice / r.days)}
                     </Cell>
                   </div>
                 ))
@@ -248,17 +240,17 @@ export default function PricingTable() {
           </div>
 
           {/* Notă pentru zilele 31+ */}
-          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          {/* <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-start gap-2">
               <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-blue-800">
-                {/* <p className="font-medium mb-1">Tarif pentru șederi lungi (30+ zile):</p> */}
+                <p className="font-medium mb-1">Tarif pentru șederi lungi (30+ zile):</p>
                 <p>
                   <strong>Începând cu ziua 30, tariful este de 24.33 RON/zi</strong>, indiferent de câte zile veți sta.
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* footnote + CTA */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -271,7 +263,7 @@ export default function PricingTable() {
             </div>
 
             <Link href="/#rezerva-formular">
-              <Button className="bg-[#ff0066] hover:bg-[#e6005c] rounded-full px-8 py-4 h-auto shadow-md hover:shadow-lg flex items-center gap-2 text-white font-medium transition-all duration-200 hover:scale-105">
+              <Button className="bg-[#ee7f1a] hover:bg-[#d67016] rounded-full px-8 py-4 h-auto shadow-md hover:shadow-lg flex items-center gap-2 text-white font-medium transition-all duration-200 hover:scale-105">
                 <Calendar className="h-5 w-5" />
                 <span>REZERVĂ ACUM</span>
               </Button>
@@ -285,12 +277,12 @@ export default function PricingTable() {
 
 /* ---------------- tiny helpers ---------------- */
 const PlaceholderRow = () => (
-  <div className="grid grid-cols-4 bg-white h-[69px]">
-    {Array.from({ length: 4 }).map((_, i) => (
+  <div className="grid grid-cols-3 bg-white h-[69px]">
+    {Array.from({ length: 3 }).map((_, i) => (
       <div
         key={i}
         className={`p-4 sm:p-6 flex items-center justify-center ${
-          i < 3 && "border-r border-gray-200"
+          i < 2 && "border-r border-gray-200"
         }`}
       >
         <Loader2 className="h-5 w-5 animate-spin text-gray-300" />
@@ -312,7 +304,7 @@ function Cell({
     <div
       className={`p-4 sm:p-6 text-center border-gray-200 ${
         bold ? "font-bold" : "font-medium"
-      } ${className} ${className.includes("border-r") ? "" : "border-r"}`}
+      } ${className}`}
     >
       {children}
     </div>

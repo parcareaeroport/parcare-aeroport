@@ -141,7 +141,7 @@ export default function HowItWorksToggle() {
           <div className="relative">
             <div className="absolute -z-10 w-48 sm:w-72 h-48 sm:h-72 bg-waze-blue/10 rounded-full blur-3xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
             <Image
-              src={activeTab === "intrare" ? "/parcare_langa_aeroportul_otopeni_intrare.jpg" : "/parcare_langa_aeroportul_otopeni_iesire.jpg"}
+              src={activeTab === "intrare" ? "/Intrarea in parcare - parcare Otopeni sigura.jpg" : "/parcare_langa_aeroportul_otopeni_iesire.jpg"}
               alt={activeTab === "intrare" ? "Intrare în parcare" : "Ieșire din parcare"}
               width={450}
               height={550}
