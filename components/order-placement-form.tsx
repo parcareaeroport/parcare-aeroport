@@ -796,12 +796,12 @@ export default function OrderPlacementForm() {
                             onChange={() => setPaymentMethod("pay_on_site")}
                             className="h-4 w-4 text-primary"
                           />
-                          <Label htmlFor="pay_on_site" className="flex-1 cursor-pointer">
+                          {/* <Label htmlFor="pay_on_site" className="flex-1 cursor-pointer">
                             <div className="flex flex-col">
                               <span>Plată la parcare</span>
                               <span className="text-sm text-gray-500">Plătiți când ajungeți la parcare</span>
                             </div>
-                          </Label>
+                          </Label> */}
                         </div>
                       </div>
                     </div>
@@ -1261,12 +1261,12 @@ export default function OrderPlacementForm() {
                             onChange={() => setPaymentMethod("pay_on_site")}
                             className="h-4 w-4 text-primary"
                           />
-                          <Label htmlFor="pay_on_site" className="flex-1 cursor-pointer">
+                          {/* <Label htmlFor="pay_on_site" className="flex-1 cursor-pointer">
                             <div className="flex flex-col">
                               <span>Plată la parcare</span>
                               <span className="text-sm text-gray-500">Plătiți când ajungeți la parcare</span>
                             </div>
-                          </Label>
+                          </Label> */}
                         </div>
                       </div>
                     </div>
