@@ -51,7 +51,7 @@ function createEmailTransporter() {
 /**
  * Generează HTML-ul pentru email-ul de confirmare
  */
-function generateBookingEmailHTML(bookingData: BookingEmailData, hasLogo: boolean = true): string {
+function generateBookingEmailHTML(bookingData: BookingEmailData): string {
   const formattedBookingNumber = bookingData.bookingNumber.padStart(6, '0')
   const isTestMode = bookingData.source === 'test_mode'
   
@@ -91,7 +91,6 @@ function generateBookingEmailHTML(bookingData: BookingEmailData, hasLogo: boolea
     <body>
       <div class="container">
         <div class="header">
-          ${hasLogo ? '<img src="cid:logo" alt="OTP Parking Logo" style="max-width: 120px; height: auto; margin-bottom: 10px;" />' : ''}
           <h1>🅿️ Confirmare Rezervare OTP Parking</h1>
           <p>Rezervarea dumneavoastră a fost confirmată cu succes!</p>
         </div>
@@ -250,87 +249,8 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     const qrBuffer = await generateMultiparkQRBuffer(bookingData.bookingNumber)
     console.log(`✅ [EMAIL-${emailProcessId}] QR code generated, buffer size: ${qrBuffer.length} bytes`)
     
-    // Citește logo-ul pentru atașament - încearcă mai multe căi
-    console.log(`🖼️ [EMAIL-${emailProcessId}] Reading logo file...`)
-    const possibleLogoPaths = [
-      path.join(process.cwd(), 'public', 'otp_parking.png'),
-      path.join(process.cwd(), 'app', 'public', 'otp_parking.png'),
-      path.join(__dirname, '..', 'public', 'otp_parking.png'),
-      path.join(__dirname, '..', 'app', 'public', 'otp_parking.png'),
-      path.join(process.cwd(), '.next', 'static', 'media', 'otp_parking.png'),
-      path.join(process.cwd(), '.next', 'server', 'static', 'media', 'otp_parking.png'),
-      './public/otp_parking.png',
-      '/var/task/public/otp_parking.png',
-      '/var/task/.next/static/media/otp_parking.png'
-    ]
-    
-    let logoBuffer: Buffer | null = null
-    let logoPath: string | null = null
-    
-    for (const possiblePath of possibleLogoPaths) {
-      try {
-        console.log(`🔍 [EMAIL-${emailProcessId}] Trying logo path: ${possiblePath}`)
-        logoBuffer = fs.readFileSync(possiblePath)
-        logoPath = possiblePath
-        console.log(`✅ [EMAIL-${emailProcessId}] Logo loaded from: ${possiblePath}`)
-        console.log(`✅ [EMAIL-${emailProcessId}] Logo buffer size: ${logoBuffer.length} bytes`)
-        break
-      } catch (error) {
-        console.log(`❌ [EMAIL-${emailProcessId}] Logo not found at: ${possiblePath}`)
-      }
-    }
-    
-    if (!logoBuffer) {
-      console.warn(`⚠️ [EMAIL-${emailProcessId}] Logo file not found in any of the paths:`)
-      possibleLogoPaths.forEach(path => console.warn(`⚠️ [EMAIL-${emailProcessId}]   - ${path}`))
-      
-      // Debug: Verifică ce fișiere există în directorul curent
-      try {
-        const currentDir = process.cwd()
-        console.log(`🔍 [EMAIL-${emailProcessId}] Current working directory: ${currentDir}`)
-        const files = fs.readdirSync(currentDir)
-        console.log(`🔍 [EMAIL-${emailProcessId}] Files in current directory: ${files.join(', ')}`)
-        
-        const publicDirPath = path.join(currentDir, 'public')
-        if (fs.existsSync(publicDirPath)) {
-          const publicFiles = fs.readdirSync(publicDirPath)
-          console.log(`🔍 [EMAIL-${emailProcessId}] Files in public directory: ${publicFiles.join(', ')}`)
-        } else {
-          console.log(`🔍 [EMAIL-${emailProcessId}] Public directory does not exist at: ${publicDirPath}`)
-        }
-        
-        // Încearcă să verifice și directorul .next dacă există
-        const nextDirPath = path.join(currentDir, '.next')
-        if (fs.existsSync(nextDirPath)) {
-          console.log(`🔍 [EMAIL-${emailProcessId}] .next directory exists`)
-          const nextFiles = fs.readdirSync(nextDirPath)
-          console.log(`🔍 [EMAIL-${emailProcessId}] Files in .next directory: ${nextFiles.join(', ')}`)
-        } else {
-          console.log(`🔍 [EMAIL-${emailProcessId}] .next directory does not exist`)
-        }
-      } catch (debugError) {
-        console.log(`🔍 [EMAIL-${emailProcessId}] Debug directory listing failed: ${debugError}`)
-      }
-      
-      
-      // Backup: Creează un logo simplu programatic dacă nu se găsește fișierul
-      console.log(`🔧 [EMAIL-${emailProcessId}] Attempting to create fallback logo...`)
-      try {
-        // SVG simplu care poate fi convertit la PNG
-        const simpleLogo = `<svg width="200" height="80" xmlns="http://www.w3.org/2000/svg">
-          <rect width="200" height="80" fill="#13005a"/>
-          <text x="100" y="30" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">OTP</text>
-          <text x="100" y="55" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ee7f1a">PARKING</text>
-        </svg>`
-        
-        // Pentru acum, să nu folosim logo-ul fallback - e mai sigur fără logo
-        console.log(`🔧 [EMAIL-${emailProcessId}] Fallback logo created but not used for compatibility`)
-        console.warn(`⚠️ [EMAIL-${emailProcessId}] Continuing without logo...`)
-      } catch (fallbackError) {
-        console.warn(`⚠️ [EMAIL-${emailProcessId}] Fallback logo creation failed: ${fallbackError}`)
-        console.warn(`⚠️ [EMAIL-${emailProcessId}] Continuing without logo...`)
-      }
-    }
+    // Nu mai folosim logo în email pentru a reduce complexitatea și dimensiunea bundle-ului
+    console.log(`📧 [EMAIL-${emailProcessId}] Skipping logo loading - email will be sent without logo`)
     
     // Creează transporterul email
     console.log(`🚀 [EMAIL-${emailProcessId}] Creating email transporter...`)
@@ -347,14 +267,7 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
       }
     ]
     
-    // Adaugă logo-ul doar dacă a fost încărcat cu succes
-    if (logoBuffer) {
-      attachments.push({
-        filename: 'otp_parking.png',
-        content: logoBuffer,
-        cid: 'logo', // Content ID pentru logo
-      })
-    }
+    // Nu mai adăugăm logo în email
     
     const mailOptions = {
       from: {
@@ -363,7 +276,7 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
       },
       to: bookingData.clientEmail,
       subject: `Confirmare Rezervare OTP Parking - ${formattedBookingNumber}`,
-      html: generateBookingEmailHTML(bookingData, !!logoBuffer),
+      html: generateBookingEmailHTML(bookingData),
       attachments: attachments
     }
     
@@ -374,7 +287,7 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     console.log(`📧 [EMAIL-${emailProcessId}]   HTML Length: ${mailOptions.html.length} chars`)
     console.log(`📧 [EMAIL-${emailProcessId}]   Attachments: ${mailOptions.attachments.length} files`)
     console.log(`📧 [EMAIL-${emailProcessId}]   QR Attachment Size: ${qrBuffer.length} bytes`)
-    console.log(`📧 [EMAIL-${emailProcessId}]   Logo Attachment Size: ${logoBuffer ? logoBuffer.length : 0} bytes`)
+    console.log(`📧 [EMAIL-${emailProcessId}]   Logo Attachment: No logo attached`)
     
     // Trimite email-ul cu timeout
     console.log(`🚀 [EMAIL-${emailProcessId}] Sending email via Gmail SMTP...`)
