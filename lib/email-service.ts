@@ -129,7 +129,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
             </div>
             <div class="detail-row">
               <span class="detail-label">Status:</span>
-              <span class="detail-value">${isTestMode ? 'Confirmat (Test)' : 'Confirmat și Plătit'}</span>
+              <span class="detail-value">${isTestMode ? 'Confirmat (Test)' : 'Confirmat'}</span>
             </div>
           </div>
           

@@ -756,6 +756,15 @@ export async function createBookingWithFirestore(
         console.log("ℹ️ Factură Oblio nu se generează - rezervare fără plată")
       }
 
+      // Convertește Firestore timestamps în Date objects pentru serializare
+      const serializableReservationData = {
+        ...completeBookingData,
+        createdAt: new Date().toISOString(),
+        termsAcceptedAt: completeBookingData.termsAcceptedAt ? new Date().toISOString() : undefined,
+        apiRequestTimestamp: new Date().toISOString(),
+        lastUpdated: undefined // Remove serverTimestamp fields
+      }
+
       return {
         firestoreId: firestoreResult.firestoreId,
         firestoreSuccess: true,
@@ -764,7 +773,7 @@ export async function createBookingWithFirestore(
         success: true,
         message: `Rezervare confirmată cu numărul ${completeBookingData.apiBookingNumber}`,
         bookingNumber: completeBookingData.apiBookingNumber,
-        reservationData: completeBookingData,
+        reservationData: serializableReservationData,
         qrData: `MPK_RES=${completeBookingData.apiBookingNumber}`,
         bookingDetails: {
           bookingNumber: completeBookingData.apiBookingNumber,
