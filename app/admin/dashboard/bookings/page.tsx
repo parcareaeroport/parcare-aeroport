@@ -774,12 +774,51 @@ function BookingsPageContent() {
     }
   }
 
+  const handleUpdatePayOnSiteStatus = async (booking: Booking, newStatus: string) => {
+    setIsUpdatingPayment(true)
+    setUpdatingPaymentBookingId(booking.id)
+    
+    try {
+      const bookingRef = doc(db, 'bookings', booking.id)
+      await updateDoc(bookingRef, {
+        paymentStatus: newStatus,
+        lastUpdated: serverTimestamp()
+      })
+      
+      const statusLabels = {
+        'pending': 'În așteptare',
+        'paid': 'Plătit la parcare'
+      }
+      
+      toast({
+        title: "Status actualizat",
+        description: `Statusul plății a fost schimbat în "${statusLabels[newStatus as keyof typeof statusLabels]}"`,
+        variant: "default",
+      })
+      
+      // Refresh lista pentru a vedea statusul actualizat
+      await fetchBookings()
+    } catch (error) {
+      console.error("Update payment status error:", error)
+      toast({ 
+        title: "Eroare", 
+        description: "Eroare la actualizarea statusului plății. Încercați din nou.", 
+        variant: "destructive" 
+      })
+    } finally {
+      setIsUpdatingPayment(false)
+      setUpdatingPaymentBookingId(null)
+    }
+  }
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed_paid":
         return <Badge className="bg-green-100 text-green-800">Confirmat</Badge>
       case "confirmed_test":
         return <Badge className="bg-blue-100 text-blue-800">Confirmat (Test)</Badge>
+      case "confirmed_pay_on_site":
+        return <Badge className="bg-orange-100 text-orange-800">Plată la parcare</Badge>
       case "cancelled_by_admin":
         return <Badge className="bg-red-100 text-red-800">Anulat (Admin)</Badge>
       case "cancelled_by_api":
@@ -823,6 +862,19 @@ function BookingsPageContent() {
         return <Badge className="bg-blue-500 text-white">Rambursată</Badge>
       default:
         return <Badge className="bg-gray-500 text-white">Nu este plătită</Badge>
+    }
+  }
+
+  const getPayOnSiteStatusBadge = (booking: Booking) => {
+    const status = booking.paymentStatus || "pending"
+    
+    switch (status) {
+      case "pending":
+        return <Badge className="bg-orange-500 text-white">În așteptare</Badge>
+      case "paid":
+        return <Badge className="bg-green-500 text-white">Plătit la parcare</Badge>
+      default:
+        return <Badge className="bg-gray-500 text-white">În așteptare</Badge>
     }
   }
 
@@ -872,6 +924,45 @@ function BookingsPageContent() {
               disabled={isUpdatingPayment}
             >
               <Badge className="bg-blue-500 text-white mr-2 w-24 justify-center">Rambursată</Badge>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    }
+    
+    // Pentru rezervările cu plată la parcare, afișăm dropdown-ul editabil
+    if (booking.source === "pay_on_site") {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-auto p-1 hover:bg-transparent"
+              disabled={isUpdatingPayment && updatingPaymentBookingId === booking.id}
+            >
+              {isUpdatingPayment && updatingPaymentBookingId === booking.id ? (
+                <div className="flex items-center">
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                  <span className="text-xs">Actualizare...</span>
+                </div>
+              ) : (
+                getPayOnSiteStatusBadge(booking)
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem 
+              onClick={() => handleUpdatePayOnSiteStatus(booking, "pending")}
+              disabled={isUpdatingPayment}
+            >
+              <Badge className="bg-orange-500 text-white mr-2 w-24 justify-center">În așteptare</Badge>
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => handleUpdatePayOnSiteStatus(booking, "paid")}
+              disabled={isUpdatingPayment}
+            >
+              <Badge className="bg-green-500 text-white mr-2 w-24 justify-center">Plătit la parcare</Badge>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -938,9 +1029,9 @@ function BookingsPageContent() {
           <TabsTrigger value="manual" onClick={() => setStatusFilter("manual")}>
                             <span className="text-orange-700">Manual</span>
           </TabsTrigger>
-          {/* <TabsTrigger value="pay_on_site" onClick={() => setStatusFilter("pay_on_site")}>
+          <TabsTrigger value="pay_on_site" onClick={() => setStatusFilter("pay_on_site")}>
             <span className="text-orange-700">Plată la parcare</span>
-          </TabsTrigger> */}
+          </TabsTrigger>
           <TabsTrigger value="cancelled_by_admin" onClick={() => setStatusFilter("cancelled_by_admin")}>
             Anulate
           </TabsTrigger>
@@ -1023,7 +1114,7 @@ function BookingsPageContent() {
                         booking.source === "manual" 
                           ? "bg-orange-50 hover:bg-orange-100 border-l-4 border-l-orange-400" 
                           : booking.source === "pay_on_site"
-                          ? "bg-orange-50 hover:bg-orange-100 border-l-4 border-l-orange-400"
+                          ? "bg-orange-100 hover:bg-orange-200 border-l-4 border-l-orange-500"
                           : ""
                       }
                     >
@@ -1033,11 +1124,11 @@ function BookingsPageContent() {
                             MANUAL
                           </Badge>
                         )}
-                        {/* {booking.source === "pay_on_site" && (
-                          <Badge variant="outline" className="text-orange-700 border-orange-400 bg-orange-100 mr-2 text-xs">
+                        {booking.source === "pay_on_site" && (
+                          <Badge variant="outline" className="text-orange-800 border-orange-500 bg-orange-200 mr-2 text-xs">
                             PLATĂ LA PARCARE
                           </Badge>
-                        )} */}
+                        )}
                         {booking.apiBookingNumber || booking.id.substring(0, 6)}
                       </TableCell>
                       <TableCell>{booking.licensePlate}</TableCell>

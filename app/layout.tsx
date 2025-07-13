@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import Script from "next/script"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
+import WhatsAppFloating from "@/components/whatsapp-floating"
 
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
@@ -111,6 +112,15 @@ export default function RootLayout({
         <meta name="msapplication-navbutton-color" content="#ee7f1a" />
         <meta name="apple-mobile-web-app-status-bar-style" content="#ee7f1a" />
         
+        {/* FontAwesome for icons */}
+        <link 
+          rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossOrigin="anonymous"
+          referrerPolicy="no-referrer"
+        />
+        
         {/* Google Tag Manager */}
         <Script
           id="gtm-script"
@@ -217,6 +227,7 @@ export default function RootLayout({
         {/* End Meta Pixel Code (noscript) */}
         
         {children}
+        <WhatsAppFloating />
         <Toaster />
       </body>
     </html>

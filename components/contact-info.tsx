@@ -9,7 +9,7 @@ export default function ContactInfo() {
     {
       title: "Telefon",
       items: [
-        { label: "Informații și suport", value: "+40 734 292 818" },
+        { label: "Informații și suport", value: "0742.039.955" },
       ],
     },
     {

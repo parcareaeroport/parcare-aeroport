@@ -101,7 +101,7 @@ export default function Header() {
           </Link>
           {/* Buton Principal - Fundal roz + Text alb */}
           <Link
-            href="tel:+40734292818"
+            href="tel:+40742039955"
             className="bg-[#ee7f1a] hover:bg-[#d67016] rounded-md text-sm font-medium shadow-md hover:shadow-lg px-3 md:px-4 py-2 h-auto flex items-center text-white transition-all duration-200"
             aria-label="Contact rapid telefonic"
           >
@@ -203,7 +203,7 @@ export default function Header() {
                   </Button>
                 </Link>
                 <Link 
-                  href="tel:+40734292818" 
+                  href="tel:+40742039955" 
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block"
                 >

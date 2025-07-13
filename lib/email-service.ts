@@ -2,6 +2,8 @@
 
 import { generateMultiparkQRBuffer } from './qr-generator'
 import nodemailer from 'nodemailer'
+import fs from 'fs'
+import path from 'path'
 
 // Interfață pentru datele de rezervare pentru email
 interface BookingEmailData {
@@ -89,6 +91,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
     <body>
       <div class="container">
         <div class="header">
+          <img src="cid:logo" alt="OTP Parking Logo" style="max-width: 120px; height: auto; margin-bottom: 10px;" />
           <h1>🅿️ Confirmare Rezervare OTP Parking</h1>
           <p>Rezervarea dumneavoastră a fost confirmată cu succes!</p>
         </div>
@@ -125,7 +128,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
             </div>
             <div class="detail-row">
               <span class="detail-label">Preț Total:</span>
-              <span class="detail-value"><strong>${bookingData.amount.toFixed(2)} RON</strong></span>
+              <span class="detail-value"><strong>${bookingData.amount.toFixed(2)} RON</strong>${bookingData.source === 'pay_on_site' ? '<br><small style="color: #ee7f1a; font-weight: bold;">Plata se va efectua la parcare</small>' : ''}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Status:</span>
@@ -164,7 +167,7 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
             <div class="contact-grid">
               <div class="contact-item">
                 <h4>📞 Telefon suport</h4>
-                <p>+40 734 292 818</p>
+                <p>0742.039.955</p>
               </div>
               <div class="contact-item">
                 <h4>📧 Email suport</h4>
@@ -247,7 +250,17 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     const qrBuffer = await generateMultiparkQRBuffer(bookingData.bookingNumber)
     console.log(`✅ [EMAIL-${emailProcessId}] QR code generated, buffer size: ${qrBuffer.length} bytes`)
     
-    // Logo eliminat din email-uri
+    // Citește logo-ul pentru atașament
+    console.log(`🖼️ [EMAIL-${emailProcessId}] Reading logo file...`)
+    const logoPath = path.join(process.cwd(), 'public', 'otp_parking.png')
+    let logoBuffer: Buffer | null = null
+    try {
+      logoBuffer = fs.readFileSync(logoPath)
+      console.log(`✅ [EMAIL-${emailProcessId}] Logo loaded, buffer size: ${logoBuffer.length} bytes`)
+    } catch (logoError) {
+      console.warn(`⚠️ [EMAIL-${emailProcessId}] Logo file not found: ${logoPath}`)
+      console.warn(`⚠️ [EMAIL-${emailProcessId}] Continuing without logo...`)
+    }
     
     // Creează transporterul email
     console.log(`🚀 [EMAIL-${emailProcessId}] Creating email transporter...`)
@@ -256,6 +269,23 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     
     // Configurează email-ul
     const formattedBookingNumber = bookingData.bookingNumber.padStart(6, '0')
+    const attachments: any[] = [
+      {
+        filename: `qr-code-${formattedBookingNumber}.png`,
+        content: qrBuffer,
+        cid: 'qrcode', // Content ID pentru a fi referenciat în HTML
+      }
+    ]
+    
+    // Adaugă logo-ul doar dacă a fost încărcat cu succes
+    if (logoBuffer) {
+      attachments.push({
+        filename: 'otp_parking.png',
+        content: logoBuffer,
+        cid: 'logo', // Content ID pentru logo
+      })
+    }
+    
     const mailOptions = {
       from: {
         name: 'OTP Parking',
@@ -264,13 +294,7 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
       to: bookingData.clientEmail,
       subject: `Confirmare Rezervare OTP Parking - ${formattedBookingNumber}`,
       html: generateBookingEmailHTML(bookingData),
-      attachments: [
-        {
-          filename: `qr-code-${formattedBookingNumber}.png`,
-          content: qrBuffer,
-          cid: 'qrcode', // Content ID pentru a fi referenciat în HTML
-        }
-      ]
+      attachments: attachments
     }
     
     console.log(`📧 [EMAIL-${emailProcessId}] Email options configured:`)
@@ -280,6 +304,7 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     console.log(`📧 [EMAIL-${emailProcessId}]   HTML Length: ${mailOptions.html.length} chars`)
     console.log(`📧 [EMAIL-${emailProcessId}]   Attachments: ${mailOptions.attachments.length} files`)
     console.log(`📧 [EMAIL-${emailProcessId}]   QR Attachment Size: ${qrBuffer.length} bytes`)
+    console.log(`📧 [EMAIL-${emailProcessId}]   Logo Attachment Size: ${logoBuffer ? logoBuffer.length : 0} bytes`)
     
     // Trimite email-ul cu timeout
     console.log(`🚀 [EMAIL-${emailProcessId}] Sending email via Gmail SMTP...`)

@@ -79,7 +79,7 @@ export default function Home() {
             "name": "Parcare-Aeroport Otopeni",
             "image": "https://parcare-aeroport.ro/images/parking-lot.jpg",
             "url": "https://parcare-aeroport.ro",
-            "telephone": "+40734292818",
+            "telephone": "+40742039955",
             "address": {
               "@type": "PostalAddress",
               "streetAddress": "Strada Aeroportului 10",

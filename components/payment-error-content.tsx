@@ -253,7 +253,7 @@ export default function PaymentErrorContent() {
               <Phone className="w-6 h-6 text-primary mr-3" />
               <div>
                 <p className="font-medium text-gray-900">Telefon</p>
-                <p className="text-gray-600">+40 21 234 5678</p>
+                <p className="text-gray-600">0742.039.955</p>
               </div>
             </div>
             

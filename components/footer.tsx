@@ -90,8 +90,8 @@ export default function Footer() {
               {/* Phone */}
               <div className="flex items-center space-x-3">
                 <Phone size={16} className="text-[#ee7f1a] flex-shrink-0" />
-                <a href="tel:+40734292818" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  +40 734 292 818
+                <a href="tel:+40742039955" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  0742.039.955
                 </a>
               </div>
               
@@ -175,7 +175,7 @@ export default function Footer() {
         {/* Scroll to top button */}
         <button
           onClick={scrollToTop}
-          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-[#ee7f1a] hover:bg-[#d67016] text-white rounded-full p-3 sm:p-4 shadow-lg transition-all duration-300 hover:scale-110"
+          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-[#ee7f1a] hover:bg-[#d67016] text-white rounded-full p-3 sm:p-4 shadow-lg transition-all duration-300 hover:scale-110 z-[9999]"
           aria-label="Scroll to top"
         >
           <ArrowUp size={20} className="sm:w-6 sm:h-6" />
