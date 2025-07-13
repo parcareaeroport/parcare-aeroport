@@ -1251,7 +1251,7 @@ export default function OrderPlacementForm() {
                           </Label>
                         </div>
 
-                        {/* <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
+                        <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-4 hover:border-primary/50 transition-colors">
                           <input
                             type="radio"
                             id="pay_on_site"
@@ -1267,7 +1267,7 @@ export default function OrderPlacementForm() {
                               <span className="text-sm text-gray-500">Plătiți când ajungeți la parcare</span>
                             </div>
                           </Label>
-                        </div> */}
+                        </div>
                       </div>
                     </div>
 
