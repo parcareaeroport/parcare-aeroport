@@ -255,6 +255,17 @@ export default function OrderPlacementForm() {
       return
     }
 
+    // Verificare parolă de developer pentru "Plată la parcare"
+    const developerPassword = prompt("Introduceți parola de developer pentru testarea plății la parcare:")
+    if (developerPassword !== "1234567890") {
+      toast({
+        title: "Acces interzis",
+        description: "Parola de developer este incorectă.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
