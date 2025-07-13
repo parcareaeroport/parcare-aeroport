@@ -255,6 +255,27 @@ export default function OrderPlacementForm() {
       return
     }
 
+    // Validare email obligatoriu pentru plata la parcare
+    if (!email || !email.trim()) {
+      toast({
+        title: "Email obligatoriu",
+        description: "Email-ul este obligatoriu pentru rezervările cu plată la parcare pentru a primi confirmarea și QR code-ul.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Validare email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Email invalid",
+        description: "Vă rugăm să introduceți o adresă de email validă.",
+        variant: "destructive",
+      })
+      return
+    }
+
     // Verificare parolă de developer pentru "Plată la parcare"
     const developerPassword = prompt("Introduceți parola de developer pentru testarea plății la parcare:")
     if (developerPassword !== "1234567890") {
@@ -279,7 +300,7 @@ export default function OrderPlacementForm() {
       formData.append("clientName", `${firstName} ${lastName}`.trim())
       if (firstName) formData.append("clientTitle", firstName)
 
-      console.log("Pay on Site - Apelăm createBookingWithFirestore cu datele:", {
+      console.log("🚀 Pay on Site - Apelăm createBookingWithFirestore cu datele:", {
         licensePlate: reservationData.licensePlate,
         startDate: reservationData.startDate,
         startTime: reservationData.startTime,
@@ -287,8 +308,14 @@ export default function OrderPlacementForm() {
         endTime: reservationData.endTime,
         clientName: `${firstName} ${lastName}`.trim(),
         clientEmail: email,
-        clientPhone: phone
+        clientPhone: phone,
+        amount: calculateTotal(),
+        days: reservationData.days,
+        source: "pay_on_site"
       })
+
+      console.log("📧 Email va fi trimis automat la:", email)
+      console.log("📧 După ce API-ul multipark confirmă rezervarea și se generează QR code-ul")
 
       // Apelează noua funcție cu salvare completă în Firestore
       const result = await createBookingWithFirestore(formData, {
@@ -332,8 +359,13 @@ export default function OrderPlacementForm() {
         const bookingNumber = 'bookingNumber' in result ? result.bookingNumber : null
         const firestoreId = 'firestoreId' in result ? result.firestoreId : null
         
+        console.log("✅ Rezervarea pay_on_site a fost creată cu succes!")
+        console.log("📧 Email-ul de confirmare va fi trimis automat cu QR code-ul la:", email)
+        console.log("🎟️ Numărul de rezervare:", bookingNumber)
+        console.log("💾 ID Firestore:", firestoreId)
+        
         const successMessage = hasFirestoreSuccess 
-          ? `Rezervarea ${bookingNumber} a fost creată cu succes! Veți plăti la parcare.`
+          ? `Rezervarea ${bookingNumber} a fost creată cu succes! Veți plăti la parcare. Email-ul de confirmare va fi trimis automat cu QR code-ul.`
           : `Rezervarea ${bookingNumber} a fost creată la API, dar nu s-a putut salva local.`
         
         toast({
@@ -359,6 +391,10 @@ export default function OrderPlacementForm() {
         // Redirectează la pagina de confirmare cu parametrii de plată la parcare
         router.push(`/confirmare?bookingNumber=${bookingNumber}&status=success_pay_on_site&firestoreId=${firestoreId || ''}`)
       } else {
+        console.error("❌ Eroare la crearea rezervării pay_on_site:", result.message)
+        console.error("📧 Email-ul nu va fi trimis din cauza erorii la rezervare")
+        console.error("📋 Detalii rezultat:", result)
+        
         toast({
           title: "Eroare la rezervare",
           description: result.message || "A apărut o eroare la crearea rezervării.",
@@ -366,7 +402,8 @@ export default function OrderPlacementForm() {
         })
       }
     } catch (error) {
-      console.error("Error creating pay on site booking:", error)
+      console.error("❌ Error creating pay on site booking:", error)
+      console.error("📧 Email-ul nu va fi trimis din cauza erorii tehnice")
       toast({
         title: "Eroare",
         description: "A apărut o eroare tehnică la crearea rezervării. Verificați consola pentru detalii.",
@@ -1276,6 +1313,7 @@ export default function OrderPlacementForm() {
                             <div className="flex flex-col">
                               <span>Plată la parcare</span>
                               <span className="text-sm text-gray-500">Plătiți când ajungeți la parcare</span>
+                              <span className="text-xs text-blue-600 mt-1">📧 Veți primi email cu QR code-ul după confirmarea rezervării</span>
                             </div>
                           </Label>
                         </div>
