@@ -678,17 +678,64 @@ export async function createBookingWithFirestore(
     if (firestoreResult.success) {
       debugLogs.push(`✅ Saved to Firestore: ${firestoreResult.firestoreId}`)
       
-      // Dacă rezervarea a reușit și avem un booking number, generează QR și trimite email
+      // Dacă rezervarea a reușit și avem un booking number, trimite email prin API endpoint
       if (apiResult.success && completeBookingData.apiBookingNumber && completeBookingData.clientEmail) {
-        debugLogs.push(`📧 Starting background QR code and email processing for booking ${completeBookingData.apiBookingNumber}`)
+        debugLogs.push(`📧 Starting email processing for booking ${completeBookingData.apiBookingNumber}`)
         debugLogs.push(`📧 Email will be sent to: ${completeBookingData.clientEmail}`)
         
-        // ⚡ FIRE-AND-FORGET: Procesează QR și email în background fără să blocheze rezervarea
-        processQRAndEmailAsync(completeBookingData, debugLogs).catch(error => {
-          console.error(`❌ Background QR/Email processing failed for booking ${completeBookingData.apiBookingNumber}:`, error)
-        })
+        // ⚡ SINCRON: Trimite email prin API endpoint pentru a funcționa pe Vercel
+        try {
+          console.log(`📧 Calling email API endpoint for booking ${completeBookingData.apiBookingNumber}`)
+          
+          const emailApiUrl = process.env.NODE_ENV === 'development' 
+            ? 'http://localhost:3000/api/send-confirmation-email'
+            : 'https://parcare-aeroport.ro/api/send-confirmation-email'
+          
+          const emailResponse = await fetch(emailApiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              bookingData: {
+                bookingNumber: completeBookingData.apiBookingNumber,
+                clientName: completeBookingData.clientName || 'Client',
+                clientEmail: completeBookingData.clientEmail,
+                clientPhone: completeBookingData.clientPhone,
+                licensePlate: completeBookingData.licensePlate,
+                startDate: completeBookingData.startDate,
+                startTime: completeBookingData.startTime,
+                endDate: completeBookingData.endDate,
+                endTime: completeBookingData.endTime,
+                days: additionalData?.days || 1,
+                amount: additionalData?.amount || 0,
+                status: completeBookingData.status,
+                source: completeBookingData.source
+              },
+              firestoreId: firestoreResult.firestoreId
+            })
+          })
+          
+          if (emailResponse.ok) {
+            const emailResult = await emailResponse.json()
+            if (emailResult.success) {
+              debugLogs.push(`✅ Email sent successfully to ${completeBookingData.clientEmail}`)
+              console.log(`✅ Email API success for booking ${completeBookingData.apiBookingNumber}`)
+            } else {
+              debugLogs.push(`⚠️ Email API failed: ${emailResult.error}`)
+              console.error(`⚠️ Email API failed for booking ${completeBookingData.apiBookingNumber}:`, emailResult.error)
+            }
+          } else {
+            debugLogs.push(`⚠️ Email API HTTP error: ${emailResponse.status}`)
+            console.error(`⚠️ Email API HTTP error for booking ${completeBookingData.apiBookingNumber}:`, emailResponse.status)
+          }
+        } catch (emailError) {
+          debugLogs.push(`⚠️ Email API exception: ${emailError instanceof Error ? emailError.message : String(emailError)}`)
+          console.error(`⚠️ Email API exception for booking ${completeBookingData.apiBookingNumber}:`, emailError)
+          // Nu eșuăm întreaga rezervare din cauza erorii de email
+        }
         
-        debugLogs.push(`⚡ QR/Email processing started in background - reservation confirmed immediately`)
+        debugLogs.push(`⚡ Email processing completed - reservation confirmed`)
         
       } else {
         if (!completeBookingData.clientEmail) {

@@ -289,6 +289,8 @@ export default function OrderPlacementForm() {
 
     setIsSubmitting(true)
 
+    const payOnSiteProcessId = `PAY_ON_SITE_${Date.now()}`
+
     try {
       // Pregătim FormData pentru API-ul direct
       const formData = new FormData()
@@ -299,8 +301,18 @@ export default function OrderPlacementForm() {
       formData.append("endTime", reservationData.endTime)
       formData.append("clientName", `${firstName} ${lastName}`.trim())
       if (firstName) formData.append("clientTitle", firstName)
-
-      console.log("🚀 Pay on Site - Apelăm createBookingWithFirestore cu datele:", {
+      
+      console.log(`🚀 [${payOnSiteProcessId}] ===== PAY ON SITE PROCESS STARTED =====`)
+      console.log(`🚀 [${payOnSiteProcessId}] Timestamp: ${new Date().toISOString()}`)
+      console.log(`🚀 [${payOnSiteProcessId}] Environment: ${process.env.NODE_ENV}`)
+      console.log(`🚀 [${payOnSiteProcessId}] Email provided: ${email}`)
+      console.log(`🚀 [${payOnSiteProcessId}] Phone provided: ${phone}`)
+      console.log(`🚀 [${payOnSiteProcessId}] Total amount: ${calculateTotal()} RON`)
+      console.log(`🚀 [${payOnSiteProcessId}] Number of days: ${reservationData.days}`)
+      console.log(`🚀 [${payOnSiteProcessId}] License plate: ${reservationData.licensePlate}`)
+      console.log(`🚀 [${payOnSiteProcessId}] Date range: ${reservationData.startDate} ${reservationData.startTime} - ${reservationData.endDate} ${reservationData.endTime}`)
+      console.log(`🚀 [${payOnSiteProcessId}] Client name: ${firstName} ${lastName}`)
+      console.log(`🚀 [${payOnSiteProcessId}] Complete booking data:`, {
         licensePlate: reservationData.licensePlate,
         startDate: reservationData.startDate,
         startTime: reservationData.startTime,
@@ -314,10 +326,14 @@ export default function OrderPlacementForm() {
         source: "pay_on_site"
       })
 
-      console.log("📧 Email va fi trimis automat la:", email)
-      console.log("📧 După ce API-ul multipark confirmă rezervarea și se generează QR code-ul")
+      console.log(`📧 [${payOnSiteProcessId}] Email will be sent automatically to: ${email}`)
+      console.log(`📧 [${payOnSiteProcessId}] After multipark API confirms reservation and generates QR code`)
+      console.log(`📧 [${payOnSiteProcessId}] QR code will be generated for access`)
 
       // Apelează noua funcție cu salvare completă în Firestore
+      console.log(`🔄 [${payOnSiteProcessId}] Calling createBookingWithFirestore...`)
+      const bookingStartTime = Date.now()
+      
       const result = await createBookingWithFirestore(formData, {
         clientEmail: email,
         clientPhone: phone,
@@ -341,10 +357,21 @@ export default function OrderPlacementForm() {
         termsAccepted: acceptTerms
       })
 
+      const bookingDuration = Date.now() - bookingStartTime
+      console.log(`📊 [${payOnSiteProcessId}] Booking API call completed in ${bookingDuration}ms`)
+      
+      console.log(`📋 [${payOnSiteProcessId}] Booking result:`)
+      console.log(`📋 [${payOnSiteProcessId}]   Success: ${result.success}`)
+      console.log(`📋 [${payOnSiteProcessId}]   Message: ${result.message}`)
+      console.log(`📋 [${payOnSiteProcessId}]   Booking Number: ${'bookingNumber' in result ? result.bookingNumber : 'N/A'}`)
+      console.log(`📋 [${payOnSiteProcessId}]   Firestore Success: ${'firestoreSuccess' in result ? result.firestoreSuccess : 'N/A'}`)
+      console.log(`📋 [${payOnSiteProcessId}]   Firestore ID: ${'firestoreId' in result ? result.firestoreId : 'N/A'}`)
+      console.log(`📋 [${payOnSiteProcessId}] Full result from server:`, result)
+
       // Log pentru debugging doar în caz de eroare
       const hasFirestoreSuccess = 'firestoreSuccess' in result ? result.firestoreSuccess : false
       if (!result.success || !hasFirestoreSuccess) {
-        console.error("🚨 Booking issues detected:")
+        console.error(`🚨 [${payOnSiteProcessId}] Booking issues detected:`)
         if ('debugLogs' in result && result.debugLogs) {
           result.debugLogs.forEach((log, index) => {
             console.log(`${index + 1}. ${log}`)
@@ -352,17 +379,18 @@ export default function OrderPlacementForm() {
         }
       }
 
-      console.log("📋 Full result from server:", result)
-
       if (result.success) {
         // Type guards pentru proprietățile opționale
         const bookingNumber = 'bookingNumber' in result ? result.bookingNumber : null
         const firestoreId = 'firestoreId' in result ? result.firestoreId : null
         
-        console.log("✅ Rezervarea pay_on_site a fost creată cu succes!")
-        console.log("📧 Email-ul de confirmare va fi trimis automat cu QR code-ul la:", email)
-        console.log("🎟️ Numărul de rezervare:", bookingNumber)
-        console.log("💾 ID Firestore:", firestoreId)
+        console.log(`✅ [${payOnSiteProcessId}] ===== BOOKING CONFIRMED =====`)
+        console.log(`✅ [${payOnSiteProcessId}] Reservation created successfully!`)
+        console.log(`✅ [${payOnSiteProcessId}] Booking Number: ${bookingNumber}`)
+        console.log(`✅ [${payOnSiteProcessId}] Firestore ID: ${firestoreId}`)
+        console.log(`✅ [${payOnSiteProcessId}] Client Email: ${email}`)
+        console.log(`✅ [${payOnSiteProcessId}] Success timestamp: ${new Date().toISOString()}`)
+        console.log(`✅ [${payOnSiteProcessId}] Email will be sent automatically with QR code`)
         
         const successMessage = hasFirestoreSuccess 
           ? `Rezervarea ${bookingNumber} a fost creată cu succes! Veți plăti la parcare. Email-ul de confirmare va fi trimis automat cu QR code-ul.`
@@ -389,11 +417,15 @@ export default function OrderPlacementForm() {
         sessionStorage.setItem("reservationDataForConfirmation", JSON.stringify(completeReservationData))
 
         // Redirectează la pagina de confirmare cu parametrii de plată la parcare
-        router.push(`/confirmare?bookingNumber=${bookingNumber}&status=success_pay_on_site&firestoreId=${firestoreId || ''}`)
+        const confirmationUrl = `/confirmare?bookingNumber=${bookingNumber}&status=success_pay_on_site&firestoreId=${firestoreId || ''}`
+        console.log(`↗️ [${payOnSiteProcessId}] Redirecting to: ${confirmationUrl}`)
+        router.push(confirmationUrl)
       } else {
-        console.error("❌ Eroare la crearea rezervării pay_on_site:", result.message)
-        console.error("📧 Email-ul nu va fi trimis din cauza erorii la rezervare")
-        console.error("📋 Detalii rezultat:", result)
+        console.error(`❌ [${payOnSiteProcessId}] ===== BOOKING FAILED =====`)
+        console.error(`❌ [${payOnSiteProcessId}] Error message: ${result.message}`)
+        console.error(`❌ [${payOnSiteProcessId}] Firestore error: ${'firestoreError' in result ? result.firestoreError : 'N/A'}`)
+        console.error(`❌ [${payOnSiteProcessId}] Email will not be sent due to booking error`)
+        console.error(`❌ [${payOnSiteProcessId}] Failed timestamp: ${new Date().toISOString()}`)
         
         toast({
           title: "Eroare la rezervare",
@@ -402,8 +434,13 @@ export default function OrderPlacementForm() {
         })
       }
     } catch (error) {
-      console.error("❌ Error creating pay on site booking:", error)
-      console.error("📧 Email-ul nu va fi trimis din cauza erorii tehnice")
+      console.error(`💥 [${payOnSiteProcessId}] ===== BOOKING EXCEPTION =====`)
+      console.error(`💥 [${payOnSiteProcessId}] Error type: ${error instanceof Error ? error.constructor.name : typeof error}`)
+      console.error(`💥 [${payOnSiteProcessId}] Error message: ${error instanceof Error ? error.message : String(error)}`)
+      console.error(`💥 [${payOnSiteProcessId}] Error stack:`, error instanceof Error ? error.stack : 'N/A')
+      console.error(`💥 [${payOnSiteProcessId}] Email will not be sent due to technical error`)
+      console.error(`💥 [${payOnSiteProcessId}] Exception timestamp: ${new Date().toISOString()}`)
+      
       toast({
         title: "Eroare",
         description: "A apărut o eroare tehnică la crearea rezervării. Verificați consola pentru detalii.",
@@ -411,6 +448,7 @@ export default function OrderPlacementForm() {
       })
     } finally {
       setIsSubmitting(false)
+      console.log(`🏁 [${payOnSiteProcessId}] Pay on site process completed`)
     }
   }
 
