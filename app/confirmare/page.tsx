@@ -373,11 +373,19 @@ function ConfirmationContent() {
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                 <h3 className="font-medium text-blue-800 mb-2">Următorii Pași</h3>
                 <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• Veți primi un email de confirmare cu codul QR</li>
-                  <li>• Folosiți codul QR pentru accesul la parcare</li>
-                  <li>• Prezentați-vă cu maximum 2 ore înainte de ora rezervată</li>
-                  {searchParams.get("status") === "success_pay_on_site" && (
-                    <li className="text-orange-700 font-medium">💳 Plătiți tariful la sosirea în parcare ({reservationDetails.price.toFixed(2)} LEI)</li>
+                  {searchParams.get("status") === "success_pay_on_site" ? (
+                    <>
+                      <li>• Veți primi un email de confirmare</li>
+                      <li>• Prezentați-vă cu maximum 2 ore înainte de ora rezervată</li>
+                      <li className="text-orange-700 font-medium">💳 Plătiți tariful la sosirea în parcare ({reservationDetails.price.toFixed(2)} LEI)</li>
+                      <li>• Prezentați confirmarea email-ului la recepția parcării</li>
+                    </>
+                  ) : (
+                    <>
+                      <li>• Veți primi un email de confirmare cu codul QR</li>
+                      <li>• Folosiți codul QR pentru accesul la parcare</li>
+                      <li>• Prezentați-vă cu maximum 2 ore înainte de ora rezervată</li>
+                    </>
                   )}
                 </ul>
               </div>

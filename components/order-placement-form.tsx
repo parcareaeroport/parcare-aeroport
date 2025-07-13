@@ -1351,7 +1351,6 @@ export default function OrderPlacementForm() {
                             <div className="flex flex-col">
                               <span>Plată la parcare</span>
                               <span className="text-sm text-gray-500">Plătiți când ajungeți la parcare</span>
-                              <span className="text-xs text-blue-600 mt-1">📧 Veți primi email cu QR code-ul după confirmarea rezervării</span>
                             </div>
                           </Label>
                         </div>

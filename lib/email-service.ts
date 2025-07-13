@@ -51,9 +51,10 @@ function createEmailTransporter() {
 /**
  * Generează HTML-ul pentru email-ul de confirmare
  */
-function generateBookingEmailHTML(bookingData: BookingEmailData): string {
+export function generateBookingEmailHTML(bookingData: BookingEmailData): string {
   const formattedBookingNumber = bookingData.bookingNumber.padStart(6, '0')
   const isTestMode = bookingData.source === 'test_mode'
+  const isPayOnSite = bookingData.source === 'pay_on_site'
   
   return `
     <!DOCTYPE html>
@@ -135,17 +136,31 @@ function generateBookingEmailHTML(bookingData: BookingEmailData): string {
             </div>
           </div>
           
+          ${isPayOnSite ? `
+          <div class="qr-section">
+            <h3>💳 Plată la Parcare</h3>
+            <div style="background: #fff3cd; border: 2px solid #ffeaa7; border-radius: 8px; padding: 20px; margin: 20px 0;">
+              <div style="text-align: center; font-size: 18px; font-weight: bold; color: #856404; margin-bottom: 10px;">
+                🚗 Achitați direct la parcare!
+              </div>
+              <div style="text-align: center; font-size: 14px; color: #856404;">
+                Prezentați-vă la sosire și plătiți ${bookingData.amount.toFixed(2)} RON la recepția parcării
+              </div>
+            </div>
+          </div>
+          ` : `
           <div class="qr-section">
             <h3>Cod QR pentru Acces</h3>
             <p>Pentru accesul în parcare puteți folosi codul QR de mai jos!</p>
             <img src="cid:qrcode" alt="QR Code pentru acces" class="qr-code" />
             <p><small>Cod QR: MPK_RES=${formattedBookingNumber}</small></p>
           </div>
+          `}
           
           <div class="warning">
             <strong>⚠️ Importante:</strong><br>
             • Prezentați-vă cu maximum 2 ore înainte de ora rezervată<br>
-            • Păstrați acest email și codul QR pentru accesul la parcare<br>
+            ${isPayOnSite ? '' : '• Păstrați acest email și codul QR pentru accesul la parcare<br>'}
             • Anularea se poate face cu minimum 24 ore înainte<br>
             • Pentru suport, contactați-ne folosind datele de mai jos
           </div>
@@ -244,10 +259,15 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     console.log(`📧 [EMAIL-${emailProcessId}] Gmail User: ${process.env.GMAIL_USER ? 'SET' : 'NOT SET'}`)
     console.log(`📧 [EMAIL-${emailProcessId}] Gmail Password: ${process.env.GMAIL_APP_PASSWORD ? 'SET (length=' + process.env.GMAIL_APP_PASSWORD.length + ')' : 'NOT SET'}`)
     
-    // Generează QR code-ul ca buffer pentru atașament
-    console.log(`🔲 [EMAIL-${emailProcessId}] Generating QR code buffer...`)
-    const qrBuffer = await generateMultiparkQRBuffer(bookingData.bookingNumber)
-    console.log(`✅ [EMAIL-${emailProcessId}] QR code generated, buffer size: ${qrBuffer.length} bytes`)
+    // Generează QR code-ul ca buffer pentru atașament (doar pentru rezervările cu plată)
+    let qrBuffer: Buffer | null = null
+    if (bookingData.source !== 'pay_on_site') {
+      console.log(`🔲 [EMAIL-${emailProcessId}] Generating QR code buffer...`)
+      qrBuffer = await generateMultiparkQRBuffer(bookingData.bookingNumber)
+      console.log(`✅ [EMAIL-${emailProcessId}] QR code generated, buffer size: ${qrBuffer.length} bytes`)
+    } else {
+      console.log(`💳 [EMAIL-${emailProcessId}] Skipping QR code generation for pay_on_site reservation`)
+    }
     
     // Nu mai folosim logo în email pentru a reduce complexitatea și dimensiunea bundle-ului
     console.log(`📧 [EMAIL-${emailProcessId}] Skipping logo loading - email will be sent without logo`)
@@ -259,13 +279,16 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     
     // Configurează email-ul
     const formattedBookingNumber = bookingData.bookingNumber.padStart(6, '0')
-    const attachments: any[] = [
-      {
+    const attachments: any[] = []
+    
+    // Adaugă QR code doar pentru rezervările cu plată
+    if (qrBuffer !== null) {
+      attachments.push({
         filename: `qr-code-${formattedBookingNumber}.png`,
         content: qrBuffer,
         cid: 'qrcode', // Content ID pentru a fi referenciat în HTML
-      }
-    ]
+      })
+    }
     
     // Nu mai adăugăm logo în email
     
@@ -286,7 +309,7 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     console.log(`📧 [EMAIL-${emailProcessId}]   Subject: ${mailOptions.subject}`)
     console.log(`📧 [EMAIL-${emailProcessId}]   HTML Length: ${mailOptions.html.length} chars`)
     console.log(`📧 [EMAIL-${emailProcessId}]   Attachments: ${mailOptions.attachments.length} files`)
-    console.log(`📧 [EMAIL-${emailProcessId}]   QR Attachment Size: ${qrBuffer.length} bytes`)
+    console.log(`📧 [EMAIL-${emailProcessId}]   QR Attachment Size: ${qrBuffer ? qrBuffer.length + ' bytes' : 'No QR code (pay on site)'}`)
     console.log(`📧 [EMAIL-${emailProcessId}]   Logo Attachment: No logo attached`)
     
     // Trimite email-ul cu timeout
