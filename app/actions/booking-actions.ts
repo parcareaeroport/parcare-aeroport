@@ -696,14 +696,18 @@ export async function createBookingWithFirestore(
     if (firestoreResult.success) {
       debugLogs.push(`✅ Saved to Firestore: ${firestoreResult.firestoreId}`)
       
-      // Dacă rezervarea a reușit și avem un booking number, trimite email prin API endpoint
-      if (apiResult.success && completeBookingData.apiBookingNumber && completeBookingData.clientEmail) {
-        debugLogs.push(`📧 Starting email processing for booking ${completeBookingData.apiBookingNumber}`)
+      // Dacă rezervarea a reușit și avem email client, trimite email prin API endpoint
+      // Pentru pay-on-site nu avem apiBookingNumber, dar tot trimitem email
+      if (apiResult.success && completeBookingData.clientEmail && 
+          (completeBookingData.apiBookingNumber || completeBookingData.source === "pay_on_site")) {
+        // Log diferit pentru pay-on-site (fără booking number) vs normal (cu booking number)
+        const bookingReference = completeBookingData.apiBookingNumber || `${completeBookingData.source}-${completeBookingData.licensePlate}`
+        debugLogs.push(`📧 Starting email processing for ${bookingReference}`)
         debugLogs.push(`📧 Email will be sent to: ${completeBookingData.clientEmail}`)
         
         // ⚡ SINCRON: Trimite email prin API endpoint pentru a funcționa pe Vercel
         try {
-          console.log(`📧 Calling email API endpoint for booking ${completeBookingData.apiBookingNumber}`)
+          console.log(`📧 Calling email API endpoint for ${bookingReference}`)
           
           const emailApiUrl = process.env.NODE_ENV === 'development' 
             ? 'http://localhost:3000/api/send-confirmation-email'
@@ -738,18 +742,18 @@ export async function createBookingWithFirestore(
             const emailResult = await emailResponse.json()
             if (emailResult.success) {
               debugLogs.push(`✅ Email sent successfully to ${completeBookingData.clientEmail}`)
-              console.log(`✅ Email API success for booking ${completeBookingData.apiBookingNumber}`)
+              console.log(`✅ Email API success for ${bookingReference}`)
             } else {
               debugLogs.push(`⚠️ Email API failed: ${emailResult.error}`)
-              console.error(`⚠️ Email API failed for booking ${completeBookingData.apiBookingNumber}:`, emailResult.error)
+              console.error(`⚠️ Email API failed for ${bookingReference}:`, emailResult.error)
             }
           } else {
             debugLogs.push(`⚠️ Email API HTTP error: ${emailResponse.status}`)
-            console.error(`⚠️ Email API HTTP error for booking ${completeBookingData.apiBookingNumber}:`, emailResponse.status)
+            console.error(`⚠️ Email API HTTP error for ${bookingReference}:`, emailResponse.status)
           }
         } catch (emailError) {
           debugLogs.push(`⚠️ Email API exception: ${emailError instanceof Error ? emailError.message : String(emailError)}`)
-          console.error(`⚠️ Email API exception for booking ${completeBookingData.apiBookingNumber}:`, emailError)
+          console.error(`⚠️ Email API exception for ${bookingReference}:`, emailError)
           // Nu eșuăm întreaga rezervare din cauza erorii de email
         }
         
@@ -759,7 +763,7 @@ export async function createBookingWithFirestore(
         if (!completeBookingData.clientEmail) {
           debugLogs.push(`⚠️ No email provided, skipping email notification`)
         }
-        if (!completeBookingData.apiBookingNumber) {
+        if (!completeBookingData.apiBookingNumber && completeBookingData.source !== "pay_on_site") {
           debugLogs.push(`⚠️ No booking number, skipping QR generation`)
         }
         if (!apiResult.success) {
