@@ -1129,7 +1129,8 @@ function BookingsPageContent() {
                             PLATĂ LA PARCARE
                           </Badge>
                         )}
-                        {booking.apiBookingNumber || booking.id.substring(0, 6)}
+                        {/* Pentru pay-on-site nu afișăm număr de rezervare (nu există în Multipark) */}
+                        {booking.source !== "pay_on_site" && (booking.apiBookingNumber || booking.id.substring(0, 6))}
                       </TableCell>
                       <TableCell>{booking.licensePlate}</TableCell>
                       <TableCell>{booking.clientName || "N/A"}</TableCell>
@@ -1241,9 +1242,12 @@ function BookingsPageContent() {
                   <p>
                     <strong>ID Firestore:</strong> {selectedBooking.id}
                   </p>
-                  <p>
-                    <strong>Nr. Rez. API Parcare:</strong> {selectedBooking.apiBookingNumber || "N/A"}
-                  </p>
+                  {/* Pentru pay-on-site nu afișăm numărul de rezervare API (nu există în Multipark) */}
+                  {selectedBooking.source !== "pay_on_site" && (
+                    <p>
+                      <strong>Nr. Rez. API Parcare:</strong> {selectedBooking.apiBookingNumber || "N/A"}
+                    </p>
+                  )}
                   <p>
                     <strong>Status Intern:</strong> {getStatusBadge(selectedBooking.status)}
                   </p>
@@ -1385,12 +1389,22 @@ function BookingsPageContent() {
                   <p>
                     <strong>Email Client:</strong> {selectedBooking.clientEmail || "N/A"}
                   </p>
-                  <p>
-                    <strong>QR Code Disponibil:</strong> {selectedBooking.apiBookingNumber ? "✅ Da" : "❌ Nu (lipsește nr. rezervare API)"}
-                  </p>
-                  {selectedBooking.apiBookingNumber && (
+                  {/* Pentru pay-on-site nu afișăm informații despre QR (nu există în Multipark) */}
+                  {selectedBooking.source !== "pay_on_site" && (
+                    <>
+                      <p>
+                        <strong>QR Code Disponibil:</strong> {selectedBooking.apiBookingNumber ? "✅ Da" : "❌ Nu (lipsește nr. rezervare API)"}
+                      </p>
+                      {selectedBooking.apiBookingNumber && (
+                        <p>
+                          <strong>QR Code:</strong> MPK_RES={selectedBooking.apiBookingNumber.padStart(6, '0')}
+                        </p>
+                      )}
+                    </>
+                  )}
+                  {selectedBooking.source === "pay_on_site" && (
                     <p>
-                      <strong>QR Code:</strong> MPK_RES={selectedBooking.apiBookingNumber.padStart(6, '0')}
+                      <strong>QR Code:</strong> <span className="text-gray-500">Nu este disponibil (plată la parcare)</span>
                     </p>
                   )}
                   <p>
