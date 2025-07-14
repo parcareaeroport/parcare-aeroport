@@ -60,6 +60,7 @@ interface Booking {
   
   // Date calculate
   durationMinutes: number
+  multiparkDurationMinutes?: number // Minutele rotunjite trimise la Multipark API
   days?: number
   amount?: number
   numberOfPersons?: number
@@ -1273,6 +1274,15 @@ function BookingsPageContent() {
                   {selectedBooking.apiMessage && (
                     <p>
                       <strong>Mesaj API:</strong> {selectedBooking.apiMessage}
+                    </p>
+                  )}
+                  <p>
+                    <strong>Durata reală:</strong> {selectedBooking.durationMinutes} minute ({(selectedBooking.durationMinutes / 60).toFixed(1)} ore)
+                  </p>
+                  {/* Pentru pay-on-site nu afișăm minutele API (nu se trimit la Multipark) */}
+                  {selectedBooking.source !== "pay_on_site" && selectedBooking.multiparkDurationMinutes && (
+                    <p>
+                      <strong>Minute în API:</strong> {selectedBooking.multiparkDurationMinutes} minute ({(selectedBooking.multiparkDurationMinutes / 60)} ore)
                     </p>
                   )}
                 </div>

@@ -45,6 +45,7 @@ interface CompleteBookingData {
   
   // Date calculate
   durationMinutes: number
+  multiparkDurationMinutes?: number // Minutele rotunjite trimise la Multipark API
   days?: number
   amount?: number
   
@@ -447,7 +448,7 @@ export async function createBooking(formData: FormData) {
 
     const validatedData = bookingFormSchema.parse(rawData)
 
-    // Calculate duration in minutes
+    // Calculate duration in minutes (real duration)
     const startDateTime = new Date(`${validatedData.startDate}T${validatedData.startTime}:00`)
     const endDateTime = new Date(`${validatedData.endDate}T${validatedData.endTime}:00`)
     const durationMinutes = Math.round((endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60))
@@ -455,6 +456,17 @@ export async function createBooking(formData: FormData) {
     if (durationMinutes <= 0) {
       return { success: false, message: "Perioada de rezervare trebuie să fie pozitivă" }
     }
+
+    // Calculate duration for Multipark API (rounded up to full days)
+    // Dacă avem 25 ore → 2 zile → 2880 minute pentru Multipark
+    const actualHours = durationMinutes / 60
+    const roundedUpDays = Math.ceil(actualHours / 24)
+    const multiparkDurationMinutes = roundedUpDays * 24 * 60
+    
+    console.log(`⏱️ Duration calculation for Multipark:`)
+    console.log(`   📏 Real duration: ${durationMinutes} minutes (${actualHours.toFixed(1)} hours)`)
+    console.log(`   📅 Rounded up to: ${roundedUpDays} days`)
+    console.log(`   🎯 Multipark duration: ${multiparkDurationMinutes} minutes (${multiparkDurationMinutes/60} hours)`)
 
     // Generate a random 6-digit booking number
     const bookingNumber = Math.floor(100000 + Math.random() * 900000).toString()
@@ -474,7 +486,7 @@ export async function createBooking(formData: FormData) {
         <BookingNumber>${bookingNumber}</BookingNumber>
         <LicensePlate>${validatedData.licensePlate}</LicensePlate>
         <StartDate>${formattedStartDate}</StartDate>
-        <Duration>${durationMinutes}</Duration>
+        <Duration>${multiparkDurationMinutes}</Duration>
         ${validatedData.clientTitle ? `<ClientTitle>${validatedData.clientTitle}</ClientTitle>` : ""}
         ${validatedData.clientName ? `<ClientName>${validatedData.clientName}</ClientName>` : ""}
         <AccessMode>0</AccessMode>
@@ -638,6 +650,17 @@ export async function createBookingWithFirestore(
         (new Date(`${formData.get("endDate")}T${formData.get("endTime")}:00`).getTime() - 
          new Date(`${formData.get("startDate")}T${formData.get("startTime")}:00`).getTime()) / (1000 * 60)
       ),
+      multiparkDurationMinutes: (() => {
+        // Calculează minutele rotunjite pentru Multipark (doar dacă nu e pay-on-site)
+        if (additionalData?.source === "pay_on_site") return undefined
+        const realMinutes = Math.round(
+          (new Date(`${formData.get("endDate")}T${formData.get("endTime")}:00`).getTime() - 
+           new Date(`${formData.get("startDate")}T${formData.get("startTime")}:00`).getTime()) / (1000 * 60)
+        )
+        const actualHours = realMinutes / 60
+        const roundedUpDays = Math.ceil(actualHours / 24)
+        return roundedUpDays * 24 * 60
+      })(),
       days: additionalData?.days,
       amount: additionalData?.amount,
       
@@ -1123,6 +1146,12 @@ export async function createManualBooking(formData: FormData) {
     const days = Math.ceil(durationMinutes / (24 * 60))
     console.log(`📅 [${manualProcessId}] Calculated days: ${days}`)
 
+    // Calculează minutele pentru Multipark (rotunjit la zile complete)
+    const manualActualHours = durationMinutes / 60
+    const manualRoundedUpDays = Math.ceil(manualActualHours / 24)
+    const multiparkDurationMinutes = manualRoundedUpDays * 24 * 60
+    console.log(`⏱️ [${manualProcessId}] Multipark duration: ${multiparkDurationMinutes} minutes (${manualRoundedUpDays} days)`)
+
     // Generare număr de rezervare aleatoriu
     const bookingNumber = Math.floor(100000 + Math.random() * 900000).toString()
     console.log(`🎲 [${manualProcessId}] Generated booking number: ${bookingNumber}`)
@@ -1140,6 +1169,7 @@ export async function createManualBooking(formData: FormData) {
       endDate,
       endTime,
       durationMinutes,
+      multiparkDurationMinutes,
       days,
       amount: 0, // Fără cost - adăugată manual de operator
       status: 'confirmed_paid', // Status pentru rezervări reale manuale
@@ -1184,10 +1214,20 @@ export async function createManualBooking(formData: FormData) {
         .replace(/-/g, "/")
         .replace(/\.\d+Z$/, "")
 
-         // Calculează durata în minute pentru API
+         // Calculează durata în minute pentru API (rotunjit în sus la zile complete)
      const apiStartDateTime = new Date(`${startDate}T${startTime}:00`)
      const apiEndDateTime = new Date(`${endDate}T${endTime}:00`)
-     const apiDurationMinutes = Math.round((apiEndDateTime.getTime() - apiStartDateTime.getTime()) / (1000 * 60))
+     const realApiDurationMinutes = Math.round((apiEndDateTime.getTime() - apiStartDateTime.getTime()) / (1000 * 60))
+     
+     // Rotunjire în sus la zile complete pentru Multipark
+     const actualHours = realApiDurationMinutes / 60
+     const roundedUpDays = Math.ceil(actualHours / 24)
+     const apiDurationMinutes = roundedUpDays * 24 * 60
+     
+     console.log(`⏱️ [${manualProcessId}] Duration calculation for Multipark:`)
+     console.log(`⏱️ [${manualProcessId}]   📏 Real duration: ${realApiDurationMinutes} minutes (${actualHours.toFixed(1)} hours)`)
+     console.log(`⏱️ [${manualProcessId}]   📅 Rounded up to: ${roundedUpDays} days`)
+     console.log(`⏱️ [${manualProcessId}]   🎯 Multipark duration: ${apiDurationMinutes} minutes (${apiDurationMinutes/60} hours)`)
 
      // XML payload în același format ca test API (format care funcționează)
       const xmlPayload = `
