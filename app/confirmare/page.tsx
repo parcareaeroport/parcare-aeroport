@@ -186,9 +186,10 @@ function ConfirmationContent() {
       if (testBookingNumber && testStatus === "success_pay_on_site" && tempReservationData) {
         setStatus("success")
         setMessage(
-          `Rezervarea (nr. ${testBookingNumber}) a fost înregistrată cu succes! Veți plăti la sosirea în parcare. Veți primi un email de confirmare.`,
+          `Rezervarea a fost înregistrată cu succes! Veți plăti la sosirea în parcare. Veți primi un email de confirmare.`,
         )
-        setBookingNumber(testBookingNumber) // Setează numărul de rezervare pentru afișare
+        // Pentru pay on site nu setăm bookingNumber pentru că nu avem număr de la Multipark
+        // setBookingNumber(testBookingNumber) // Comentat - nu afișăm număr de rezervare pentru pay on site
         return
       }
 
@@ -333,7 +334,8 @@ function ConfirmationContent() {
               <h2 className="text-xl font-semibold text-gray-700 mb-6 text-center">🎉 Detalii Rezervare Confirmată</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                {bookingNumber && (
+                {/* Afișăm numărul de rezervare DOAR pentru rezervările care au mers la Multipark (nu pay on site) */}
+                {bookingNumber && searchParams.get("status") !== "success_pay_on_site" && (
                   <div className="bg-white rounded-lg p-4 border border-green-200">
                     <div className="text-sm text-gray-600 mb-1">Număr Rezervare</div>
                     <div className="text-lg font-bold text-green-600">{bookingNumber}</div>
