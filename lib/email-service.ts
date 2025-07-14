@@ -52,7 +52,8 @@ function createEmailTransporter() {
  * Generează HTML-ul pentru email-ul de confirmare
  */
 export function generateBookingEmailHTML(bookingData: BookingEmailData): string {
-  const formattedBookingNumber = bookingData.bookingNumber.padStart(6, '0')
+  // Pentru pay-on-site nu avem booking number, pentru celelalte formatăm normal
+  const formattedBookingNumber = bookingData.bookingNumber ? bookingData.bookingNumber.padStart(6, '0') : ''
   const isTestMode = bookingData.source === 'test_mode'
   const isPayOnSite = bookingData.source === 'pay_on_site'
   
@@ -106,10 +107,12 @@ export function generateBookingEmailHTML(bookingData: BookingEmailData): string 
           
           <h2>Detalii Rezervare</h2>
           <div class="booking-details">
+            ${!isPayOnSite ? `
             <div class="detail-row">
               <span class="detail-label">Număr Rezervare:</span>
               <span class="detail-value"><strong>${formattedBookingNumber}</strong></span>
             </div>
+            ` : ''}
             <div class="detail-row">
               <span class="detail-label">Număr Înmatriculare:</span>
               <span class="detail-value">${bookingData.licensePlate}</span>

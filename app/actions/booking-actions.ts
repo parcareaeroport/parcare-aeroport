@@ -586,16 +586,13 @@ export async function createBookingWithFirestore(
     
     // Pentru pay on site: NU merge la Multipark, se procesează doar local
     if (additionalData?.source === "pay_on_site") {
-      // Generare booking number local (același algoritm ca în createBooking)
-      const localBookingNumber = Math.floor(100000 + Math.random() * 900000).toString()
+      debugLogs.push(`💰 PAY ON SITE: Skipping Multipark API - no booking number will be generated`)
       
-      debugLogs.push(`💰 PAY ON SITE: Generated local booking number ${localBookingNumber} - skipping Multipark API`)
-      
-      // Mock un rezultat de succes fără a apela Multipark
+      // Mock un rezultat de succes fără a apela Multipark - NU generăm booking number fals
       apiResult = {
         success: true,
         message: "Rezervare pay on site creată cu succes (procesare locală)",
-        bookingNumber: localBookingNumber,
+        bookingNumber: undefined, // Nu mai generăm numere false!
         apiPayload: "N/A - Pay on site (local processing)",
         apiResponse: "N/A - Pay on site (local processing)"
       }
@@ -1548,8 +1545,8 @@ export async function sendManualBookingEmail(bookingId: string): Promise<{ succe
       endTime: bookingData.endTime,
       days: bookingData.days || 1,
       amount: bookingData.amount || 0,
-      // Pentru pay on site folosim un booking number local/fake, pentru celelalte folosim apiBookingNumber
-      bookingNumber: bookingData.apiBookingNumber || `LOCAL-${bookingData.licensePlate}-${Date.now()}`,
+      // Pentru pay on site NU folosim booking number (nu există în Multipark)
+      bookingNumber: bookingData.source === 'pay_on_site' ? '' : (bookingData.apiBookingNumber || 'N/A'),
       status: bookingData.status,
       source: bookingData.source || 'manual',
       createdAt: bookingData.createdAt?.toDate() || new Date()
