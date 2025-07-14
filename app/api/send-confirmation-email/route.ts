@@ -17,7 +17,8 @@ export async function POST(request: NextRequest) {
     console.log(`📧 [${emailProcessId}] Firestore ID: ${firestoreId}`)
     
     // Validează că avem toate datele necesare
-    if (!bookingData.clientEmail || !bookingData.bookingNumber) {
+    // Pentru pay-on-site nu avem bookingNumber, dar tot trimitem email
+    if (!bookingData.clientEmail || (!bookingData.bookingNumber && bookingData.source !== "pay_on_site")) {
       console.error(`❌ [${emailProcessId}] Missing required data`)
       return NextResponse.json({ 
         success: false, 

@@ -22,7 +22,7 @@ interface BookingEmailData {
   amount: number
   
   // Date sistem
-  bookingNumber: string
+  bookingNumber?: string // Opțional pentru pay-on-site (nu au booking number)
   status: string
   source: "webhook" | "test_mode" | "manual" | "pay_on_site"
   createdAt: Date
@@ -233,7 +233,9 @@ export function generateBookingEmailHTML(bookingData: BookingEmailData): string 
  * Trimite email de confirmare rezervare cu QR code
  */
 export async function sendBookingConfirmationEmail(bookingData: BookingEmailData): Promise<{ success: boolean, error?: string }> {
-  const emailProcessId = `${bookingData.bookingNumber}_${Date.now()}`
+  // Pentru pay-on-site folosim licensePlate în loc de bookingNumber în emailProcessId
+  const bookingRef = bookingData.bookingNumber || `pay_on_site_${bookingData.licensePlate}`
+  const emailProcessId = `${bookingRef}_${Date.now()}`
   
   try {
     console.log(`📧 [EMAIL-${emailProcessId}] ===== STARTING EMAIL PROCESS =====`)
@@ -264,12 +266,12 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     
     // Generează QR code-ul ca buffer pentru atașament (doar pentru rezervările cu plată)
     let qrBuffer: Buffer | null = null
-    if (bookingData.source !== 'pay_on_site') {
+    if (bookingData.source !== 'pay_on_site' && bookingData.bookingNumber) {
       console.log(`🔲 [EMAIL-${emailProcessId}] Generating QR code buffer...`)
       qrBuffer = await generateMultiparkQRBuffer(bookingData.bookingNumber)
       console.log(`✅ [EMAIL-${emailProcessId}] QR code generated, buffer size: ${qrBuffer.length} bytes`)
     } else {
-      console.log(`💳 [EMAIL-${emailProcessId}] Skipping QR code generation for pay_on_site reservation`)
+      console.log(`💳 [EMAIL-${emailProcessId}] Skipping QR code generation for pay_on_site reservation or missing booking number`)
     }
     
     // Nu mai folosim logo în email pentru a reduce complexitatea și dimensiunea bundle-ului
@@ -281,7 +283,8 @@ export async function sendBookingConfirmationEmail(bookingData: BookingEmailData
     console.log(`✅ [EMAIL-${emailProcessId}] Email transporter created`)
     
     // Configurează email-ul
-    const formattedBookingNumber = bookingData.bookingNumber.padStart(6, '0')
+    // Pentru pay-on-site nu avem booking number, folosim licensePlate pentru nume fișiere
+    const formattedBookingNumber = bookingData.bookingNumber ? bookingData.bookingNumber.padStart(6, '0') : bookingData.licensePlate
     const attachments: any[] = []
     
     // Adaugă QR code doar pentru rezervările cu plată
