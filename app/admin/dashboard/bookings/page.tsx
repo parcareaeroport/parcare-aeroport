@@ -1167,7 +1167,7 @@ function BookingsPageContent() {
                             </DropdownMenuItem>
                             
                             {/* Buton pentru trimiterea email-ului cu QR code */}
-                            {booking.clientEmail && booking.apiBookingNumber && (
+                            {booking.clientEmail && (booking.apiBookingNumber || booking.source === "pay_on_site") && (
                               <DropdownMenuItem
                                 onClick={() => handleSendEmail(booking)}
                                 disabled={isSendingEmail}
@@ -1178,7 +1178,7 @@ function BookingsPageContent() {
                                 ) : (
                                   <Mail className="mr-2 h-4 w-4" />
                                 )}
-                                Trimite Email cu QR
+                                {booking.source === "pay_on_site" ? "Trimite Email (fără QR)" : "Trimite Email cu QR"}
                               </DropdownMenuItem>
                             )}
                             {booking.status === "api_error" && booking.paymentStatus === "paid" && (
@@ -1200,7 +1200,8 @@ function BookingsPageContent() {
                             {isAdmin &&
                               booking.status !== "cancelled_by_admin" &&
                               booking.status !== "cancelled_by_api" &&
-                              booking.apiBookingNumber && (
+                              booking.apiBookingNumber &&
+                              booking.source !== "pay_on_site" && (
                                 <>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
@@ -1442,7 +1443,7 @@ function BookingsPageContent() {
           )}
           <DialogFooter>
             {/* Buton pentru trimiterea email-ului din dialog */}
-            {selectedBooking && selectedBooking.clientEmail && selectedBooking.apiBookingNumber && (
+            {selectedBooking && selectedBooking.clientEmail && (selectedBooking.apiBookingNumber || selectedBooking.source === "pay_on_site") && (
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1457,7 +1458,7 @@ function BookingsPageContent() {
                 ) : (
                   <Mail className="mr-2 h-4 w-4" />
                 )}
-                Trimite Email cu QR
+                {selectedBooking.source === "pay_on_site" ? "Trimite Email (fără QR)" : "Trimite Email cu QR"}
               </Button>
             )}
             
@@ -1465,10 +1466,11 @@ function BookingsPageContent() {
               selectedBooking &&
               selectedBooking.status !== "cancelled_by_admin" &&
               selectedBooking.status !== "cancelled_by_api" &&
-              selectedBooking.apiBookingNumber && (
+              selectedBooking.apiBookingNumber &&
+              selectedBooking.source !== "pay_on_site" && (
                 <Button
                   variant="destructive"
-                  onClick={() => handleCancelBooking(selectedBooking)}
+                  onClick={() => handleCancelBooking(selectedBooking!)}
                   disabled={isCancelling}
                 >
                   {isCancelling ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}

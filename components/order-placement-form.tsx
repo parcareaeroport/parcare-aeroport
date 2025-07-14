@@ -236,12 +236,17 @@ export default function OrderPlacementForm() {
   // Calculate discount and total
   const calculateDiscount = () => {
     if (!reservationData) return 0
-    return 0 // Discount eliminat
+    // 10% reducere pentru plăți online cu cardul
+    if (paymentMethod === "card") {
+      return Math.round(reservationData.price * 0.1)
+    }
+    return 0
   }
 
   const calculateTotal = () => {
     if (!reservationData) return 0
-    return reservationData.price // Preț integral, fără discount
+    const discount = calculateDiscount()
+    return reservationData.price - discount
   }
 
   // Pay on site booking function
@@ -866,8 +871,9 @@ export default function OrderPlacementForm() {
                             className="h-4 w-4 text-primary"
                           />
                           <Label htmlFor="card" className="flex-1 cursor-pointer">
-                            <div className="flex items-center">
+                            <div className="flex flex-col">
                               <span>Plată online cu cardul (Stripe)</span>
+                              <span className="text-sm text-green-600 font-medium">10% reducere pentru plata online cu cardul</span>
                             </div>
                           </Label>
                         </div>
@@ -1040,9 +1046,21 @@ export default function OrderPlacementForm() {
                       <span className="font-medium">{reservationData.duration}</span>
                     </div>
                     <div className="pt-4 border-t border-gray-200">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Preț:</span>
-                        <span className="font-medium">{reservationData.price} RON</span>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Preț original:</span>
+                          <span className="font-medium">{reservationData.price} RON</span>
+                        </div>
+                        {calculateDiscount() > 0 && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-green-600">Reducere (10%):</span>
+                            <span className="font-medium text-green-600">-{calculateDiscount()} RON</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between items-center pt-2 border-t border-gray-200">
+                          <span className="text-lg font-bold">Total de plată:</span>
+                          <span className="text-lg font-bold text-primary">{calculateTotal()} RON</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1331,8 +1349,9 @@ export default function OrderPlacementForm() {
                             className="h-4 w-4 text-primary"
                           />
                           <Label htmlFor="card" className="flex-1 cursor-pointer">
-                            <div className="flex items-center">
+                            <div className="flex flex-col">
                               <span>Plată online cu cardul (Stripe)</span>
+                              <span className="text-sm text-green-600 font-medium">10% reducere pentru plata online cu cardul</span>
                             </div>
                           </Label>
                         </div>
@@ -1504,9 +1523,21 @@ export default function OrderPlacementForm() {
                     <span className="font-medium">{reservationData.duration}</span>
                   </div>
                   <div className="pt-4 border-t border-gray-200">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Preț:</span>
-                      <span className="font-medium">{reservationData.price} RON</span>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Preț original:</span>
+                        <span className="font-medium">{reservationData.price} RON</span>
+                      </div>
+                      {calculateDiscount() > 0 && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-green-600">Reducere (10%):</span>
+                          <span className="font-medium text-green-600">-{calculateDiscount()} RON</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center pt-2 border-t border-gray-200">
+                        <span className="text-lg font-bold">Total de plată:</span>
+                        <span className="text-lg font-bold text-primary">{calculateTotal()} RON</span>
+                      </div>
                     </div>
                   </div>
                 </div>

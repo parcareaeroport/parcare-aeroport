@@ -582,9 +582,30 @@ export async function createBookingWithFirestore(
   try {
     debugLogs.push(`🚀 Starting booking process for ${formData.get("licensePlate")} (${additionalData?.source || "manual"})`)
     
-    // Apelează API-ul standard
-    const apiResult = await createBooking(formData)
-    debugLogs.push(`📞 API: ${apiResult.success ? "SUCCESS" : "FAILED"} - ${apiResult.message}`)
+    let apiResult: any
+    
+    // Pentru pay on site: NU merge la Multipark, se procesează doar local
+    if (additionalData?.source === "pay_on_site") {
+      // Generare booking number local (același algoritm ca în createBooking)
+      const localBookingNumber = Math.floor(100000 + Math.random() * 900000).toString()
+      
+      debugLogs.push(`💰 PAY ON SITE: Generated local booking number ${localBookingNumber} - skipping Multipark API`)
+      
+      // Mock un rezultat de succes fără a apela Multipark
+      apiResult = {
+        success: true,
+        message: "Rezervare pay on site creată cu succes (procesare locală)",
+        bookingNumber: localBookingNumber,
+        apiPayload: "N/A - Pay on site (local processing)",
+        apiResponse: "N/A - Pay on site (local processing)"
+      }
+      
+      debugLogs.push(`📞 PAY ON SITE: LOCAL SUCCESS - ${apiResult.message}`)
+    } else {
+      // Pentru toate celelalte: merge la Multipark normal (webhook, test_mode, manual)
+      apiResult = await createBooking(formData)
+      debugLogs.push(`📞 MULTIPARK API: ${apiResult.success ? "SUCCESS" : "FAILED"} - ${apiResult.message}`)
+    }
     
     // Verifică că amount-ul este corect calculat
     if (additionalData?.amount) {
@@ -1485,21 +1506,33 @@ export async function sendManualBookingEmail(bookingId: string): Promise<{ succe
     }
     
     if (!bookingData.apiBookingNumber) {
-      console.error(`❌ [${manualEmailProcessId}] API booking number missing`)
-      console.error(`❌ [${manualEmailProcessId}] Cannot generate QR code without booking number`)
-      console.error(`❌ [${manualEmailProcessId}] API Success: ${bookingData.apiSuccess}`)
-      console.error(`❌ [${manualEmailProcessId}] API Message: ${bookingData.apiMessage || 'N/A'}`)
-      
-      return {
-        success: false,
-        message: "Numărul de rezervare API lipsește - nu se poate genera QR code",
-        error: "API booking number missing"
+      // Pentru pay on site, nu avem apiBookingNumber din Multipark, dar avem booking number local
+      if (bookingData.source === 'pay_on_site') {
+        console.log(`💰 [${manualEmailProcessId}] Pay on site reservation - no API booking number needed`)
+        console.log(`💰 [${manualEmailProcessId}] Will use local booking number for email (no QR generation)`)
+      } else {
+        console.error(`❌ [${manualEmailProcessId}] API booking number missing`)
+        console.error(`❌ [${manualEmailProcessId}] Cannot generate QR code without booking number`)
+        console.error(`❌ [${manualEmailProcessId}] API Success: ${bookingData.apiSuccess}`)
+        console.error(`❌ [${manualEmailProcessId}] API Message: ${bookingData.apiMessage || 'N/A'}`)
+        
+        return {
+          success: false,
+          message: "Numărul de rezervare API lipsește - nu se poate genera QR code",
+          error: "API booking number missing"
+        }
       }
     }
     
     console.log(`✅ [${manualEmailProcessId}] Email validation passed`)
     console.log(`✅ [${manualEmailProcessId}] Email recipient: ${bookingData.clientEmail}`)
-    console.log(`✅ [${manualEmailProcessId}] QR booking number: ${bookingData.apiBookingNumber}`)
+    
+    // Pentru pay on site nu avem QR, pentru celelalte da
+    if (bookingData.source === 'pay_on_site') {
+      console.log(`💰 [${manualEmailProcessId}] Pay on site - email will be sent without QR code`)
+    } else {
+      console.log(`✅ [${manualEmailProcessId}] QR booking number: ${bookingData.apiBookingNumber}`)
+    }
     
     console.log(`📧 [${manualEmailProcessId}] ===== PREPARING EMAIL DATA =====`)
     
@@ -1515,7 +1548,8 @@ export async function sendManualBookingEmail(bookingId: string): Promise<{ succe
       endTime: bookingData.endTime,
       days: bookingData.days || 1,
       amount: bookingData.amount || 0,
-      bookingNumber: bookingData.apiBookingNumber,
+      // Pentru pay on site folosim un booking number local/fake, pentru celelalte folosim apiBookingNumber
+      bookingNumber: bookingData.apiBookingNumber || `LOCAL-${bookingData.licensePlate}-${Date.now()}`,
       status: bookingData.status,
       source: bookingData.source || 'manual',
       createdAt: bookingData.createdAt?.toDate() || new Date()
