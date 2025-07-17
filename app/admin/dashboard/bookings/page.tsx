@@ -110,6 +110,7 @@ interface Booking {
   lastManualEmailSent?: Timestamp
   manualEmailCount?: number
   lastEmailError?: string
+  payOnSiteStatus?: "pending" | "paid" | "cancelled" // Adaugă status special pentru pay-on-site
 }
 
 function BookingsPageContent() {
@@ -132,6 +133,10 @@ function BookingsPageContent() {
   // State pentru actualizarea statusului de plată manual
   const [isUpdatingPayment, setIsUpdatingPayment] = useState(false)
   const [updatingPaymentBookingId, setUpdatingPaymentBookingId] = useState<string | null>(null)
+  
+  // State pentru anularea rezervărilor pay-on-site
+  const [isCancellingPayOnSite, setIsCancellingPayOnSite] = useState(false)
+  const [cancellingPayOnSiteBookingId, setCancellingPayOnSiteBookingId] = useState<string | null>(null)
   
   // State pentru adăugarea manuală de rezervări
   const [isManualDialogOpen, setIsManualDialogOpen] = useState(false)
@@ -301,6 +306,55 @@ function BookingsPageContent() {
       })
     } finally {
       setIsCancelling(false)
+    }
+  }
+
+  const handleCancelPayOnSiteBooking = async (booking: Booking) => {
+    if (booking.source !== "pay_on_site") {
+      toast({
+        title: "Eroare",
+        description: "Această funcție este doar pentru rezervările cu plată la parcare.",
+        variant: "destructive",
+      })
+      return
+    }
+    
+    setIsCancellingPayOnSite(true)
+    setCancellingPayOnSiteBookingId(booking.id)
+    
+    try {
+      // Anularea se face doar în Firebase, nu prin API Multipark
+      const bookingDocRef = doc(db, "bookings", booking.id)
+      await updateDoc(bookingDocRef, {
+        status: "cancelled_by_admin",
+        payOnSiteStatus: "cancelled", // Adaugă status special pentru pay-on-site
+        cancelledAt: serverTimestamp(),
+        cancelledBy: "admin",
+        apiMessage: "Rezervare anulată de administrator (doar în sistemul local)",
+      })
+      
+      // Decrementez contorul de rezervări active
+      const statsDocRef = doc(db, "config", "reservationStats")
+      await updateDoc(statsDocRef, { activeBookingsCount: increment(-1) })
+      
+      toast({
+        title: "Rezervare Anulată",
+        description: `Rezervarea cu numărul ${booking.licensePlate} a fost anulată cu succes în sistemul local.`,
+      })
+      
+      fetchBookings() // Reîncarcă lista
+      if (isViewDialogOpen) setIsViewDialogOpen(false)
+      
+    } catch (error) {
+      console.error("Error cancelling pay-on-site booking:", error)
+      toast({
+        title: "Eroare Sistem",
+        description: "A apărut o eroare la procesul de anulare.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsCancellingPayOnSite(false)
+      setCancellingPayOnSiteBookingId(null)
     }
   }
 
@@ -867,6 +921,11 @@ function BookingsPageContent() {
   }
 
   const getPayOnSiteStatusBadge = (booking: Booking) => {
+    // Verifică dacă rezervarea a fost anulată
+    if (booking.payOnSiteStatus === "cancelled" || booking.status === "cancelled_by_admin") {
+      return <Badge className="bg-red-500 text-white">Anulată</Badge>
+    }
+    
     const status = booking.paymentStatus || "pending"
     
     switch (status) {
@@ -933,6 +992,11 @@ function BookingsPageContent() {
     
     // Pentru rezervările cu plată la parcare, afișăm dropdown-ul editabil
     if (booking.source === "pay_on_site") {
+      // Dacă rezervarea este anulată, afișăm doar badge-ul fără dropdown
+      if (booking.payOnSiteStatus === "cancelled" || booking.status === "cancelled_by_admin") {
+        return getPayOnSiteStatusBadge(booking)
+      }
+      
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -1215,6 +1279,26 @@ function BookingsPageContent() {
                                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     ) : null}
                                     Anulează (API)
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                            
+                            {/* Buton anulare pentru rezervările pay-on-site */}
+                            {isAdmin &&
+                              booking.source === "pay_on_site" &&
+                              booking.status !== "cancelled_by_admin" &&
+                              booking.status !== "cancelled_by_api" && (
+                                <>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onClick={() => handleCancelPayOnSiteBooking(booking)}
+                                    disabled={isCancellingPayOnSite}
+                                    className="text-red-600 hover:text-white hover:bg-red-600 focus:text-white focus:bg-red-600"
+                                  >
+                                    {isCancellingPayOnSite && cancellingPayOnSiteBookingId === booking.id ? (
+                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    ) : null}
+                                    Anulează (Local)
                                   </DropdownMenuItem>
                                 </>
                               )}
