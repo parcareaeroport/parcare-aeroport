@@ -1340,7 +1340,7 @@ export default function OrderPlacementForm() {
                           <Label htmlFor="card" className="flex-1 cursor-pointer">
                             <div className="flex flex-col">
                               <span>Plată online cu cardul (Stripe)</span>
-                              <span className="text-sm text-green-600 font-medium">10% reducere pentru plata online cu cardul</span>
+                              <span className="text-sm text-red-600 font-medium">10% reducere pentru plata online cu cardul</span>
                             </div>
                           </Label>
                         </div>
