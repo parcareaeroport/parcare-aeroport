@@ -558,13 +558,19 @@ export async function getDailyEntries(selectedDate: string): Promise<DailyEntryE
 
     snapshot.forEach(doc => {
       const booking = doc.data()
+      // Determină sursa rezervării
+      let source = booking.source || 'webhook'
+      if (booking.status === 'confirmed_pay_on_site') {
+        source = 'pay_on_site'
+      }
+      
       entries.push({
         id: doc.id,
         time: booking.startTime || 'N/A',
         licensePlate: booking.licensePlate || 'N/A',
         phone: booking.clientPhone || 'N/A',
         numberOfPersons: booking.numberOfPersons ? booking.numberOfPersons : 'N/A',
-        source: booking.source || 'webhook'
+        source: source
       })
     })
 
@@ -596,13 +602,19 @@ export async function getDailyExits(selectedDate: string): Promise<DailyEntryExi
 
     snapshot.forEach(doc => {
       const booking = doc.data()
+      // Determină sursa rezervării
+      let source = booking.source || 'webhook'
+      if (booking.status === 'confirmed_pay_on_site') {
+        source = 'pay_on_site'
+      }
+      
       exits.push({
         id: doc.id,
         time: booking.endTime || 'N/A',
         licensePlate: booking.licensePlate || 'N/A',
         phone: booking.clientPhone || 'N/A',
         numberOfPersons: booking.numberOfPersons ? booking.numberOfPersons : 'N/A',
-        source: booking.source || 'webhook'
+        source: source
       })
     })
 

@@ -373,13 +373,22 @@ export default function StatisticsPage() {
                               MANUAL
                             </Badge>
                           )}
+                          {entry.source === 'pay_on_site' && (
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                              PLATĂ LA PARCARE
+                            </Badge>
+                          )}
                         </div>
                         <p className="text-xs text-muted-foreground">Tel: {entry.phone}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium">{entry.time}</p>
                         <p className="text-xs text-muted-foreground">
-                          {entry.source === 'manual' ? 'Intrare manuală' : 'Din rezervare'}
+                          {entry.source === 'manual' 
+                            ? 'Intrare manuală' 
+                            : entry.source === 'pay_on_site'
+                            ? 'Plată la parcare'
+                            : 'Din rezervare'}
                         </p>
                       </div>
                     </div>
@@ -411,13 +420,22 @@ export default function StatisticsPage() {
                               MANUAL
                             </Badge>
                           )}
+                          {exit.source === 'pay_on_site' && (
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                              PLATĂ LA PARCARE
+                            </Badge>
+                          )}
                         </div>
                         <p className="text-xs text-muted-foreground">Tel: {exit.phone}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium">{exit.time}</p>
                         <p className="text-xs text-muted-foreground">
-                          {exit.source === 'manual' ? 'Ieșire manuală' : 'Din rezervare'}
+                          {exit.source === 'manual' 
+                            ? 'Ieșire manuală' 
+                            : exit.source === 'pay_on_site'
+                            ? 'Plată la parcare'
+                            : 'Din rezervare'}
                         </p>
                       </div>
                     </div>
