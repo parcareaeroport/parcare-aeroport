@@ -75,7 +75,7 @@ export function ReservationLimitManager() {
     const col = collection(db, "bookings")
     
     // Query mai inteligent: excludem rezervările expirate, anulate și cu erori
-    const q = query(col, where("status", "in", ["confirmed_paid", "confirmed_test", "confirmed", "paid"]))
+    const q = query(col, where("status", "in", ["confirmed_paid", "confirmed_test", "confirmed", "paid", "confirmed_pay_on_site"]))
     
     const unsub = onSnapshot(q, async (snapshot) => {
       // Calculăm în timp real rezervările care sunt cu adevărat active ACUM
@@ -170,7 +170,7 @@ export function ReservationLimitManager() {
       // Query pentru rezervările care ar trebui să fie active dar poate au expirat
       const potentiallyExpiredQuery = query(
         bookingsRef,
-        where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']),
+        where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid', 'confirmed_pay_on_site']),
         where('endDate', '<=', currentDateStr) // Toate rezervările care se termină astăzi sau în trecut
       )
       

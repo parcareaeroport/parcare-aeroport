@@ -127,7 +127,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       if (booking.clientEmail) {
         uniqueClients.add(booking.clientEmail)
       }
-      if (booking.status === 'confirmed_paid' || booking.status === 'confirmed_test') {
+      if (booking.status === 'confirmed_paid' || booking.status === 'confirmed_test' || booking.status === 'confirmed_pay_on_site') {
         confirmedBookings++
       }
     })
@@ -165,7 +165,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       bookingsRef,
       where('startDate', '<=', today.toISOString().split('T')[0]),
       where('endDate', '>=', today.toISOString().split('T')[0]),
-      where('status', 'in', ['confirmed_paid', 'confirmed_test'])
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed_pay_on_site'])
     )
 
     console.log('🔍 Dashboard occupancy check for date:', today.toISOString().split('T')[0])
@@ -217,7 +217,7 @@ export async function getMonthlyRevenueData(): Promise<MonthlyStats[]> {
       bookingsRef,
       where('createdAt', '>=', Timestamp.fromDate(startOfYear)),
       where('createdAt', '<=', Timestamp.fromDate(endOfYear)),
-      where('status', 'in', ['confirmed_paid', 'confirmed_test'])
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed_pay_on_site'])
     )
 
     const snapshot = await getDocs(q)
@@ -305,7 +305,7 @@ export async function getBookingStatusData(): Promise<BookingStatusStats[]> {
       const booking = doc.data()
       const status = booking.status || 'pending'
       
-      if (status === 'confirmed_paid' || status === 'confirmed_test' || status === 'confirmed' || status === 'paid') {
+      if (status === 'confirmed_paid' || status === 'confirmed_test' || status === 'confirmed' || status === 'paid' || status === 'confirmed_pay_on_site') {
         statusCounts.confirmed++
       } else if (status === 'cancelled_by_admin' || status === 'cancelled_by_api' || status === 'cancelled') {
         statusCounts.cancelled++
@@ -356,7 +356,7 @@ async function markExpiredBookingsAsInactive() {
     // Query pentru rezervările care ar trebui să fie active dar poate au expirat
     const potentiallyExpiredQuery = query(
       bookingsRef,
-      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']),
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid', 'confirmed_pay_on_site']),
       where('endDate', '<=', currentDateStr) // Toate rezervările care se termină astăzi sau în trecut
     )
     
@@ -441,7 +441,7 @@ export async function getOccupancyData(): Promise<OccupancyStats[]> {
       bookingsRef,
       where('startDate', '<=', currentDateStr),
       where('endDate', '>=', currentDateStr),
-      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid'])
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid', 'confirmed_pay_on_site'])
     )
 
     const snapshot = await getDocs(activeBookingsQuery)
@@ -549,7 +549,7 @@ export async function getDailyEntries(selectedDate: string): Promise<DailyEntryE
     const q = query(
       bookingsRef,
       where('startDate', '==', selectedDate),
-      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']),
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid', 'confirmed_pay_on_site']),
       orderBy('startTime', 'asc')
     )
 
@@ -587,7 +587,7 @@ export async function getDailyExits(selectedDate: string): Promise<DailyEntryExi
     const q = query(
       bookingsRef,
       where('endDate', '==', selectedDate),
-      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']),
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid', 'confirmed_pay_on_site']),
       orderBy('endTime', 'asc')
     )
 
@@ -681,7 +681,7 @@ export async function getExpiredReservations(): Promise<ExpiredReservation[]> {
     // Query pentru rezervările care ar fi trebuit să se termine până acum
     const expiredQuery = query(
       bookingsRef,
-      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']),
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid', 'confirmed_pay_on_site']),
       where('endDate', '<', currentDateStr)
     )
 
