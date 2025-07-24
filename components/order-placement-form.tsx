@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { loadStripe } from "@stripe/stripe-js"
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import { createBooking, createBookingWithFirestore } from "@/app/actions/booking-actions"
+import { normalizeLicensePlate } from "@/lib/utils"
 
 // Inițializăm Stripe cu cheia publică
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "")
@@ -288,7 +289,7 @@ export default function OrderPlacementForm() {
     try {
       // Pregătim FormData pentru API-ul direct
       const formData = new FormData()
-      formData.append("licensePlate", reservationData.licensePlate)
+      formData.append("licensePlate", normalizeLicensePlate(reservationData.licensePlate))
       formData.append("startDate", reservationData.startDate)
       formData.append("startTime", reservationData.startTime)
       formData.append("endDate", reservationData.endDate)
@@ -303,11 +304,11 @@ export default function OrderPlacementForm() {
       console.log(`🚀 [${payOnSiteProcessId}] Phone provided: ${phone}`)
       console.log(`🚀 [${payOnSiteProcessId}] Total amount: ${calculateTotal()} RON`)
       console.log(`🚀 [${payOnSiteProcessId}] Number of days: ${reservationData.days}`)
-      console.log(`🚀 [${payOnSiteProcessId}] License plate: ${reservationData.licensePlate}`)
-      console.log(`🚀 [${payOnSiteProcessId}] Date range: ${reservationData.startDate} ${reservationData.startTime} - ${reservationData.endDate} ${reservationData.endTime}`)
-      console.log(`🚀 [${payOnSiteProcessId}] Client name: ${firstName} ${lastName}`)
-      console.log(`🚀 [${payOnSiteProcessId}] Complete booking data:`, {
-        licensePlate: reservationData.licensePlate,
+              console.log(`🚀 [${payOnSiteProcessId}] License plate: ${normalizeLicensePlate(reservationData.licensePlate)}`)
+        console.log(`🚀 [${payOnSiteProcessId}] Date range: ${reservationData.startDate} ${reservationData.startTime} - ${reservationData.endDate} ${reservationData.endTime}`)
+        console.log(`🚀 [${payOnSiteProcessId}] Client name: ${firstName} ${lastName}`)
+        console.log(`🚀 [${payOnSiteProcessId}] Complete booking data:`, {
+          licensePlate: normalizeLicensePlate(reservationData.licensePlate),
         startDate: reservationData.startDate,
         startTime: reservationData.startTime,
         endDate: reservationData.endDate,
@@ -514,7 +515,7 @@ export default function OrderPlacementForm() {
         body: JSON.stringify({
           amount: calculateTotal(),
           bookingData: {
-            licensePlate: reservationData.licensePlate,
+            licensePlate: normalizeLicensePlate(reservationData.licensePlate),
             startDate: `${reservationData.startDate}T${reservationData.startTime}:00`,
             endDate: `${reservationData.endDate}T${reservationData.endTime}:00`,
           },

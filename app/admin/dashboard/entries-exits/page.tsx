@@ -408,9 +408,9 @@ export default function EntriesExitsPage() {
                               </span>
                             </div>
                             <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs text-green-600 font-medium uppercase tracking-wide">Număr auto</span>
-                                <div className="flex items-center gap-2">
+                              {/* Badge-uri pe rând separat */}
+                              {(entry.source === "manual" || entry.source === "pay_on_site") && (
+                                <div className="flex justify-end">
                                   {entry.source === "manual" && (
                                     <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 text-xs">
                                       MANUAL
@@ -421,8 +421,12 @@ export default function EntriesExitsPage() {
                                       PLATĂ LA PARCARE
                                     </Badge>
                                   )}
-                                  <span className="font-semibold text-gray-900">{entry.licensePlate}</span>
                                 </div>
+                              )}
+                              {/* Număr auto pe rând separat */}
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-green-600 font-medium uppercase tracking-wide">Număr auto</span>
+                                <span className="font-semibold text-gray-900">{entry.licensePlate}</span>
                               </div>
                               <div className="flex items-center justify-between">
                                 <span className="text-xs text-green-600 font-medium uppercase tracking-wide">Telefon</span>
@@ -517,9 +521,9 @@ export default function EntriesExitsPage() {
                               </span>
                             </div>
                             <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs text-red-600 font-medium uppercase tracking-wide">Număr auto</span>
-                                <div className="flex items-center gap-2">
+                              {/* Badge-uri pe rând separat */}
+                              {(exit.source === "manual" || exit.source === "pay_on_site") && (
+                                <div className="flex justify-end">
                                   {exit.source === "manual" && (
                                     <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 text-xs">
                                       MANUAL
@@ -530,8 +534,12 @@ export default function EntriesExitsPage() {
                                       PLATĂ LA PARCARE
                                     </Badge>
                                   )}
-                                  <span className="font-semibold text-gray-900">{exit.licensePlate}</span>
                                 </div>
+                              )}
+                              {/* Număr auto pe rând separat */}
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-red-600 font-medium uppercase tracking-wide">Număr auto</span>
+                                <span className="font-semibold text-gray-900">{exit.licensePlate}</span>
                               </div>
                               <div className="flex items-center justify-between">
                                 <span className="text-xs text-red-600 font-medium uppercase tracking-wide">Telefon</span>

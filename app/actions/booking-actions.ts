@@ -1236,7 +1236,7 @@ export async function createManualBooking(formData: FormData) {
          <MultiparkId>${API_CONFIG.multiparkId}</MultiparkId>
           <OperationType>N</OperationType>
           <BookingNumber>${bookingNumber}</BookingNumber>
-          <LicensePlate>${licensePlate.toUpperCase()}</LicensePlate>
+          <LicensePlate>${normalizeLicensePlate(licensePlate)}</LicensePlate>
           <StartDate>${formattedStartDate}</StartDate>
          <Duration>${apiDurationMinutes}</Duration>
           ${clientName ? `<ClientName>${clientName}</ClientName>` : ""}

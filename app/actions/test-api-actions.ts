@@ -1,6 +1,7 @@
 "use server"
 
 import { z } from "zod"
+import { normalizeLicensePlate } from "@/lib/utils"
 
 // Schema de validare pentru testarea creării unei rezervări
 const testCreateBookingSchema = z.object({
@@ -122,7 +123,7 @@ export async function testCreateBooking(formData: FormData) {
 
     // Parsare și validare date formular
     const rawData = {
-      licensePlate: formData.get("licensePlate") as string,
+      licensePlate: normalizeLicensePlate(formData.get("licensePlate") as string),
       startDate: formData.get("startDate") as string,
       startTime: formData.get("startTime") as string,
       durationMinutes: Number.parseInt(formData.get("durationMinutes") as string) || 120,
@@ -274,7 +275,7 @@ export async function testUpdateBooking(formData: FormData) {
     // Parsare și validare date formular
     const rawData = {
       bookingNumber: formData.get("bookingNumber") as string,
-      licensePlate: formData.get("licensePlate") as string,
+      licensePlate: normalizeLicensePlate(formData.get("licensePlate") as string || ""),
       startDate: formData.get("startDate") as string,
       startTime: formData.get("startTime") as string,
       durationMinutes: Number.parseInt(formData.get("durationMinutes") as string) || 120,

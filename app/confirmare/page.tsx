@@ -12,6 +12,7 @@ import { getStripe } from "@/lib/stripe" // Pentru a prelua instanța Stripe.js
 import { collection, addDoc, serverTimestamp, query, where, getDocs, doc, updateDoc, increment } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useToast } from "@/components/ui/use-toast"
+import { normalizeLicensePlate } from "@/lib/utils"
 
 interface ReservationData {
   licensePlate: string
@@ -59,7 +60,7 @@ function ConfirmationContent() {
         const orderData = JSON.parse(storedOrderData)
         // Convertim datele comenzii în format ReservationData
         tempReservationData = {
-          licensePlate: orderData.reservationData.licensePlate,
+          licensePlate: normalizeLicensePlate(orderData.reservationData.licensePlate),
           startDate: orderData.reservationData.startDate,
           startTime: orderData.reservationData.startTime,
           endDate: orderData.reservationData.endDate,
@@ -80,7 +81,7 @@ function ConfirmationContent() {
           const bookingResult = JSON.parse(storedBookingResult)
           // Convertim rezultatul rezervării în format ReservationData
           tempReservationData = {
-            licensePlate: bookingResult.reservationData.licensePlate,
+            licensePlate: normalizeLicensePlate(bookingResult.reservationData.licensePlate),
             startDate: bookingResult.reservationData.startDate,
             startTime: bookingResult.reservationData.startTime,
             endDate: bookingResult.reservationData.endDate,

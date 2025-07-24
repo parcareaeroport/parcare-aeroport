@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import Stripe from "stripe"
+import { normalizeLicensePlate } from "@/lib/utils"
 
 // Inițializăm clientul Stripe cu cheia secretă
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
       customerName: `${customerInfo.firstName} ${customerInfo.lastName}`,
       customerEmail: customerInfo.email,
       customerPhone: customerInfo.phone || "",
-      licensePlate: bookingData.licensePlate,
+      licensePlate: normalizeLicensePlate(bookingData.licensePlate), // Normalizare pentru siguranță
       startDate: bookingData.startDate,
       endDate: bookingData.endDate,
     }
