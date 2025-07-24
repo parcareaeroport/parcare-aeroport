@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/components/ui/use-toast"
+import { normalizeLicensePlate } from "@/lib/utils"
 import { Loader2, Mail, Phone, User, Calendar, Car, Hash, CalendarIcon, Clock } from "lucide-react"
 import { format, addDays } from "date-fns"
 import { ro } from "date-fns/locale"
@@ -305,7 +306,7 @@ export default function CancellationForm() {
             id="licensePlate"
             type="text"
             value={licensePlate}
-            onChange={(e) => setLicensePlate(e.target.value.toUpperCase())}
+            onChange={(e) => setLicensePlate(normalizeLicensePlate(e.target.value))}
             placeholder="Ex: DB99SDF"
             required
             className="h-12"

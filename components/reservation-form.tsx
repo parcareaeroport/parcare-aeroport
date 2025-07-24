@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label"
 import { collection, getDocs, query, orderBy, doc, getDoc, getCountFromServer, where, onSnapshot } from "firebase/firestore" // Importuri Firestore necesare
 import { db } from "@/lib/firebase"
 import { checkAvailability, checkExistingReservationByLicensePlate } from "@/lib/booking-utils" // Import pentru verificarea disponibilității și duplicatelor
+import { normalizeLicensePlate } from "@/lib/utils" // Import pentru normalizarea numărului de înmatriculare
 
 interface PriceTier {
   id: string
@@ -185,16 +186,10 @@ export default function ReservationForm() {
     setTimeError(null)
   }
 
-  // Funcție pentru formatarea numărului de înmatriculare
-  const formatLicensePlate = (input: string) => {
-    // Elimină spațiile și liniuțele și convertește la uppercase
-    return input.replace(/[\s-]/g, '').toUpperCase()
-  }
-
   // Handler pentru schimbarea numărului de înmatriculare
   const handleLicensePlateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatLicensePlate(e.target.value)
-    setLicensePlate(formatted)
+    const normalized = normalizeLicensePlate(e.target.value)
+    setLicensePlate(normalized)
     // Golește erorile când utilizatorul schimbă numărul
     setDuplicateError(null)
     setTimeError(null)

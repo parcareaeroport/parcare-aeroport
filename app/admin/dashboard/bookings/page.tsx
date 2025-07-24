@@ -44,6 +44,7 @@ import { cancelBooking as cancelParkingApiBooking, cleanupExpiredBookings, creat
 import { recoverSpecificBooking } from "@/app/actions/booking-recovery" // Recovery pentru rezervări eșuate
 import { TimePickerDemo } from "@/components/time-picker"
 import { checkExistingReservationByLicensePlate } from "@/lib/booking-utils"
+import { normalizeLicensePlate } from "@/lib/utils"
 import { Clock, XCircle } from "lucide-react"
 
 interface Booking {
@@ -1608,7 +1609,7 @@ function BookingsPageContent() {
                 <Input
                   value={manualLicensePlate}
                   onChange={(e) => {
-                    setManualLicensePlate(e.target.value.toUpperCase())
+                    setManualLicensePlate(normalizeLicensePlate(e.target.value))
                     // Golește eroarea când utilizatorul schimbă numărul
                     setManualDuplicateError(null)
                   }}

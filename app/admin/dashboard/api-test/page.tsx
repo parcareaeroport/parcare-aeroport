@@ -15,6 +15,7 @@ import {
   testApiConnectivity,
   testUpdateBooking,
 } from "@/app/actions/test-api-actions"
+import { normalizeLicensePlate } from "@/lib/utils"
 import { CalendarIcon, Clock, AlertCircle, CheckCircle2, XCircle, Wifi, WifiOff } from "lucide-react"
 import { format } from "date-fns"
 import { ro } from "date-fns/locale"
@@ -231,7 +232,7 @@ export default function ApiTestPage() {
                     <Input
                       id="licensePlate"
                       value={licensePlate}
-                      onChange={(e) => setLicensePlate(e.target.value)}
+                      onChange={(e) => setLicensePlate(normalizeLicensePlate(e.target.value))}
                       placeholder="Ex: B-123-ABC"
                       required
                     />
@@ -545,7 +546,7 @@ export default function ApiTestPage() {
                     <Input
                       id="updateLicensePlate"
                       value={updateLicensePlate}
-                      onChange={(e) => setUpdateLicensePlate(e.target.value)}
+                      onChange={(e) => setUpdateLicensePlate(normalizeLicensePlate(e.target.value))}
                       placeholder="Ex: B-123-ABC"
                     />
                   </div>
