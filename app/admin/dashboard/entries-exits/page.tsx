@@ -376,6 +376,11 @@ export default function EntriesExitsPage() {
                                         MANUAL
                                       </Badge>
                                     )}
+                                    {entry.source === "pay_on_site" && (
+                                      <Badge variant="outline" className="text-orange-700 border-orange-400 bg-orange-100 text-xs">
+                                        PLATĂ LA PARCARE
+                                      </Badge>
+                                    )}
                                     {entry.licensePlate}
                                   </div>
                                 </td>
@@ -409,6 +414,11 @@ export default function EntriesExitsPage() {
                                   {entry.source === "manual" && (
                                     <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 text-xs">
                                       MANUAL
+                                    </Badge>
+                                  )}
+                                  {entry.source === "pay_on_site" && (
+                                    <Badge variant="outline" className="text-orange-700 border-orange-400 bg-orange-100 text-xs">
+                                      PLATĂ LA PARCARE
                                     </Badge>
                                   )}
                                   <span className="font-semibold text-gray-900">{entry.licensePlate}</span>
@@ -475,6 +485,11 @@ export default function EntriesExitsPage() {
                                         MANUAL
                                       </Badge>
                                     )}
+                                    {exit.source === "pay_on_site" && (
+                                      <Badge variant="outline" className="text-orange-700 border-orange-400 bg-orange-100 text-xs">
+                                        PLATĂ LA PARCARE
+                                      </Badge>
+                                    )}
                                     {exit.licensePlate}
                                   </div>
                                 </td>
@@ -508,6 +523,11 @@ export default function EntriesExitsPage() {
                                   {exit.source === "manual" && (
                                     <Badge variant="outline" className="text-pink-700 border-pink-400 bg-pink-100 text-xs">
                                       MANUAL
+                                    </Badge>
+                                  )}
+                                  {exit.source === "pay_on_site" && (
+                                    <Badge variant="outline" className="text-orange-700 border-orange-400 bg-orange-100 text-xs">
+                                      PLATĂ LA PARCARE
                                     </Badge>
                                   )}
                                   <span className="font-semibold text-gray-900">{exit.licensePlate}</span>
