@@ -7,6 +7,7 @@ import { db } from "@/lib/firebase"
 // Importăm serviciile pentru QR și email
 import { generateMultiparkQR } from "@/lib/qr-generator"
 import { sendBookingConfirmationEmail } from "@/lib/email-service"
+import { normalizeLicensePlate } from "@/lib/utils"
 
 // Define validation schema for the form data
 const bookingFormSchema = z.object({
@@ -437,7 +438,7 @@ export async function createBooking(formData: FormData) {
   try {
     // Parse and validate form data
     const rawData = {
-      licensePlate: formData.get("licensePlate") as string,
+      licensePlate: normalizeLicensePlate(formData.get("licensePlate") as string),
       startDate: formData.get("startDate") as string,
       startTime: formData.get("startTime") as string,
       endDate: formData.get("endDate") as string,
@@ -632,7 +633,7 @@ export async function createBookingWithFirestore(
     // Pregătește datele complete pentru Firestore
     const completeBookingData: CompleteBookingData = {
       // Date de bază din formData
-      licensePlate: formData.get("licensePlate") as string,
+      licensePlate: normalizeLicensePlate(formData.get("licensePlate") as string),
       startDate: formData.get("startDate") as string,
       startTime: formData.get("startTime") as string,
       endDate: formData.get("endDate") as string,
@@ -1160,7 +1161,7 @@ export async function createManualBooking(formData: FormData) {
 
     // 1. CREEAZĂ REZERVAREA ÎN FIRESTORE MAI ÎNTÂI
     const bookingData = {
-      licensePlate: licensePlate.toUpperCase(),
+      licensePlate: normalizeLicensePlate(licensePlate),
       clientName,
       clientEmail,
       clientPhone,

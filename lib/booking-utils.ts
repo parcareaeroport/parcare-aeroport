@@ -1,5 +1,6 @@
 import { collection, query, where, getDocs, doc, updateDoc, serverTimestamp, increment } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import { normalizeLicensePlate } from '@/lib/utils'
 
 /**
  * Verifică dacă o rezervare este expirată în funcție de data/ora curentă
@@ -445,11 +446,14 @@ export async function checkExistingReservationByLicensePlate(
   try {
     const bookingsRef = collection(db, 'bookings')
     
+    // Normalizează numărul de înmatriculare pentru căutare
+    const normalizedInputLicensePlate = normalizeLicensePlate(licensePlate)
+    
     // Query pentru rezervările active cu același număr de înmatriculare
+    // Căutăm toate rezervările active și facem comparația după normalizare
     const existingQuery = query(
       bookingsRef,
-      where('licensePlate', '==', licensePlate.toUpperCase()),
-      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid'])
+      where('status', 'in', ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid', 'confirmed_pay_on_site'])
     )
     
     // Converteste noua rezervare la timestamps pentru comparare
@@ -457,26 +461,45 @@ export async function checkExistingReservationByLicensePlate(
     const newEndDateTime = new Date(`${newEndDate}T${newEndTime}:00`)
     
     console.log('🔍 VERIFICARE SUPRAPUNERE PERIOADA NUMĂR ÎNMATRICULARE:', {
-      licensePlate: licensePlate.toUpperCase(),
+      originalInput: licensePlate,
+      normalizedInput: normalizedInputLicensePlate,
       newPeriod: `${newStartDate} ${newStartTime} - ${newEndDate} ${newEndTime}`,
       newStartDateTime: newStartDateTime.toISOString(),
       newEndDateTime: newEndDateTime.toISOString(),
-      activeStatuses: ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid']
+      activeStatuses: ['confirmed_paid', 'confirmed_test', 'confirmed', 'paid', 'confirmed_pay_on_site']
     })
     
     const snapshot = await getDocs(existingQuery)
     
     if (snapshot.empty) {
-      console.log('✅ NU EXISTĂ REZERVARE ACTIVĂ cu același număr de înmatriculare')
+      console.log('✅ NU EXISTĂ REZERVĂRI ACTIVE în sistem')
       return { exists: false }
     }
     
     // Verifică dacă există suprapunere cu vreo rezervare activă
     let overlappingBookingFound = false
     let overlappingBookingData = null
+    let matchingLicensePlateCount = 0
     
     for (const docSnapshot of snapshot.docs) {
       const booking = docSnapshot.data()
+      
+      // Normalizează numărul de înmatriculare din DB pentru comparație
+      const normalizedDbLicensePlate = normalizeLicensePlate(booking.licensePlate || '')
+      
+      // Verifică dacă numerele de înmatriculare se potrivesc (după normalizare)
+      if (normalizedDbLicensePlate !== normalizedInputLicensePlate) {
+        continue // Skip rezervările cu alt număr de înmatriculare
+      }
+      
+      matchingLicensePlateCount++
+      console.log(`🎯 GĂSIT NUMĂR ÎNMATRICULARE POTRIVIT #${matchingLicensePlateCount}:`, {
+        id: docSnapshot.id,
+        originalDb: booking.licensePlate,
+        normalizedDb: normalizedDbLicensePlate,
+        input: normalizedInputLicensePlate,
+        status: booking.status
+      })
       
       // Verifică dacă rezervarea nu este expirată
       if (!isBookingExpired({
@@ -495,6 +518,9 @@ export async function checkExistingReservationByLicensePlate(
         
         console.log('🧮 VERIFICARE SUPRAPUNERE:', {
           existingId: docSnapshot.id,
+          existingLicensePlate: booking.licensePlate,
+          normalizedExistingLicensePlate: normalizedDbLicensePlate,
+          normalizedInputLicensePlate: normalizedInputLicensePlate,
           existingPeriod: `${booking.startDate} ${booking.startTime} - ${booking.endDate} ${booking.endTime}`,
           existingStart: existingStartDateTime.toISOString(),
           existingEnd: existingEndDateTime.toISOString(),
@@ -540,13 +566,15 @@ export async function checkExistingReservationByLicensePlate(
       }
     }
     
+    console.log(`📊 REZULTAT CĂUTARE: Găsite ${matchingLicensePlateCount} rezervări cu numărul de înmatriculare ${normalizedInputLicensePlate}`)
+    
     if (overlappingBookingFound && overlappingBookingData) {
       return {
         exists: true,
         existingBooking: overlappingBookingData
       }
     } else {
-      console.log('✅ Nu există suprapuneri - rezervarea poate continua')
+      console.log(`✅ Nu există suprapuneri pentru ${normalizedInputLicensePlate} - rezervarea poate continua`)
       return { exists: false }
     }
     
