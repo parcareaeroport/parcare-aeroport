@@ -60,9 +60,7 @@ export default function HeroSection() {
       {/* Formularul fix în partea superioară a imaginii pe toate ecranele */}
       <div className="w-full flex justify-center md:absolute md:top-12 md:left-1/2 md:-translate-x-1/2 z-20 px-2 md:px-0 mt-4">
         <div className="w-full max-w-6xl">
-          <div className="bg-white rounded-2xl shadow-2xl p-4 md:p-6 flex flex-col gap-4 border border-gray-100">
-            <ReservationForm />
-          </div>
+          <ReservationForm />
         </div>
       </div>
       {/* Conținutul sliderului */}
