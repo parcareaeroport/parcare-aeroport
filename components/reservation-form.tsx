@@ -84,26 +84,45 @@ export default function ReservationForm() {
         checkLoaded();
       }
     );
-    const unsubStats = onSnapshot(
-      doc(db, "config", "reservationStats"),
-      (statsSnap) => {
-        const statsData = statsSnap.exists() ? statsSnap.data() : {};
-        setActiveBookingsCount(statsData.activeBookingsCount ?? 0);
-        statsLoaded = true;
-        checkLoaded();
-      },
-      (error) => {
-        console.error("Error fetching reservation stats:", error);
-        toast({
-          title: "Eroare de sistem",
-          description: "Nu s-au putut încărca statisticile rezervărilor. Funcționalitatea poate fi limitată.",
-          variant: "destructive",
-        });
-        setActiveBookingsCount(0);
-        statsLoaded = true;
-        checkLoaded();
-      }
-    );
+    // SMART CALCULATION: Calculăm rezervările active direct din bookings (ca în admin)
+    const bookingsCol = collection(db, "bookings")
+    const activeBookingsQuery = query(bookingsCol, where("status", "in", ["confirmed_paid", "confirmed_test", "confirmed", "paid", "confirmed_pay_on_site"]))
+
+    const unsubStats = onSnapshot(activeBookingsQuery, (snapshot) => {
+      // Calculăm în timp real rezervările care sunt cu adevărat active ACUM
+      const now = new Date()
+      let reallyActiveCount = 0
+      
+      snapshot.forEach(doc => {
+        const booking = doc.data()
+        const endDateTime = new Date(`${booking.endDate}T${booking.endTime}:00`)
+        
+        // Verifică dacă rezervarea este încă activă (nu a expirat)
+        if (endDateTime > now) {
+          reallyActiveCount++
+        }
+      })
+      
+      setActiveBookingsCount(reallyActiveCount)
+      console.log('📊 [RESERVATION-FORM] Smart active bookings count:', {
+        totalWithActiveStatus: snapshot.size,
+        reallyActiveNow: reallyActiveCount,
+        currentTime: now.toISOString()
+      })
+      
+      statsLoaded = true;
+      checkLoaded();
+    }, (error) => {
+      console.error("Error fetching reservation stats:", error);
+      toast({
+        title: "Eroare de sistem",
+        description: "Nu s-au putut încărca statisticile rezervărilor. Funcționalitatea poate fi limitată.",
+        variant: "destructive",
+      });
+      setActiveBookingsCount(0);
+      statsLoaded = true;
+      checkLoaded();
+    });
     // NU mai apela setIsLoadingSystemStatus(false) aici!
     return () => {
       unsubSettings();
@@ -823,6 +842,20 @@ export default function ReservationForm() {
           </div>
         </div>
       )}
+
+      {/* Debug section for active bookings count */}
+      {/* <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mt-4">
+        <h4 className="text-sm font-medium text-blue-900 mb-2">🔍 Debug - Rezervări Active</h4>
+        <div className="text-xs text-blue-800 space-y-1">
+          <div>📊 Rezervări active calculate: <strong>{activeBookingsCount ?? 'Se încarcă...'}</strong></div>
+          <div>🎯 Limită maximă: <strong>{reservationSettings?.maxTotalReservations ?? 'Se încarcă...'}</strong></div>
+          <div>📈 Status sistem: <strong>{reservationSettings?.reservationsEnabled ? 'ACTIV' : 'DEZACTIVAT'}</strong></div>
+          <div>⏰ Ultima actualizare: <strong>{new Date().toLocaleTimeString('ro-RO')}</strong></div>
+          {reservationSettings?.maxTotalReservations && activeBookingsCount !== null && (
+            <div>📋 Locuri libere: <strong>{Math.max(0, reservationSettings.maxTotalReservations - activeBookingsCount)}</strong></div>
+          )}
+        </div>
+      </div> */}
 
       {timeError && <div className="text-red-500 text-sm font-semibold mt-1 flex items-center"><XCircle className="mr-1 h-5 w-5" />{timeError}</div>}
       {dateError && <div className="text-red-500 text-sm font-semibold mt-1 flex items-center"><XCircle className="mr-1 h-5 w-5" />{dateError}</div>}
